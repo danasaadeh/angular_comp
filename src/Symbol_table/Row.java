@@ -1,6 +1,6 @@
 package Symbol_table;
 public class Row {
-   // string name;
+    String name;
     String type;
     String value;
     String scope;
@@ -23,5 +23,13 @@ public class Row {
 
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
