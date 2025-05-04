@@ -1,8 +1,10 @@
 package AST.Basic;
 
+import AST.Statements;
+
 import java.util.List;
 
-public class SuperExp {
+public class SuperExp extends Statements {
     private String methodName;
     private List<String> arguments;
     private String property;

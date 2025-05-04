@@ -6,7 +6,7 @@ import AST.Statements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Return {
+public class Return  extends Statements{
     private String id;
     private String value;
     private String sentence;

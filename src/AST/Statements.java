@@ -15,7 +15,7 @@ import AST.Basic.Loop.While;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Statements {
+public class Statements  extends Instruction{
     private String type;
     private List<ClassDecl> classDecls;
     private List<Interface> interfaces;

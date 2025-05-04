@@ -1,7 +1,9 @@
 package AST.Basic;
 
 import AST.Basic.Loop.Exp.Expression;
-public class Print {
+import AST.Statements;
+
+public class Print extends Statements {
     private Expression expression;
 
     public Print(Expression expression) {

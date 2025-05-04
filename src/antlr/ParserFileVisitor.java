@@ -17,11 +17,33 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitProgram(ParserFile.ProgramContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ParserFile#instruction}.
+	 * Visit a parse tree produced by the {@code IMPORT_INSTRUCT}
+	 * labeled alternative in {@link ParserFile#instruction}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitInstruction(ParserFile.InstructionContext ctx);
+	T visitIMPORT_INSTRUCT(ParserFile.IMPORT_INSTRUCTContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code COMPONENT_INSTRUCT}
+	 * labeled alternative in {@link ParserFile#instruction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCOMPONENT_INSTRUCT(ParserFile.COMPONENT_INSTRUCTContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code INJECT_INSTRUCT}
+	 * labeled alternative in {@link ParserFile#instruction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitINJECT_INSTRUCT(ParserFile.INJECT_INSTRUCTContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code STATEMENTS_INSTRUCT}
+	 * labeled alternative in {@link ParserFile#instruction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSTATEMENTS_INSTRUCT(ParserFile.STATEMENTS_INSTRUCTContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ParserFile#component}.
 	 * @param ctx the parse tree
@@ -77,11 +99,131 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitProvided_in(ParserFile.Provided_inContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ParserFile#statements}.
+	 * Visit a parse tree produced by the {@code CLASS_DECLAR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatements(ParserFile.StatementsContext ctx);
+	T visitCLASS_DECLAR_STATE(ParserFile.CLASS_DECLAR_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code INTERFACE_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitINTERFACE_STATE(ParserFile.INTERFACE_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code FUNC_DECL_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFUNC_DECL_STATE(ParserFile.FUNC_DECL_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code CONSTR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCONSTR_STATE(ParserFile.CONSTR_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code INIT_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitINIT_STATE(ParserFile.INIT_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code INIT_ARRAY_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitINIT_ARRAY_STATE(ParserFile.INIT_ARRAY_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code DECLARE_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDECLARE_STATE(ParserFile.DECLARE_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ASSIGN_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitASSIGN_STATE(ParserFile.ASSIGN_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code IF_CONDITION_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIF_CONDITION_STATE(ParserFile.IF_CONDITION_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code FOR_LOOP_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFOR_LOOP_STATE(ParserFile.FOR_LOOP_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code WHILE_LOOP_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWHILE_LOOP_STATE(ParserFile.WHILE_LOOP_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code EXPR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEXPR_STATE(ParserFile.EXPR_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code THIS_EXPR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTHIS_EXPR_STATE(ParserFile.THIS_EXPR_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code SUPER_EXPR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSUPER_EXPR_STATE(ParserFile.SUPER_EXPR_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code PRINT_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPRINT_STATE(ParserFile.PRINT_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code VALUE_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVALUE_STATE(ParserFile.VALUE_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code RETRUN_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRETRUN_STATE(ParserFile.RETRUN_STATEContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code COMMENT_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCOMMENT_STATE(ParserFile.COMMENT_STATEContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ParserFile#init}.
 	 * @param ctx the parse tree
@@ -155,11 +297,54 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitElse_condition(ParserFile.Else_conditionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ParserFile#condition}.
+	 * Visit a parse tree produced by the {@code ID_COND}
+	 * labeled alternative in {@link ParserFile#condition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCondition(ParserFile.ConditionContext ctx);
+	T visitID_COND(ParserFile.ID_CONDContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code VAL_COND}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVAL_COND(ParserFile.VAL_CONDContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code VAL_OPERA_VAL}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVAL_OPERA_VAL(ParserFile.VAL_OPERA_VALContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code VAL_OPERA_ID}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVAL_OPERA_ID(ParserFile.VAL_OPERA_IDContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ID_OPERA_VAL}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitID_OPERA_VAL(ParserFile.ID_OPERA_VALContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ID_OPERA_ID}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitID_OPERA_ID(ParserFile.ID_OPERA_IDContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ID_OPERA_DOT_ID}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitID_OPERA_DOT_ID(ParserFile.ID_OPERA_DOT_IDContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ParserFile#body}.
 	 * @param ctx the parse tree
@@ -179,11 +364,68 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitWhile(ParserFile.WhileContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ParserFile#expr}.
+	 * Visit a parse tree produced by the {@code DIV}
+	 * labeled alternative in {@link ParserFile#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExpr(ParserFile.ExprContext ctx);
+	T visitDIV(ParserFile.DIVContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ID_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitID_EXPR(ParserFile.ID_EXPRContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code PLUS2}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPLUS2(ParserFile.PLUS2Context ctx);
+	/**
+	 * Visit a parse tree produced by the {@code SENT_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSENT_EXPR(ParserFile.SENT_EXPRContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code VAL_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVAL_EXPR(ParserFile.VAL_EXPRContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code MINUS2}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMINUS2(ParserFile.MINUS2Context ctx);
+	/**
+	 * Visit a parse tree produced by the {@code MULTI}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMULTI(ParserFile.MULTIContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code PLUS}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPLUS(ParserFile.PLUSContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code MINUS}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMINUS(ParserFile.MINUSContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ParserFile#print}.
 	 * @param ctx the parse tree

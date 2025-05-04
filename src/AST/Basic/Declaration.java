@@ -1,6 +1,8 @@
 package AST.Basic;
 
-public class Declaration {
+import AST.Statements;
+
+public class Declaration extends Statements {
     private String id;
     private String dataType;
 

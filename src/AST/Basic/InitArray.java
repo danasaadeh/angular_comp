@@ -61,10 +61,12 @@
 
 package AST.Basic;
 
+import AST.Statements;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class InitArray {
+public class InitArray extends Statements {
     private String id;
     private String dataType;
     private List<Value> values;

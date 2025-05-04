@@ -41,6 +41,7 @@ import java.util.List;
 
 public class AngularVisitor extends ParserFileBaseVisitor {
 
+
     public SymbolTable st = new SymbolTable();
 
     @Override
@@ -49,15 +50,36 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         Program program = new Program();
         for (int i = 0; i<ctx.instruction().size(); i++) {
             if (ctx.instruction(i)!=null)
-                program.setInstructions_list(visitInstruction(ctx.instruction(i)));
+                program.setInstructions_list((Instruction) visit(ctx.instruction(i)));
         }
        // this.st.print();
         st.exitScope();
         return program;
-
+        
     }
 
     @Override
+    public Object visitIMPORT_INSTRUCT(ParserFile.IMPORT_INSTRUCTContext ctx) {
+        return super.visitIMPORT_INSTRUCT(ctx);
+    }
+
+    @Override
+    public Object visitCOMPONENT_INSTRUCT(ParserFile.COMPONENT_INSTRUCTContext ctx) {
+        return super.visitCOMPONENT_INSTRUCT(ctx);
+    }
+
+    @Override
+    public Object visitINJECT_INSTRUCT(ParserFile.INJECT_INSTRUCTContext ctx) {
+        return super.visitINJECT_INSTRUCT(ctx);
+    }
+
+    @Override
+    public Object visitSTATEMENTS_INSTRUCT(ParserFile.STATEMENTS_INSTRUCTContext ctx) {
+        return super.visitSTATEMENTS_INSTRUCT(ctx);
+    }
+
+
+    /*@Override
     public Instruction visitInstruction(ParserFile.InstructionContext ctx) {
         List<Component> components = new ArrayList<>();
         List<ImportState> importStates = new ArrayList<>();
@@ -66,7 +88,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
 
         if (ctx.statements() != null) {
-            Statements statement = (Statements) visitStatements(ctx.statements());
+            Statements statement = (Statements) visit(ctx.statements());
             statements.add(statement);
         }
 
@@ -103,9 +125,102 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         st.getRow().add(row);
 
         return instruction;
+    }*/
+    @Override
+    public Object visitCLASS_DECLAR_STATE(ParserFile.CLASS_DECLAR_STATEContext ctx) {
+        return super.visitCLASS_DECLAR_STATE(ctx);
+    }
+
+    @Override
+    public Statements visitINTERFACE_STATE(ParserFile.INTERFACE_STATEContext ctx) {
+        return (Statements) super.visitINTERFACE_STATE(ctx);
+    }
+
+    @Override
+    public Object visitFUNC_DECL_STATE(ParserFile.FUNC_DECL_STATEContext ctx) {
+        return super.visitFUNC_DECL_STATE(ctx);
+    }
+
+    @Override
+    public Object visitCONSTR_STATE(ParserFile.CONSTR_STATEContext ctx) {
+        return super.visitCONSTR_STATE(ctx);
+    }
+
+    @Override
+    public Object visitINIT_STATE(ParserFile.INIT_STATEContext ctx) {
+        return super.visitINIT_STATE(ctx);
+    }
+
+    @Override
+    public Object visitINIT_ARRAY_STATE(ParserFile.INIT_ARRAY_STATEContext ctx) {
+        return super.visitINIT_ARRAY_STATE(ctx);
+    }
+
+    @Override
+    public Object visitDECLARE_STATE(ParserFile.DECLARE_STATEContext ctx) {
+        return super.visitDECLARE_STATE(ctx);
+    }
+
+    @Override
+    public Object visitASSIGN_STATE(ParserFile.ASSIGN_STATEContext ctx) {
+        return super.visitASSIGN_STATE(ctx);
+    }
+
+    @Override
+    public Object visitIF_CONDITION_STATE(ParserFile.IF_CONDITION_STATEContext ctx) {
+        return super.visitIF_CONDITION_STATE(ctx);
+    }
+
+    @Override
+    public Object visitFOR_LOOP_STATE(ParserFile.FOR_LOOP_STATEContext ctx) {
+        return super.visitFOR_LOOP_STATE(ctx);
+    }
+
+    @Override
+    public Object visitWHILE_LOOP_STATE(ParserFile.WHILE_LOOP_STATEContext ctx) {
+        return super.visitWHILE_LOOP_STATE(ctx);
+    }
+
+    @Override
+    public Object visitEXPR_STATE(ParserFile.EXPR_STATEContext ctx) {
+        return super.visitEXPR_STATE(ctx);
+    }
+
+    @Override
+    public Object visitTHIS_EXPR_STATE(ParserFile.THIS_EXPR_STATEContext ctx) {
+        return super.visitTHIS_EXPR_STATE(ctx);
+    }
+
+    @Override
+    public Object visitSUPER_EXPR_STATE(ParserFile.SUPER_EXPR_STATEContext ctx) {
+        return super.visitSUPER_EXPR_STATE(ctx);
+    }
+
+    @Override
+    public Object visitPRINT_STATE(ParserFile.PRINT_STATEContext ctx) {
+        return super.visitPRINT_STATE(ctx);
+    }
+
+    @Override
+    public Object visitVALUE_STATE(ParserFile.VALUE_STATEContext ctx) {
+        return super.visitVALUE_STATE(ctx);
+    }
+
+    @Override
+    public Object visitRETRUN_STATE(ParserFile.RETRUN_STATEContext ctx) {
+        return super.visitRETRUN_STATE(ctx);
+    }
+
+    @Override
+    public Object visitCOMMENT_STATE(ParserFile.COMMENT_STATEContext ctx) {
+        return super.visitCOMMENT_STATE(ctx);
     }
 
 
+
+
+
+/*
     @Override
     public Statements visitStatements(ParserFile.StatementsContext ctx) {
         Statements statements = new Statements();
@@ -205,7 +320,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
         return statements;
     }
-
+*/
 
     @Override
     public Component visitComponent(ParserFile.ComponentContext ctx) {
@@ -349,7 +464,6 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
 
 
-
     @Override
     public Value visitValue(ParserFile.ValueContext ctx) {
         Value value = new Value();
@@ -456,59 +570,106 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         return new ElseStatement(body);
     }
 
-
+    @Override
+    public Object visitID_COND(ParserFile.ID_CONDContext ctx) {
+        return new IdentifierCondition(ctx.ID().getText());
+    }
 
     @Override
-    public Condition visitCondition(ParserFile.ConditionContext ctx) {
-        // Handling the case where the condition is of the form ID OPERATION ID DOT ID
-        if (ctx.ID().size() == 3 && ctx.DOT() != null) {
-            Condition left = new IdentifierCondition(ctx.ID(0).getText()); // First ID
-            String operation = ctx.OPERATION().getText();
-            Condition right = new IdentifierCondition(ctx.ID(1).getText() + "." + ctx.ID(2).getText()); // Combine second and third IDs
-            return new BinaryCondition(left, operation, right);
-        }
-
-        // Handling the case for ID OPERATION ID
-        if (ctx.ID().size() == 2) {
-            Condition left = new IdentifierCondition(ctx.ID(0).getText()); // First ID
-            String operation = ctx.OPERATION().getText();
-            Condition right = new IdentifierCondition(ctx.ID(1).getText()); // Second ID
-            return new BinaryCondition(left, operation, right);
-        }
-
-        // Handling the case for VAL OPERATION VAL or VAL OPERATION ID
-        if (ctx.VAL() != null && ctx.VAL().size() > 0) {
-            Condition left = new ValueCondition(ctx.VAL(0).getText()); // Access the first VAL
-            String operation = ctx.OPERATION().getText();
-
-            if (ctx.ID().size() == 1) {
-                Condition right = new IdentifierCondition(ctx.ID(0).getText());
-                return new BinaryCondition(left, operation, right);
-            }
-
-            // If both left and right are VAL, handle this case
-            if (ctx.ID().size() == 0) {
-                return left; // Just return the ValueCondition
-            }
-        }
-
-        // Handling the case for ID OPERATION VAL
-        if (ctx.ID().size() == 1 && ctx.VAL() != null && ctx.VAL().size() > 0) {
-            Condition left = new IdentifierCondition(ctx.ID(0).getText());
-            String operation = ctx.OPERATION().getText();
-            Condition right = new ValueCondition(ctx.VAL(0).getText()); // Access the first VAL
-            return new BinaryCondition(left, operation, right);
-        }
-
-        // For simple ID or VAL
-        if (ctx.ID().size() == 1) {
-            return new IdentifierCondition(ctx.ID(0).getText());
-        } else if (ctx.VAL() != null && ctx.VAL().size() > 0) {
-            return new ValueCondition(ctx.VAL(0).getText()); // Access the first VAL
-        }
-
-        return null; // Return null or handle invalid cases
+    public Object visitVAL_COND(ParserFile.VAL_CONDContext ctx) {
+        return new ValueCondition(ctx.VAL().getText());
     }
+
+    @Override
+    public Object visitVAL_OPERA_VAL(ParserFile.VAL_OPERA_VALContext ctx) {
+        Condition left = new ValueCondition(ctx.VAL(0).getText());
+        String operation = ctx.OPERATION().getText();
+        Condition right = new ValueCondition(ctx.VAL(1).getText());
+        return new BinaryCondition(left, operation, right);
+    }
+
+    @Override
+    public Object visitVAL_OPERA_ID(ParserFile.VAL_OPERA_IDContext ctx) {
+        Condition left = new ValueCondition(ctx.VAL().getText());
+        String operation = ctx.OPERATION().getText();
+        Condition right = new IdentifierCondition(ctx.ID().getText());
+        return new BinaryCondition(left, operation, right);
+    }
+
+    @Override
+    public Object visitID_OPERA_VAL(ParserFile.ID_OPERA_VALContext ctx) {
+        Condition left = new IdentifierCondition(ctx.ID().getText());
+        String operation = ctx.OPERATION().getText();
+        Condition right = new ValueCondition(ctx.VAL().getText());
+        return new BinaryCondition(left, operation, right);
+    }
+
+    @Override
+    public Object visitID_OPERA_ID(ParserFile.ID_OPERA_IDContext ctx) {
+        Condition left = new IdentifierCondition(ctx.ID(0).getText());
+        String operation = ctx.OPERATION().getText();
+        Condition right = new IdentifierCondition(ctx.ID(1).getText());
+        return new BinaryCondition(left, operation, right);
+    }
+
+    @Override
+    public Object visitID_OPERA_DOT_ID(ParserFile.ID_OPERA_DOT_IDContext ctx) {
+        Condition left = new IdentifierCondition(ctx.ID(0).getText());
+        String operation = ctx.OPERATION().getText();
+        Condition right = new IdentifierCondition(ctx.ID(1).getText() + "." + ctx.ID(2).getText());
+        return new BinaryCondition(left, operation, right);
+    }
+    /*  @Override
+      public Condition visitCondition(ParserFile.ConditionContext ctx) {
+          // Handling the case where the condition is of the form ID OPERATION ID DOT ID
+          if (ctx.ID().size() == 3 && ctx.DOT() != null) {
+              Condition left = new IdentifierCondition(ctx.ID(0).getText()); // First ID
+              String operation = ctx.OPERATION().getText();
+              Condition right = new IdentifierCondition(ctx.ID(1).getText() + "." + ctx.ID(2).getText()); // Combine second and third IDs
+              return new BinaryCondition(left, operation, right);
+          }
+
+          // Handling the case for ID OPERATION ID
+          if (ctx.ID().size() == 2) {
+              Condition left = new IdentifierCondition(ctx.ID(0).getText()); // First ID
+              String operation = ctx.OPERATION().getText();
+              Condition right = new IdentifierCondition(ctx.ID(1).getText()); // Second ID
+              return new BinaryCondition(left, operation, right);
+          }
+
+          // Handling the case for VAL OPERATION VAL or VAL OPERATION ID
+          if (ctx.VAL() != null && ctx.VAL().size() > 0) {
+              Condition left = new ValueCondition(ctx.VAL(0).getText()); // Access the first VAL
+              String operation = ctx.OPERATION().getText();
+
+              if (ctx.ID().size() == 1) {
+                  Condition right = new IdentifierCondition(ctx.ID(0).getText());
+                  return new BinaryCondition(left, operation, right);
+              }
+
+              // If both left and right are VAL, handle this case
+              if (ctx.ID().size() == 0) {
+                  return left; // Just return the ValueCondition
+              }
+          }
+
+          // Handling the case for ID OPERATION VAL
+          if (ctx.ID().size() == 1 && ctx.VAL() != null && ctx.VAL().size() > 0) {
+              Condition left = new IdentifierCondition(ctx.ID(0).getText());
+              String operation = ctx.OPERATION().getText();
+              Condition right = new ValueCondition(ctx.VAL(0).getText()); // Access the first VAL
+              return new BinaryCondition(left, operation, right);
+          }
+
+          // For simple ID or VAL
+          if (ctx.ID().size() == 1) {
+              return new IdentifierCondition(ctx.ID(0).getText());
+          } else if (ctx.VAL() != null && ctx.VAL().size() > 0) {
+              return new ValueCondition(ctx.VAL(0).getText()); // Access the first VAL
+          }
+
+          return null; // Return null or handle invalid cases
+      }*/
     @Override
     public Body visitBody(ParserFile.BodyContext ctx) {
         Body body = new Body();
@@ -567,6 +728,67 @@ public class AngularVisitor extends ParserFileBaseVisitor {
     }
 
     @Override
+    public Object visitDIV(ParserFile.DIVContext ctx) {
+        return new BinaryExpression(
+                (Expression) visit(ctx.expr(0)),
+                "/",
+                (Expression) visit(ctx.expr(1))
+        );
+    }
+
+    @Override
+    public Object visitID_EXPR(ParserFile.ID_EXPRContext ctx) {
+        return new ValueExpression(ctx.ID().getText());
+    }
+
+    @Override
+    public Object visitPLUS2(ParserFile.PLUS2Context ctx) {
+        return new UnaryExpression("++", (Expression) visit(ctx.expr()));
+    }
+
+    @Override
+    public Object visitSENT_EXPR(ParserFile.SENT_EXPRContext ctx) {
+        return new ValueExpression(ctx.SENTENCE().getText());
+    }
+
+    @Override
+    public Object visitVAL_EXPR(ParserFile.VAL_EXPRContext ctx) {
+        return new ValueExpression(ctx.VAL().getText());
+    }
+
+    @Override
+    public Object visitMINUS2(ParserFile.MINUS2Context ctx) {
+        return new UnaryExpression("--", (Expression) visit(ctx.expr()));
+    }
+
+    @Override
+    public Object visitMULTI(ParserFile.MULTIContext ctx) {
+        return new BinaryExpression(
+                (Expression) visit(ctx.expr(0)),
+                "*",
+                (Expression) visit(ctx.expr(1))
+        );
+    }
+
+    @Override
+    public Object visitPLUS(ParserFile.PLUSContext ctx) {
+        return new BinaryExpression(
+                (Expression) visit(ctx.expr(0)),
+                "+",
+                (Expression) visit(ctx.expr(1))
+        );
+    }
+
+    @Override
+    public Object visitMINUS(ParserFile.MINUSContext ctx) {
+        return new BinaryExpression(
+                (Expression) visit(ctx.expr(0)),
+                "-",
+                (Expression) visit(ctx.expr(1))
+        );
+    }
+
+    /*@Override
     public Expression visitExpr(ParserFile.ExprContext ctx) {
 
         if (ctx.MUL() != null) {
@@ -606,7 +828,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         }
 
         return null;
-    }
+    }*/
 
     @Override
     public Object visitPrint(ParserFile.PrintContext ctx) {
@@ -778,7 +1000,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
         if (ctx.statements() != null) {
 
-             Statements statements = (Statements) visitStatements(ctx.statements());
+             Statements statements = (Statements) visit(ctx.statements());
                 returnStatement.getStatements().add(statements);
             }
 
@@ -897,7 +1119,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
 
         for (ParserFile.StatementsContext statement : ctx.statements()) {
-            Statements stmt = (Statements) visitStatements(statement);
+            Statements stmt = (Statements) visit(statement);
             classBody.getStatements().add(stmt);
         }
         Row row = new Row();

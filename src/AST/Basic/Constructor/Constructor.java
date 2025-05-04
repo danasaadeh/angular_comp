@@ -9,7 +9,7 @@ import AST.Statements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Constructor {
+public class Constructor extends  Statements {
     public String return_type ;
     public String name  ;
     public List <FuncBody> functionBodies;

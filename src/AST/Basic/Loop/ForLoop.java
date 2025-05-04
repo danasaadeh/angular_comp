@@ -6,7 +6,7 @@ import AST.Basic.Loop.Exp.Condition.Condition;
 import AST.Basic.Loop.Exp.Expression;
 import AST.Statements;
 
-public class ForLoop {
+public class ForLoop extends  Statements{
     private Init init;
     private Condition condition;
     private Expression expression;

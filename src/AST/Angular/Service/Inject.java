@@ -1,6 +1,8 @@
 package AST.Angular.Service;
 
-public class Inject {
+import AST.Instruction;
+
+public class Inject extends Instruction {
 
     private ProvidedIn providedIn; // The provided in information
 

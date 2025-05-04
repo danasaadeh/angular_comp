@@ -1,6 +1,8 @@
 package AST.Angular.Component;
 
-public class Component {
+import AST.Instruction;
+
+public class Component extends Instruction {
     private ComponentBody componentBody;
 
 

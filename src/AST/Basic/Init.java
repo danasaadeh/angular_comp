@@ -1,6 +1,8 @@
 package AST.Basic;
 
-public class Init {
+import AST.Statements;
+
+public class Init extends Statements {
     private String id;
     private String dataType;
     private String value;

@@ -18,13 +18,19 @@ public class Instruction extends Program{
 
     private String type;
 
-    public Instruction(List<Component> components, List<ImportState> importStates, List<Inject> injects, List<Statements> statements) {
-        this.components = components;
-        this.importStates = importStates;
-        this.injects = injects;
-        this.statements = statements;
-    }
+//    public Instruction(List<Component> components, List<ImportState> importStates, List<Inject> injects, List<Statements> statements) {
+//        this.components = components;
+//        this.importStates = importStates;
+//        this.injects = injects;
+//        this.statements = statements;
+//    }
 
+public  Instruction(){
+    this.importStates=new ArrayList<>();
+    this.components=new ArrayList<>();
+    this.injects=new ArrayList<>();
+    this.statements=new ArrayList<>();
+}
 
     @Override
     public String toString() {

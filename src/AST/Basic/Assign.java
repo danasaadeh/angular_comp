@@ -1,8 +1,9 @@
 package AST.Basic;
 
 
+import AST.Statements;
 
-public class Assign {
+public class Assign  extends Statements {
     private String variableName;
     private String value;
 

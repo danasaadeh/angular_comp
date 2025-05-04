@@ -1,9 +1,12 @@
 package AST.Basic;
 
+import AST.Statements;
+
+import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Value {
+public class Value extends Statements {
     private List<String> values;
     private List <MyObject> objects;
 

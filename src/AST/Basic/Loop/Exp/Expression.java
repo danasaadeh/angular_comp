@@ -1,5 +1,7 @@
 package AST.Basic.Loop.Exp;
 
-public abstract class Expression {
+import AST.Statements;
+
+public abstract class Expression extends Statements {
 
 }

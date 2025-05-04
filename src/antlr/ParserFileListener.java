@@ -18,15 +18,53 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitProgram(ParserFile.ProgramContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ParserFile#instruction}.
+	 * Enter a parse tree produced by the {@code IMPORT_INSTRUCT}
+	 * labeled alternative in {@link ParserFile#instruction}.
 	 * @param ctx the parse tree
 	 */
-	void enterInstruction(ParserFile.InstructionContext ctx);
+	void enterIMPORT_INSTRUCT(ParserFile.IMPORT_INSTRUCTContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ParserFile#instruction}.
+	 * Exit a parse tree produced by the {@code IMPORT_INSTRUCT}
+	 * labeled alternative in {@link ParserFile#instruction}.
 	 * @param ctx the parse tree
 	 */
-	void exitInstruction(ParserFile.InstructionContext ctx);
+	void exitIMPORT_INSTRUCT(ParserFile.IMPORT_INSTRUCTContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code COMPONENT_INSTRUCT}
+	 * labeled alternative in {@link ParserFile#instruction}.
+	 * @param ctx the parse tree
+	 */
+	void enterCOMPONENT_INSTRUCT(ParserFile.COMPONENT_INSTRUCTContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code COMPONENT_INSTRUCT}
+	 * labeled alternative in {@link ParserFile#instruction}.
+	 * @param ctx the parse tree
+	 */
+	void exitCOMPONENT_INSTRUCT(ParserFile.COMPONENT_INSTRUCTContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code INJECT_INSTRUCT}
+	 * labeled alternative in {@link ParserFile#instruction}.
+	 * @param ctx the parse tree
+	 */
+	void enterINJECT_INSTRUCT(ParserFile.INJECT_INSTRUCTContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code INJECT_INSTRUCT}
+	 * labeled alternative in {@link ParserFile#instruction}.
+	 * @param ctx the parse tree
+	 */
+	void exitINJECT_INSTRUCT(ParserFile.INJECT_INSTRUCTContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code STATEMENTS_INSTRUCT}
+	 * labeled alternative in {@link ParserFile#instruction}.
+	 * @param ctx the parse tree
+	 */
+	void enterSTATEMENTS_INSTRUCT(ParserFile.STATEMENTS_INSTRUCTContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code STATEMENTS_INSTRUCT}
+	 * labeled alternative in {@link ParserFile#instruction}.
+	 * @param ctx the parse tree
+	 */
+	void exitSTATEMENTS_INSTRUCT(ParserFile.STATEMENTS_INSTRUCTContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ParserFile#component}.
 	 * @param ctx the parse tree
@@ -118,15 +156,221 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitProvided_in(ParserFile.Provided_inContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ParserFile#statements}.
+	 * Enter a parse tree produced by the {@code CLASS_DECLAR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatements(ParserFile.StatementsContext ctx);
+	void enterCLASS_DECLAR_STATE(ParserFile.CLASS_DECLAR_STATEContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ParserFile#statements}.
+	 * Exit a parse tree produced by the {@code CLASS_DECLAR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatements(ParserFile.StatementsContext ctx);
+	void exitCLASS_DECLAR_STATE(ParserFile.CLASS_DECLAR_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code INTERFACE_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterINTERFACE_STATE(ParserFile.INTERFACE_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code INTERFACE_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitINTERFACE_STATE(ParserFile.INTERFACE_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code FUNC_DECL_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterFUNC_DECL_STATE(ParserFile.FUNC_DECL_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code FUNC_DECL_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitFUNC_DECL_STATE(ParserFile.FUNC_DECL_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code CONSTR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterCONSTR_STATE(ParserFile.CONSTR_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code CONSTR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitCONSTR_STATE(ParserFile.CONSTR_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code INIT_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterINIT_STATE(ParserFile.INIT_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code INIT_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitINIT_STATE(ParserFile.INIT_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code INIT_ARRAY_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterINIT_ARRAY_STATE(ParserFile.INIT_ARRAY_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code INIT_ARRAY_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitINIT_ARRAY_STATE(ParserFile.INIT_ARRAY_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code DECLARE_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterDECLARE_STATE(ParserFile.DECLARE_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code DECLARE_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitDECLARE_STATE(ParserFile.DECLARE_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ASSIGN_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterASSIGN_STATE(ParserFile.ASSIGN_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ASSIGN_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitASSIGN_STATE(ParserFile.ASSIGN_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code IF_CONDITION_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterIF_CONDITION_STATE(ParserFile.IF_CONDITION_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code IF_CONDITION_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitIF_CONDITION_STATE(ParserFile.IF_CONDITION_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code FOR_LOOP_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterFOR_LOOP_STATE(ParserFile.FOR_LOOP_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code FOR_LOOP_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitFOR_LOOP_STATE(ParserFile.FOR_LOOP_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code WHILE_LOOP_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterWHILE_LOOP_STATE(ParserFile.WHILE_LOOP_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code WHILE_LOOP_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitWHILE_LOOP_STATE(ParserFile.WHILE_LOOP_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code EXPR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterEXPR_STATE(ParserFile.EXPR_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code EXPR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitEXPR_STATE(ParserFile.EXPR_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code THIS_EXPR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterTHIS_EXPR_STATE(ParserFile.THIS_EXPR_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code THIS_EXPR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitTHIS_EXPR_STATE(ParserFile.THIS_EXPR_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code SUPER_EXPR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterSUPER_EXPR_STATE(ParserFile.SUPER_EXPR_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code SUPER_EXPR_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitSUPER_EXPR_STATE(ParserFile.SUPER_EXPR_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code PRINT_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterPRINT_STATE(ParserFile.PRINT_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code PRINT_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitPRINT_STATE(ParserFile.PRINT_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code VALUE_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterVALUE_STATE(ParserFile.VALUE_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code VALUE_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitVALUE_STATE(ParserFile.VALUE_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code RETRUN_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterRETRUN_STATE(ParserFile.RETRUN_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code RETRUN_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitRETRUN_STATE(ParserFile.RETRUN_STATEContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code COMMENT_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterCOMMENT_STATE(ParserFile.COMMENT_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code COMMENT_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitCOMMENT_STATE(ParserFile.COMMENT_STATEContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ParserFile#init}.
 	 * @param ctx the parse tree
@@ -248,15 +492,89 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitElse_condition(ParserFile.Else_conditionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ParserFile#condition}.
+	 * Enter a parse tree produced by the {@code ID_COND}
+	 * labeled alternative in {@link ParserFile#condition}.
 	 * @param ctx the parse tree
 	 */
-	void enterCondition(ParserFile.ConditionContext ctx);
+	void enterID_COND(ParserFile.ID_CONDContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ParserFile#condition}.
+	 * Exit a parse tree produced by the {@code ID_COND}
+	 * labeled alternative in {@link ParserFile#condition}.
 	 * @param ctx the parse tree
 	 */
-	void exitCondition(ParserFile.ConditionContext ctx);
+	void exitID_COND(ParserFile.ID_CONDContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code VAL_COND}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 */
+	void enterVAL_COND(ParserFile.VAL_CONDContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code VAL_COND}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 */
+	void exitVAL_COND(ParserFile.VAL_CONDContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code VAL_OPERA_VAL}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 */
+	void enterVAL_OPERA_VAL(ParserFile.VAL_OPERA_VALContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code VAL_OPERA_VAL}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 */
+	void exitVAL_OPERA_VAL(ParserFile.VAL_OPERA_VALContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code VAL_OPERA_ID}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 */
+	void enterVAL_OPERA_ID(ParserFile.VAL_OPERA_IDContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code VAL_OPERA_ID}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 */
+	void exitVAL_OPERA_ID(ParserFile.VAL_OPERA_IDContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ID_OPERA_VAL}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 */
+	void enterID_OPERA_VAL(ParserFile.ID_OPERA_VALContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ID_OPERA_VAL}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 */
+	void exitID_OPERA_VAL(ParserFile.ID_OPERA_VALContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ID_OPERA_ID}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 */
+	void enterID_OPERA_ID(ParserFile.ID_OPERA_IDContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ID_OPERA_ID}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 */
+	void exitID_OPERA_ID(ParserFile.ID_OPERA_IDContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ID_OPERA_DOT_ID}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 */
+	void enterID_OPERA_DOT_ID(ParserFile.ID_OPERA_DOT_IDContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ID_OPERA_DOT_ID}
+	 * labeled alternative in {@link ParserFile#condition}.
+	 * @param ctx the parse tree
+	 */
+	void exitID_OPERA_DOT_ID(ParserFile.ID_OPERA_DOT_IDContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ParserFile#body}.
 	 * @param ctx the parse tree
@@ -288,15 +606,113 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitWhile(ParserFile.WhileContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ParserFile#expr}.
+	 * Enter a parse tree produced by the {@code DIV}
+	 * labeled alternative in {@link ParserFile#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpr(ParserFile.ExprContext ctx);
+	void enterDIV(ParserFile.DIVContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ParserFile#expr}.
+	 * Exit a parse tree produced by the {@code DIV}
+	 * labeled alternative in {@link ParserFile#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpr(ParserFile.ExprContext ctx);
+	void exitDIV(ParserFile.DIVContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ID_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterID_EXPR(ParserFile.ID_EXPRContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ID_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitID_EXPR(ParserFile.ID_EXPRContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code PLUS2}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterPLUS2(ParserFile.PLUS2Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code PLUS2}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitPLUS2(ParserFile.PLUS2Context ctx);
+	/**
+	 * Enter a parse tree produced by the {@code SENT_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterSENT_EXPR(ParserFile.SENT_EXPRContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code SENT_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitSENT_EXPR(ParserFile.SENT_EXPRContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code VAL_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterVAL_EXPR(ParserFile.VAL_EXPRContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code VAL_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitVAL_EXPR(ParserFile.VAL_EXPRContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code MINUS2}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterMINUS2(ParserFile.MINUS2Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code MINUS2}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitMINUS2(ParserFile.MINUS2Context ctx);
+	/**
+	 * Enter a parse tree produced by the {@code MULTI}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterMULTI(ParserFile.MULTIContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code MULTI}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitMULTI(ParserFile.MULTIContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code PLUS}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterPLUS(ParserFile.PLUSContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code PLUS}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitPLUS(ParserFile.PLUSContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code MINUS}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterMINUS(ParserFile.MINUSContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code MINUS}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitMINUS(ParserFile.MINUSContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ParserFile#print}.
 	 * @param ctx the parse tree

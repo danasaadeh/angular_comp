@@ -8,7 +8,7 @@ import AST.Statements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FuncDecl  {
+public class FuncDecl  extends Statements {
     public String return_type ;
     public String name  ;
     public List <FuncBody> functionBodies;

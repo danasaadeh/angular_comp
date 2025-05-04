@@ -4,11 +4,12 @@ package AST.Basic.Class;
 import AST.Basic.Declaration;
 import AST.Basic.Function.FuncDecl;
 import AST.Basic.Init;
+import AST.Statements;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassDecl  {
+public class ClassDecl extends Statements {
 
     public String class_name ;
    public ClassBody body;

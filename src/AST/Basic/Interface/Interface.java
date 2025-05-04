@@ -4,11 +4,12 @@ package AST.Basic.Interface;
 import AST.Basic.Declaration;
 import AST.Basic.Function.FuncDecl;
 import AST.Basic.Init;
+import AST.Statements;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Interface  {
+public class Interface extends Statements {
 
     public String interface_name ;
     public List<Declaration> body;

@@ -1,8 +1,10 @@
 package AST.Basic;
 
+import AST.Statements;
+
 import java.util.List;
 
-public class ThisExpression {
+public class ThisExpression extends Statements {
     private String identifier;
     private List<String> chainedIdentifiers;
 

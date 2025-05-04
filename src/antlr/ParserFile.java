@@ -241,36 +241,96 @@ public class ParserFile extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class InstructionContext extends ParserRuleContext {
+		public InstructionContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_instruction; }
+	 
+		public InstructionContext() { }
+		public void copyFrom(InstructionContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class COMPONENT_INSTRUCTContext extends InstructionContext {
+		public ComponentContext component() {
+			return getRuleContext(ComponentContext.class,0);
+		}
+		public COMPONENT_INSTRUCTContext(InstructionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterCOMPONENT_INSTRUCT(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitCOMPONENT_INSTRUCT(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitCOMPONENT_INSTRUCT(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class IMPORT_INSTRUCTContext extends InstructionContext {
 		public List<Import_statementContext> import_statement() {
 			return getRuleContexts(Import_statementContext.class);
 		}
 		public Import_statementContext import_statement(int i) {
 			return getRuleContext(Import_statementContext.class,i);
 		}
-		public ComponentContext component() {
-			return getRuleContext(ComponentContext.class,0);
-		}
-		public InjectContext inject() {
-			return getRuleContext(InjectContext.class,0);
-		}
-		public StatementsContext statements() {
-			return getRuleContext(StatementsContext.class,0);
-		}
-		public InstructionContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_instruction; }
+		public IMPORT_INSTRUCTContext(InstructionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterInstruction(this);
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterIMPORT_INSTRUCT(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitInstruction(this);
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitIMPORT_INSTRUCT(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitInstruction(this);
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitIMPORT_INSTRUCT(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class INJECT_INSTRUCTContext extends InstructionContext {
+		public InjectContext inject() {
+			return getRuleContext(InjectContext.class,0);
+		}
+		public INJECT_INSTRUCTContext(InstructionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterINJECT_INSTRUCT(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitINJECT_INSTRUCT(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitINJECT_INSTRUCT(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class STATEMENTS_INSTRUCTContext extends InstructionContext {
+		public StatementsContext statements() {
+			return getRuleContext(StatementsContext.class,0);
+		}
+		public STATEMENTS_INSTRUCTContext(InstructionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterSTATEMENTS_INSTRUCT(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitSTATEMENTS_INSTRUCT(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitSTATEMENTS_INSTRUCT(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -284,6 +344,7 @@ public class ParserFile extends Parser {
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case IMPORT:
+				_localctx = new IMPORT_INSTRUCTContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(116); 
@@ -325,6 +386,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case COMPONENT:
+				_localctx = new COMPONENT_INSTRUCTContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(126);
@@ -332,6 +394,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case INJECTABLE:
+				_localctx = new INJECT_INSTRUCTContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(127);
@@ -359,6 +422,7 @@ public class ParserFile extends Parser {
 			case VAL:
 			case ID:
 			case SENTENCE:
+				_localctx = new STATEMENTS_INSTRUCTContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(128);
@@ -991,75 +1055,373 @@ public class ParserFile extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class StatementsContext extends ParserRuleContext {
-		public Class_declContext class_decl() {
-			return getRuleContext(Class_declContext.class,0);
-		}
-		public InterfaceContext interface_() {
-			return getRuleContext(InterfaceContext.class,0);
-		}
-		public Function_declContext function_decl() {
-			return getRuleContext(Function_declContext.class,0);
-		}
-		public ConstructorContext constructor() {
-			return getRuleContext(ConstructorContext.class,0);
-		}
-		public InitContext init() {
-			return getRuleContext(InitContext.class,0);
-		}
-		public Init_arrayContext init_array() {
-			return getRuleContext(Init_arrayContext.class,0);
-		}
-		public DeclarationContext declaration() {
-			return getRuleContext(DeclarationContext.class,0);
-		}
-		public AssignContext assign() {
-			return getRuleContext(AssignContext.class,0);
-		}
-		public If_conditionContext if_condition() {
-			return getRuleContext(If_conditionContext.class,0);
-		}
-		public ForContext for_() {
-			return getRuleContext(ForContext.class,0);
-		}
-		public WhileContext while_() {
-			return getRuleContext(WhileContext.class,0);
-		}
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
-		public This_expContext this_exp() {
-			return getRuleContext(This_expContext.class,0);
-		}
-		public Super_expContext super_exp() {
-			return getRuleContext(Super_expContext.class,0);
-		}
-		public PrintContext print() {
-			return getRuleContext(PrintContext.class,0);
-		}
-		public ValueContext value() {
-			return getRuleContext(ValueContext.class,0);
-		}
-		public ReturnContext return_() {
-			return getRuleContext(ReturnContext.class,0);
-		}
-		public CommentContext comment() {
-			return getRuleContext(CommentContext.class,0);
-		}
 		public StatementsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_statements; }
+	 
+		public StatementsContext() { }
+		public void copyFrom(StatementsContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class PRINT_STATEContext extends StatementsContext {
+		public PrintContext print() {
+			return getRuleContext(PrintContext.class,0);
+		}
+		public PRINT_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterStatements(this);
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterPRINT_STATE(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitStatements(this);
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitPRINT_STATE(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitStatements(this);
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitPRINT_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class INIT_STATEContext extends StatementsContext {
+		public InitContext init() {
+			return getRuleContext(InitContext.class,0);
+		}
+		public INIT_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterINIT_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitINIT_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitINIT_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ASSIGN_STATEContext extends StatementsContext {
+		public AssignContext assign() {
+			return getRuleContext(AssignContext.class,0);
+		}
+		public ASSIGN_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterASSIGN_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitASSIGN_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitASSIGN_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class EXPR_STATEContext extends StatementsContext {
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public EXPR_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterEXPR_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitEXPR_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitEXPR_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class FOR_LOOP_STATEContext extends StatementsContext {
+		public ForContext for_() {
+			return getRuleContext(ForContext.class,0);
+		}
+		public FOR_LOOP_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterFOR_LOOP_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitFOR_LOOP_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitFOR_LOOP_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class SUPER_EXPR_STATEContext extends StatementsContext {
+		public Super_expContext super_exp() {
+			return getRuleContext(Super_expContext.class,0);
+		}
+		public SUPER_EXPR_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterSUPER_EXPR_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitSUPER_EXPR_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitSUPER_EXPR_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class INTERFACE_STATEContext extends StatementsContext {
+		public InterfaceContext interface_() {
+			return getRuleContext(InterfaceContext.class,0);
+		}
+		public INTERFACE_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterINTERFACE_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitINTERFACE_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitINTERFACE_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class DECLARE_STATEContext extends StatementsContext {
+		public DeclarationContext declaration() {
+			return getRuleContext(DeclarationContext.class,0);
+		}
+		public DECLARE_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterDECLARE_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitDECLARE_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitDECLARE_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class FUNC_DECL_STATEContext extends StatementsContext {
+		public Function_declContext function_decl() {
+			return getRuleContext(Function_declContext.class,0);
+		}
+		public FUNC_DECL_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterFUNC_DECL_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitFUNC_DECL_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitFUNC_DECL_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class VALUE_STATEContext extends StatementsContext {
+		public ValueContext value() {
+			return getRuleContext(ValueContext.class,0);
+		}
+		public VALUE_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterVALUE_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitVALUE_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitVALUE_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class RETRUN_STATEContext extends StatementsContext {
+		public ReturnContext return_() {
+			return getRuleContext(ReturnContext.class,0);
+		}
+		public RETRUN_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterRETRUN_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitRETRUN_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitRETRUN_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class INIT_ARRAY_STATEContext extends StatementsContext {
+		public Init_arrayContext init_array() {
+			return getRuleContext(Init_arrayContext.class,0);
+		}
+		public INIT_ARRAY_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterINIT_ARRAY_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitINIT_ARRAY_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitINIT_ARRAY_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class IF_CONDITION_STATEContext extends StatementsContext {
+		public If_conditionContext if_condition() {
+			return getRuleContext(If_conditionContext.class,0);
+		}
+		public IF_CONDITION_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterIF_CONDITION_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitIF_CONDITION_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitIF_CONDITION_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class CONSTR_STATEContext extends StatementsContext {
+		public ConstructorContext constructor() {
+			return getRuleContext(ConstructorContext.class,0);
+		}
+		public CONSTR_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterCONSTR_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitCONSTR_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitCONSTR_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class WHILE_LOOP_STATEContext extends StatementsContext {
+		public WhileContext while_() {
+			return getRuleContext(WhileContext.class,0);
+		}
+		public WHILE_LOOP_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterWHILE_LOOP_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitWHILE_LOOP_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitWHILE_LOOP_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class CLASS_DECLAR_STATEContext extends StatementsContext {
+		public Class_declContext class_decl() {
+			return getRuleContext(Class_declContext.class,0);
+		}
+		public CLASS_DECLAR_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterCLASS_DECLAR_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitCLASS_DECLAR_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitCLASS_DECLAR_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class COMMENT_STATEContext extends StatementsContext {
+		public CommentContext comment() {
+			return getRuleContext(CommentContext.class,0);
+		}
+		public COMMENT_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterCOMMENT_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitCOMMENT_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitCOMMENT_STATE(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class THIS_EXPR_STATEContext extends StatementsContext {
+		public This_expContext this_exp() {
+			return getRuleContext(This_expContext.class,0);
+		}
+		public THIS_EXPR_STATEContext(StatementsContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterTHIS_EXPR_STATE(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitTHIS_EXPR_STATE(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitTHIS_EXPR_STATE(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1072,6 +1434,7 @@ public class ParserFile extends Parser {
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
 			case 1:
+				_localctx = new CLASS_DECLAR_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(202);
@@ -1079,6 +1442,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 2:
+				_localctx = new INTERFACE_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(203);
@@ -1086,6 +1450,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 3:
+				_localctx = new FUNC_DECL_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(204);
@@ -1093,6 +1458,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 4:
+				_localctx = new CONSTR_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(205);
@@ -1100,6 +1466,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 5:
+				_localctx = new INIT_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(206);
@@ -1107,6 +1474,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 6:
+				_localctx = new INIT_ARRAY_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(207);
@@ -1114,6 +1482,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 7:
+				_localctx = new DECLARE_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 7);
 				{
 				setState(208);
@@ -1121,6 +1490,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 8:
+				_localctx = new ASSIGN_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 8);
 				{
 				setState(209);
@@ -1128,6 +1498,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 9:
+				_localctx = new IF_CONDITION_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 9);
 				{
 				setState(210);
@@ -1135,6 +1506,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 10:
+				_localctx = new FOR_LOOP_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 10);
 				{
 				setState(211);
@@ -1142,6 +1514,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 11:
+				_localctx = new WHILE_LOOP_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 11);
 				{
 				setState(212);
@@ -1149,6 +1522,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 12:
+				_localctx = new EXPR_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 12);
 				{
 				setState(213);
@@ -1156,6 +1530,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 13:
+				_localctx = new THIS_EXPR_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 13);
 				{
 				setState(214);
@@ -1163,6 +1538,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 14:
+				_localctx = new SUPER_EXPR_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 14);
 				{
 				setState(215);
@@ -1170,6 +1546,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 15:
+				_localctx = new PRINT_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 15);
 				{
 				setState(216);
@@ -1177,6 +1554,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 16:
+				_localctx = new VALUE_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 16);
 				{
 				setState(217);
@@ -1184,6 +1562,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 17:
+				_localctx = new RETRUN_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 17);
 				{
 				setState(218);
@@ -1191,6 +1570,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 18:
+				_localctx = new COMMENT_STATEContext(_localctx);
 				enterOuterAlt(_localctx, 18);
 				{
 				setState(219);
@@ -2221,31 +2601,156 @@ public class ParserFile extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ConditionContext extends ParserRuleContext {
+		public ConditionContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_condition; }
+	 
+		public ConditionContext() { }
+		public void copyFrom(ConditionContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ID_OPERA_DOT_IDContext extends ConditionContext {
 		public List<TerminalNode> ID() { return getTokens(ParserFile.ID); }
 		public TerminalNode ID(int i) {
 			return getToken(ParserFile.ID, i);
 		}
+		public TerminalNode OPERATION() { return getToken(ParserFile.OPERATION, 0); }
+		public TerminalNode DOT() { return getToken(ParserFile.DOT, 0); }
+		public ID_OPERA_DOT_IDContext(ConditionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterID_OPERA_DOT_ID(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitID_OPERA_DOT_ID(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitID_OPERA_DOT_ID(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ID_OPERA_VALContext extends ConditionContext {
+		public TerminalNode ID() { return getToken(ParserFile.ID, 0); }
+		public TerminalNode OPERATION() { return getToken(ParserFile.OPERATION, 0); }
+		public TerminalNode VAL() { return getToken(ParserFile.VAL, 0); }
+		public ID_OPERA_VALContext(ConditionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterID_OPERA_VAL(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitID_OPERA_VAL(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitID_OPERA_VAL(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class VAL_CONDContext extends ConditionContext {
+		public TerminalNode VAL() { return getToken(ParserFile.VAL, 0); }
+		public VAL_CONDContext(ConditionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterVAL_COND(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitVAL_COND(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitVAL_COND(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class VAL_OPERA_IDContext extends ConditionContext {
+		public TerminalNode VAL() { return getToken(ParserFile.VAL, 0); }
+		public TerminalNode OPERATION() { return getToken(ParserFile.OPERATION, 0); }
+		public TerminalNode ID() { return getToken(ParserFile.ID, 0); }
+		public VAL_OPERA_IDContext(ConditionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterVAL_OPERA_ID(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitVAL_OPERA_ID(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitVAL_OPERA_ID(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ID_OPERA_IDContext extends ConditionContext {
+		public List<TerminalNode> ID() { return getTokens(ParserFile.ID); }
+		public TerminalNode ID(int i) {
+			return getToken(ParserFile.ID, i);
+		}
+		public TerminalNode OPERATION() { return getToken(ParserFile.OPERATION, 0); }
+		public ID_OPERA_IDContext(ConditionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterID_OPERA_ID(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitID_OPERA_ID(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitID_OPERA_ID(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class VAL_OPERA_VALContext extends ConditionContext {
 		public List<TerminalNode> VAL() { return getTokens(ParserFile.VAL); }
 		public TerminalNode VAL(int i) {
 			return getToken(ParserFile.VAL, i);
 		}
 		public TerminalNode OPERATION() { return getToken(ParserFile.OPERATION, 0); }
-		public TerminalNode DOT() { return getToken(ParserFile.DOT, 0); }
-		public ConditionContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_condition; }
+		public VAL_OPERA_VALContext(ConditionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterCondition(this);
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterVAL_OPERA_VAL(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitCondition(this);
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitVAL_OPERA_VAL(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitCondition(this);
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitVAL_OPERA_VAL(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ID_CONDContext extends ConditionContext {
+		public TerminalNode ID() { return getToken(ParserFile.ID, 0); }
+		public ID_CONDContext(ConditionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterID_COND(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitID_COND(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitID_COND(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2258,6 +2763,7 @@ public class ParserFile extends Parser {
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,32,_ctx) ) {
 			case 1:
+				_localctx = new ID_CONDContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(369);
@@ -2265,6 +2771,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 2:
+				_localctx = new VAL_CONDContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(370);
@@ -2272,6 +2779,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 3:
+				_localctx = new VAL_OPERA_VALContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(371);
@@ -2283,6 +2791,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 4:
+				_localctx = new VAL_OPERA_IDContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(374);
@@ -2294,6 +2803,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 5:
+				_localctx = new ID_OPERA_VALContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(377);
@@ -2305,6 +2815,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 6:
+				_localctx = new ID_OPERA_IDContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(380);
@@ -2316,6 +2827,7 @@ public class ParserFile extends Parser {
 				}
 				break;
 			case 7:
+				_localctx = new ID_OPERA_DOT_IDContext(_localctx);
 				enterOuterAlt(_localctx, 7);
 				{
 				setState(383);
@@ -2598,9 +3110,138 @@ public class ParserFile extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ExprContext extends ParserRuleContext {
-		public TerminalNode VAL() { return getToken(ParserFile.VAL, 0); }
+		public ExprContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_expr; }
+	 
+		public ExprContext() { }
+		public void copyFrom(ExprContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class DIVContext extends ExprContext {
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
+		}
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode DIV() { return getToken(ParserFile.DIV, 0); }
+		public DIVContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterDIV(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitDIV(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitDIV(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ID_EXPRContext extends ExprContext {
 		public TerminalNode ID() { return getToken(ParserFile.ID, 0); }
+		public ID_EXPRContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterID_EXPR(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitID_EXPR(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitID_EXPR(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class PLUS2Context extends ExprContext {
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public TerminalNode PLUS_PLUS() { return getToken(ParserFile.PLUS_PLUS, 0); }
+		public PLUS2Context(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterPLUS2(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitPLUS2(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitPLUS2(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class SENT_EXPRContext extends ExprContext {
 		public TerminalNode SENTENCE() { return getToken(ParserFile.SENTENCE, 0); }
+		public SENT_EXPRContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterSENT_EXPR(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitSENT_EXPR(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitSENT_EXPR(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class VAL_EXPRContext extends ExprContext {
+		public TerminalNode VAL() { return getToken(ParserFile.VAL, 0); }
+		public VAL_EXPRContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterVAL_EXPR(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitVAL_EXPR(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitVAL_EXPR(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class MINUS2Context extends ExprContext {
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public TerminalNode MINUS_MINUS() { return getToken(ParserFile.MINUS_MINUS, 0); }
+		public MINUS2Context(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterMINUS2(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitMINUS2(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitMINUS2(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class MULTIContext extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -2608,26 +3249,66 @@ public class ParserFile extends Parser {
 			return getRuleContext(ExprContext.class,i);
 		}
 		public TerminalNode MUL() { return getToken(ParserFile.MUL, 0); }
-		public TerminalNode DIV() { return getToken(ParserFile.DIV, 0); }
-		public TerminalNode PLUS() { return getToken(ParserFile.PLUS, 0); }
-		public TerminalNode MINUS() { return getToken(ParserFile.MINUS, 0); }
-		public TerminalNode PLUS_PLUS() { return getToken(ParserFile.PLUS_PLUS, 0); }
-		public TerminalNode MINUS_MINUS() { return getToken(ParserFile.MINUS_MINUS, 0); }
-		public ExprContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_expr; }
+		public MULTIContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterExpr(this);
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterMULTI(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitExpr(this);
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitMULTI(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitExpr(this);
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitMULTI(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class PLUSContext extends ExprContext {
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
+		}
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode PLUS() { return getToken(ParserFile.PLUS, 0); }
+		public PLUSContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterPLUS(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitPLUS(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitPLUS(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class MINUSContext extends ExprContext {
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
+		}
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode MINUS() { return getToken(ParserFile.MINUS, 0); }
+		public MINUSContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).enterMINUS(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ParserFileListener ) ((ParserFileListener)listener).exitMINUS(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ParserFileVisitor ) return ((ParserFileVisitor<? extends T>)visitor).visitMINUS(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2652,18 +3333,28 @@ public class ParserFile extends Parser {
 			switch (_input.LA(1)) {
 			case VAL:
 				{
+				_localctx = new VAL_EXPRContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+
 				setState(428);
 				match(VAL);
 				}
 				break;
 			case ID:
 				{
+				_localctx = new ID_EXPRContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(429);
 				match(ID);
 				}
 				break;
 			case SENTENCE:
 				{
+				_localctx = new SENT_EXPRContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(430);
 				match(SENTENCE);
 				}
@@ -2685,7 +3376,7 @@ public class ParserFile extends Parser {
 					switch ( getInterpreter().adaptivePredict(_input,38,_ctx) ) {
 					case 1:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
+						_localctx = new MULTIContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(433);
 						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
@@ -2697,7 +3388,7 @@ public class ParserFile extends Parser {
 						break;
 					case 2:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
+						_localctx = new DIVContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(436);
 						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
@@ -2709,7 +3400,7 @@ public class ParserFile extends Parser {
 						break;
 					case 3:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
+						_localctx = new PLUSContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(439);
 						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
@@ -2721,7 +3412,7 @@ public class ParserFile extends Parser {
 						break;
 					case 4:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
+						_localctx = new MINUSContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(442);
 						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
@@ -2733,7 +3424,7 @@ public class ParserFile extends Parser {
 						break;
 					case 5:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
+						_localctx = new PLUS2Context(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(445);
 						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
@@ -2743,7 +3434,7 @@ public class ParserFile extends Parser {
 						break;
 					case 6:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
+						_localctx = new MINUS2Context(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(447);
 						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");

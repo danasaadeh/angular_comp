@@ -1,11 +1,14 @@
 package AST.Basic;
 
-public  class ImportState {
+import AST.Instruction;
+
+public  class ImportState extends Instruction {
     private String importType; //  or 'ID'
 
     private String fromPath;
 
     public ImportState() {
+
         this.importType = importType;
 
         this.fromPath = fromPath;

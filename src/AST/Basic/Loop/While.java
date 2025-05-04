@@ -2,11 +2,12 @@ package AST.Basic.Loop;
 
 import AST.Basic.Loop.Exp.Body;
 import AST.Basic.Loop.Exp.Condition.Condition;
+import AST.Statements;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class While {
+public class While  extends Statements {
     private Condition condition;
     private Body body;
 

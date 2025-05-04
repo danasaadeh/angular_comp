@@ -2,11 +2,12 @@ package AST.Basic.If;
 
 import AST.Basic.Loop.Exp.Body;
 import AST.Basic.Loop.Exp.Condition.Condition;
+import AST.Statements;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class IfStatement {
+public class  IfStatement  extends Statements {
     private Condition condition;
     private Body body;
     private List<ElseIfStatement> elseIfs;
