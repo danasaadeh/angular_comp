@@ -1,0 +1,5 @@
+name:string;
+
+buttonClicked(product: any) {
+    title:string ;
+  }

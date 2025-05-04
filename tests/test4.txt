@@ -1,0 +1,10 @@
+function checkEvenOdd(num: number): string {
+    if (num  == 0) {
+        return "equal to zero" ;
+    } else {
+        return  "odd" ;
+    }
+}
+let numberToCheck = 7;
+let result = checkEvenOdd(numberToCheck);
+console.log(result); // Output: "7 is odd."

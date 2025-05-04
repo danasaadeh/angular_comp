@@ -1,0 +1,3 @@
+  buttonClicked(product: any) {
+ return i++;
+  }
