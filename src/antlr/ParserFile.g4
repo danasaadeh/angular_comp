@@ -52,7 +52,7 @@ statements:
   |return                #RETRUN_STATE
   | comment             #COMMENT_STATE;
 
-init:HELPERS?  ID (COLON DATA_TYPE)? EQUAL VAL eos;
+init:HELPERS?  ID (COLON DATA_TYPE)? EQUAL VAL  eos;
 init_array:HELPERS? ID (COLON DATA_TYPE SQUARE_OPEN SQUARE_CLOSE)? EQUAL SQUARE_OPEN value (COMMA value)* SQUARE_CLOSE eos;
 value:  VAL
       | object;
@@ -61,17 +61,18 @@ object:CURLY_OPEN objectProperty (COMMA objectProperty)* CURLY_CLOSE;
 
 objectProperty: ID COLON VAL;
 
+
+
 declaration:MODIFIER? HELPERS? ID (COLON DATA_TYPE)? eos	;
 
-
 assign:
-HELPERS? ID EQUAL (VAL | ID ) eos;
+ ID EQUAL (VAL | ID ) eos;
+
 
 this_exp: THIS DOT ID+ EQUAL (VAL | ID) eos;
 
-super_exp: SUPER DOT ID+ EQUAL (VAL|ID) eos
-         | SUPER OPEN_B ID (COMMA ID)* CLOSE_B eos
-         ;
+super_exp: SUPER DOT ID+(DOT ID)* EQUAL (VAL|ID) eos
+          | SUPER OPEN_B ID (COMMA ID)* CLOSE_B eos;
 
 if_condition:IF OPEN_B condition (LOGICAL_OPERATION condition)* CLOSE_B body else_if_condition*else_condition?;
 

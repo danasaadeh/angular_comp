@@ -43,8 +43,8 @@ public class Init extends Statements {
     public String toString() {
         return
                 " \n \t\t\t\t\t\t\t ID: " + id +
-                (dataType != null ? " : " + dataType : "") +
-                " = " + value;
+                        (dataType != null ? " : " + dataType : "") +
+                        " = " + value;
     }
     public String print() {
         return "\n Init: " +

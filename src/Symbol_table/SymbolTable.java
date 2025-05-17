@@ -20,6 +20,7 @@ public class SymbolTable {
         scopeStack.push(scope);
     }
 
+
     public void exitScope() {
         if (!scopeStack.isEmpty()) {
             scopeStack.pop();
@@ -31,19 +32,21 @@ public class SymbolTable {
     }
 
     public void print() {
-
         System.out.println("Symbol Table:");
-        System.out.println("ID\t| Variable Name\t\t| \t\t Value  \t\t\t | Scope");
-        System.out.println("================================================================");
-
+        System.out.println("ID\t| Variable Name\t\t| Type\t\t | \t\t Value  \t\t\t | Scope");
+        System.out.println("=============================================================================");
 
         for (int i = 0; i < row.size(); i++) {
             Row currentRow = row.get(i);
             if (currentRow != null) {
+                System.out.printf("%d\t| %s\t\t| %s \t\t| %s\t\t| %s\n",
+                        i + 1,
+                        currentRow.getName(),
+                        currentRow.getType(),
+                        currentRow.getValue(),
+                        currentRow.getScope()); // Added scope here
 
-                System.out.printf("%d\t| %s\t\t| %s \t\t| %s\n", i + 1, currentRow.getType(), currentRow.getValue(), currentRow.getScope());
-
-                System.out.println("----------------------------------------------------------------");
+                System.out.println("---------------------------------------------------------------------------");
             }
         }
     }

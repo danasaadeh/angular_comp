@@ -34,9 +34,11 @@ public class Value extends Statements {
 
     @Override
     public String toString() {
-        return "\n \t\t\t\t\t\t\tValue{" +
-                "\n \t\t\t\t\t\t\tobjects=" + objects +
-                "\n \t\t\t\t\t\t\t values=" + values +
-                '}';
+        if (!objects.isEmpty()) {
+            return objects.toString(); // print list of MyObject
+        } else {
+            return values.toString(); // simple primitive values
+        }
     }
+
 }

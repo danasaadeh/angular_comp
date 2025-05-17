@@ -26,14 +26,14 @@ public class ThisExpression extends Statements {
     @Override
     public String toString() {
         return
-                "\n \t\t\t\t\t\t\t chainedIdentifiers=" + chainedIdentifiers +
-                "\n \t\t\t\t\t\t\t identifier='" + identifier ;
+
+                " identifier = " + identifier ;
     }
 
     public String print() {
-        return "\n ThisExpression{" +
-                "\n chainedIdentifiers=" + chainedIdentifiers +
-                ",\n identifier='" + identifier + '\'' +
-                '}';
+        return
+
+                ",\n identifier = " + identifier
+                ;
     }
 }

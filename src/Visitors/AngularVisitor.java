@@ -52,10 +52,10 @@ public class AngularVisitor extends ParserFileBaseVisitor {
             if (ctx.instruction(i)!=null)
                 program.setInstructions_list((Instruction) visit(ctx.instruction(i)));
         }
-       // this.st.print();
+        // this.st.print();
         st.exitScope();
         return program;
-        
+
     }
 
     @Override
@@ -324,6 +324,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
     @Override
     public Component visitComponent(ParserFile.ComponentContext ctx) {
+
         ComponentBody componentBody = (ComponentBody) visit(ctx.componentBody());
 //        Row row = new Row();
 //
@@ -383,7 +384,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
         Imports imports = new Imports(importsList);
 
-
+//
 //        Row row = new Row();
 //
 //        row.setType("imports");
@@ -485,29 +486,38 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
         return value;
     }
+
     @Override
     public Init visitInit(ParserFile.InitContext ctx) {
-        String id = ctx.ID().getText();
-        String dataType = ctx.DATA_TYPE() != null ? ctx.DATA_TYPE().getText() : null;
+        String name = ctx.ID().getText();
+        String dataType = ctx.DATA_TYPE() != null ? ctx.DATA_TYPE().getText() : "unknown";
         String value = ctx.VAL() != null ? ctx.VAL().getText() : null;
-        Row row = new Row();
 
-        row.setType("Init ");
-        row.setValue(value.toString());
+        Row row = new Row();
+        row.setType("init");
+        row.setName(name);
+        row.setValue(value);
         row.setScope(st.getCurrentScope());
         st.getRow().add(row);
-        return new Init(dataType, id, value);
+
+        return new Init(dataType, name, value);
     }
+
+
 
     @Override
     public InitArray visitInit_array(ParserFile.Init_arrayContext ctx) {
-        InitArray initArray = new InitArray();
 
-        initArray.setId(ctx.ID().getText());
+        String name = ctx.ID() != null ? ctx.ID().getText() : "unnamed";
+        InitArray initArray = new InitArray(name);
+        String dataType = ctx.DATA_TYPE() != null ? ctx.DATA_TYPE().getText() :"undefined";
 
-        if (ctx.DATA_TYPE() != null) {
-            initArray.setDataType(ctx.DATA_TYPE().getText());
-        }
+        Row arrayRow = new Row();
+        arrayRow.setType(dataType);
+        arrayRow.setName(name);
+        arrayRow.setScope(st.getCurrentScope());
+        st.getRow().add(arrayRow);
+
 
         if (ctx.value() != null) {
             for (ParserFile.ValueContext valueCtx : ctx.value()) {
@@ -516,15 +526,13 @@ public class AngularVisitor extends ParserFileBaseVisitor {
             }
         }
 
-        Row row = new Row();
 
-        row.setType("Init Array");
-        row.setValue(initArray.toString());
-        row.setScope(st.getCurrentScope());
-        st.getRow().add(row);
+        arrayRow.setValue(initArray.getValues().toString());
 
         return initArray;
     }
+
+
 
     @Override
     public IfStatement visitIf_condition(ParserFile.If_conditionContext ctx) {
@@ -550,7 +558,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 //        row.setValue(body.toString());
 //        row.setScope(st.getCurrentScope());
 //        st.getRow().add(row);
-        st.exitScope();
+//        st.exitScope();
 
         return new IfStatement(condition, body, elseIfs, elseBody);
     }
@@ -698,8 +706,8 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
         ForLoop forLoop = new ForLoop(init, condition, expression, body);
 
-       // Row row = new Row();
-
+//        Row row = new Row();
+//
 //        row.setType("forLoop");
 //        row.setValue(forLoop.toString());
 //        row.setScope(st.getCurrentScope());
@@ -715,7 +723,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         Body body = (Body) visit(ctx.body());
 
 
-//
+
 //        Row row = new Row();
 //
 //        row.setType("While");
@@ -878,15 +886,17 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
     @Override
     public Declaration visitDeclaration(ParserFile.DeclarationContext ctx) {
-        String id = ctx.ID().getText();
-        String dataType = ctx.DATA_TYPE() != null ? ctx.DATA_TYPE().getText() : null;
+        String name = ctx.ID() != null ? ctx.ID().getText() : "unnamed";
+        String dataType = ctx.DATA_TYPE() != null ? ctx.DATA_TYPE().getText() : "undefined";
 
-        Declaration declaration = new Declaration(id, dataType);
 
+
+        Declaration declaration = new Declaration(name, dataType);
         Row row = new Row();
 
-        row.setType("declaration");
-        row.setValue(declaration.toString());
+        row.setType(dataType);
+        row.setName(name);
+        row.setValue("declaration");
         row.setScope(st.getCurrentScope());
         st.getRow().add(row);
 
@@ -915,8 +925,9 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
         Row row = new Row();
 
-        row.setType(variableName);
+        row.setType("Assign");
         row.setValue(value);
+        row.setName(variableName);
         row.setScope(st.getCurrentScope());
         st.getRow().add(row);
 
@@ -932,11 +943,22 @@ public class AngularVisitor extends ParserFileBaseVisitor {
             chainedIdentifiers.add(ctx.ID(i).getText());
         }
         ThisExpression thisExpr = new ThisExpression(identifier, chainedIdentifiers);
-        Row row = new Row();
+        String value = null;
+        if (ctx.VAL() != null) {
+            value = ctx.VAL().getText();
+        } else if (ctx.ID().size() > 1) {
+            value = ctx.ID(ctx.ID().size() - 1).getText();
+        } else {
+            throw new IllegalArgumentException("Invalid assignment context: no value found.");
+        }
 
-        row.setType("thisExpression");
-        row.setValue(thisExpr.toString());
+
+        Row row = new Row();
+        row.setType("this");
+        row.setValue(value);
         row.setScope(st.getCurrentScope());
+        row.setName(identifier);
+
         st.getRow().add(row);
 
         return thisExpr;
@@ -944,44 +966,63 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
     @Override
     public Object visitSuper_exp(ParserFile.Super_expContext ctx) {
-        if (ctx.getChildCount() == 6) {
-            String property = ctx.ID(0).getText();
-            String value = ctx.VAL() != null ? ctx.VAL().getText() : ctx.ID(1).getText();
 
+        if (ctx.getChildCount() >= 6 && ctx.EQUAL() != null) {
+            StringBuilder propertyBuilder = new StringBuilder();
+            String firstProperty = ctx.ID(0) != null ? ctx.ID(0).getText() : null;
+
+
+            for (int i = 0; i < ctx.ID().size(); i++) {
+                if (i > 0) {
+                    propertyBuilder.append(".");
+                }
+                propertyBuilder.append(ctx.ID(i).getText());
+            }
+
+            String property = propertyBuilder.toString();
+            String value = ctx.VAL() != null ? ctx.VAL().getText() : (ctx.ID(ctx.ID().size() - 1) != null ? ctx.ID(ctx.ID().size() - 1).getText() : null);
+            if (firstProperty == null) {
+                return null;
+            }
+            if (value == null) {
+                return null;
+            }
             SuperExp superExp = new SuperExp(property, value);
 
 
             Row row = new Row();
-
             row.setType("Super");
-            row.setValue(superExp.toString());
-            st.getRow().add(row);
-
-            return superExp;
-        } else if (ctx.getChildCount() > 4) {
-            String methodName = ctx.ID(0).getText();
-            List<String> arguments = new ArrayList<>();
-
-            for (int i = 1; i < ctx.ID().size(); i++) {
-                arguments.add(ctx.ID(i).getText());
-            }
-
-            SuperExp superExp = new SuperExp(methodName, arguments);
-
-
-            Row row = new Row();
-
-            row.setType("Super Method ");
-            row.setValue(superExp.toString());
+            row.setName(firstProperty);
+            row.setValue(value);
+            row.setScope(st.getCurrentScope());
             st.getRow().add(row);
 
             return superExp;
         }
 
+        else if (ctx.getChildCount() > 4) {
+            String methodName = "unnamed";
+
+            List<String> arguments = new ArrayList<>();
+            for (int i = 0; i < ctx.ID().size(); i++) {
+                if (ctx.ID(i) != null) {
+                    arguments.add(ctx.ID(i).getText());
+                }
+            }
+            SuperExp superExp = new SuperExp(methodName, arguments);
+
+
+            Row row = new Row();
+            row.setType("Super Method");
+            row.setName(methodName);
+            row.setValue(superExp.toString());
+            row.setScope(st.getCurrentScope());
+            st.getRow().add(row);
+
+            return superExp;
+        }
         return null;
     }
-
-
     @Override
     public Return visitReturn(ParserFile.ReturnContext ctx) {
         Return returnStatement = new Return();
@@ -1000,9 +1041,9 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
         if (ctx.statements() != null) {
 
-             Statements statements = (Statements) visit(ctx.statements());
-                returnStatement.getStatements().add(statements);
-            }
+            Statements statements = (Statements) visit(ctx.statements());
+            returnStatement.getStatements().add(statements);
+        }
 
         if (ctx.object() != null) {
             List<MyObject> objectList = new ArrayList<>();
@@ -1031,15 +1072,15 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
 
         if (ctx.DATA_TYPE() != null) {
-            parameter.setType(ctx.DATA_TYPE().getText());
+       //     parameter.setType(ctx.DATA_TYPE().getText());
         } else {
-            parameter.setType("unknown");
+        //    parameter.setType("unknown");
         }
-        Row row = new Row();
-
-        row.setType("Parameters");
-        row.setValue(parameter.toString());
-        st.getRow().add(row);
+    //    Row row = new Row();
+//
+//        row.setType("Parameters");
+//        row.setValue(parameter.toString());
+//        st.getRow().add(row);
         return parameter;
     }
 
@@ -1090,12 +1131,12 @@ public class AngularVisitor extends ParserFileBaseVisitor {
                 Parameter parameter = (Parameter) visit(paramCtx);
                 funcDecl.getParameters().add(parameter);
 
-
-                Row row = new Row();
-                row.setType("Parameter");
-                row.setValue(parameter.toString());
-                row.setScope(st.getCurrentScope());
-                st.getRow().add(row);
+//
+//                Row row = new Row();
+//                row.setType("Parameter");
+//                row.setValue(parameter.toString());
+//                row.setScope(st.getCurrentScope());
+//                st.getRow().add(row);
             }
         }
 
@@ -1103,7 +1144,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         FuncBody functionBody = (FuncBody) visit(ctx.function_body());
         funcDecl.getFunctionBodies().add(functionBody);
 
-//
+
 //        Row row = new Row();
 //        row.setType("Function Declaration");
 //        row.setValue(funcDecl.toString());
@@ -1153,15 +1194,15 @@ public class AngularVisitor extends ParserFileBaseVisitor {
     @Override
     public Interface visitInterface(ParserFile.InterfaceContext ctx) {
         st.enterScope("interface");
-       Interface inter = new Interface();
+        Interface inter = new Interface();
 
         inter.setInterface_name(ctx.ID().getText());
 
 
         if (ctx.declaration() != null) {
             for (ParserFile.DeclarationContext declCtx : ctx.declaration()) {
-            Declaration body = (Declaration) visitDeclaration(declCtx);
-            inter.getBody().add(body);
+                Declaration body = (Declaration) visitDeclaration(declCtx);
+                inter.getBody().add(body);
             }
         }
 //        Row row = new Row();
@@ -1301,7 +1342,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
     public Object visitHtmlElement(ParserFile.HtmlElementContext ctx) {
         HtmlElement htmlElement = new HtmlElement();
         if(ctx.TAG_NAME()!=null){
-        htmlElement.setTagName(ctx.TAG_NAME().getText());}
+            htmlElement.setTagName(ctx.TAG_NAME().getText());}
 
 
         for (ParserFile.HtmlAttributeContext attribute : ctx.htmlAttribute()) {
@@ -1383,10 +1424,10 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         HtmlContent htmlContent = new HtmlContent();
 
         if(ctx.htmlElement() !=null){
-        for (ParserFile.HtmlElementContext element : ctx.htmlElement()) {
-            HtmlElement htmlElement = (HtmlElement) visitHtmlElement(element);
-            htmlContent.getHtmlElements().add(htmlElement);
-        }}
+            for (ParserFile.HtmlElementContext element : ctx.htmlElement()) {
+                HtmlElement htmlElement = (HtmlElement) visitHtmlElement(element);
+                htmlContent.getHtmlElements().add(htmlElement);
+            }}
 
         for (ParserFile.HtmlChardataContext chardata : ctx.htmlChardata()) {
             HtmlChardata data = (HtmlChardata) visit(chardata);
