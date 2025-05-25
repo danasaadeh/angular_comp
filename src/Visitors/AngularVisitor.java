@@ -362,11 +362,11 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         String value = ctx.VAL().getText();
         Selector selector = new Selector(value);
 
-//        Row row = new Row();
-//
-//        row.setType("selector");
-//        row.setValue(selector.toString());
-//        st.getRow().add(row);
+        Row row = new Row();
+row.setName("selector");
+        row.setType("selector");
+        row.setValue(selector.toString());
+        st.getRow().add(row);
 
         return selector;
     }
@@ -420,12 +420,13 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         TerminalNode templateUrlNode = ctx.VAL();
         if (templateUrlNode != null) {
             templateUrlList.add(templateUrlNode.getText());
-        }
-//        Row row = new Row();
-//
-//        row.setType("Template_url");
-//        row.setValue(templateUrlList.toString());
-//        st.getRow().add(row);
+      }
+        Row row = new Row();
+
+        row.setType("Template_url");
+        row.setName("template_url");
+        row.setValue(templateUrlList.toString());
+        st.getRow().add(row);
         return new Template_Url(templateUrlList);
     }
 
@@ -1283,10 +1284,11 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
         HtmlDocument htmlDocument = (HtmlDocument) visitHtmlDocument(ctx.htmlDocument());
         template.setHtmlDocument(htmlDocument);
-//        Row row = new Row();
-//        row.setType("Template");
-//        row.setValue(template.toString());
-//        st.getRow().add(row);
+        Row row = new Row();
+        row.setName("template");
+        row.setType("Template");
+        row.setValue("template value");
+        st.getRow().add(row);
 
         return template;
     }
