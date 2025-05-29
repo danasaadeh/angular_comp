@@ -28,6 +28,7 @@ import AST.Instruction;
 import AST.Program;
 import AST.Statements;
 import Symbol_table.Row;
+import Symbol_table.SemanticChecker;
 import Symbol_table.SymbolTable;
 import antlr.ParserFile;
 import antlr.ParserFileBaseVisitor;
@@ -35,9 +36,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import javax.swing.text.DefaultCaret;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class AngularVisitor extends ParserFileBaseVisitor {
 
@@ -321,53 +320,52 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         return statements;
     }
 */
+private Set<String> selectorSet = new HashSet<>();
 
     @Override
     public Component visitComponent(ParserFile.ComponentContext ctx) {
-
         ComponentBody componentBody = (ComponentBody) visit(ctx.componentBody());
-//        Row row = new Row();
-//
-//        row.setType("component");
-//        row.setValue(componentBody.toString());
-//        st.getRow().add(row);
+
+        // Check for duplicate selector
+        if (componentBody.getSelector() != null) {
+            String selectorValue = componentBody.getSelector().getValue();
+
+            if (!selectorSet.add(selectorValue)) {
+                System.err.println("Semantic Error: Duplicate selector found: " + selectorValue);
+            }
+        }
+
         return new Component(componentBody);
-
     }
-
 
     @Override
     public ComponentBody visitComponentBody(ParserFile.ComponentBodyContext ctx) {
-
-        Selector selector = (Selector) visit(ctx.selector());
-        Template template =  ctx.template() != null ? (Template) visit(ctx.template()) : null;
+        Selector selector = ctx.selector() != null ? (Selector) visit(ctx.selector()) : null; // Check if selector exists
+        Template template = ctx.template() != null ? (Template) visit(ctx.template()) : null;
         Imports imports = ctx.imports() != null ? (Imports) visit(ctx.imports()) : null;
         Style_Urls styleUrls = ctx.style_Urls() != null ? (Style_Urls) visit(ctx.style_Urls()) : null;
         Template_Url templateUrl = ctx.template_Url() != null ? (Template_Url) visit(ctx.template_Url()) : null;
 
-        ComponentBody componentBody = new ComponentBody(selector, template, imports, styleUrls,templateUrl);
+        ComponentBody componentBody = new ComponentBody(selector, template, imports, styleUrls, templateUrl);
 
-
-//        Row row = new Row();
-//
-//        row.setType("componentBody");
-//        row.setValue(componentBody.toString());
-//        st.getRow().add(row);
+        // Check if selector is null and throw an error if necessary
+        if (selector == null || selector.getValue() == null || selector.getValue().isEmpty()) {
+            System.err.println("Semantic Error: Component must have a 'selector' property.");
+        }
 
         return componentBody;
     }
+
 
     @Override
     public Selector visitSelector(ParserFile.SelectorContext ctx) {
         String value = ctx.VAL().getText();
         Selector selector = new Selector(value);
-
         Row row = new Row();
-row.setName("selector");
+        row.setName("selector");
         row.setType("selector");
         row.setValue(selector.toString());
         st.getRow().add(row);
-
         return selector;
     }
 
@@ -501,6 +499,12 @@ row.setName("selector");
         row.setScope(st.getCurrentScope());
         st.getRow().add(row);
 
+//        SemanticChecker semnatic2=new SemanticChecker();
+//        semnatic2.setSymbolTable(this.st);
+//        semnatic2.check();
+
+
+
         return new Init(dataType, name, value);
     }
 
@@ -537,7 +541,7 @@ row.setName("selector");
 
     @Override
     public IfStatement visitIf_condition(ParserFile.If_conditionContext ctx) {
-        st.enterScope("local");
+        st.enterScope("if_scope");
         Condition condition = (Condition) visit(ctx.condition(0));
         Body body = (Body) visit(ctx.body());
 
@@ -560,22 +564,25 @@ row.setName("selector");
 //        row.setScope(st.getCurrentScope());
 //        st.getRow().add(row);
 //        st.exitScope();
-
+        st.exitScope();
         return new IfStatement(condition, body, elseIfs, elseBody);
     }
 
     @Override
     public ElseIfStatement visitElse_if_condition(ParserFile.Else_if_conditionContext ctx) {
+        st.enterScope("else_If_scope");
 
         Condition condition = (Condition) visit(ctx.condition(0));
         Body body = (Body) visit(ctx.body());
-
+        st.exitScope();
         return new ElseIfStatement(condition, body);
     }
 
     @Override
     public ElseStatement visitElse_condition(ParserFile.Else_conditionContext ctx) {
+        st.enterScope("else_scope");
         Body body = (Body) visit(ctx.body());
+        st.exitScope();
         return new ElseStatement(body);
     }
 
@@ -693,7 +700,7 @@ row.setName("selector");
     }
     @Override
     public ForLoop visitFor(ParserFile.ForContext ctx) {
-        st.enterScope("local");
+        st.enterScope("for");
         Init init = (Init) visit(ctx.init());
 
 
@@ -719,7 +726,7 @@ row.setName("selector");
 
     @Override
     public While visitWhile(ParserFile.WhileContext ctx) {
-        st.enterScope("local");
+        st.enterScope("while");
         Condition condition = (Condition) visit(ctx.condition(0));
         Body body = (Body) visit(ctx.body());
 
@@ -747,7 +754,7 @@ row.setName("selector");
 
     @Override
     public Object visitID_EXPR(ParserFile.ID_EXPRContext ctx) {
-        return new ValueExpression(ctx.ID().getText());
+        return new IdExpr(ctx.ID().getText());
     }
 
     @Override
@@ -841,21 +848,31 @@ row.setName("selector");
 
     @Override
     public Object visitPrint(ParserFile.PrintContext ctx) {
-
         Expression expr = null;
+
         if (ctx.expr() != null) {
             expr = (Expression) visit(ctx.expr());
+
+            if (expr instanceof IdExpr) {
+                String varName = ((IdExpr) expr).getID();
+
+                boolean isDefined = false;
+                for (Row row : st.getRow()) {
+                    // Check if row is not null before accessing its methods
+                    if (row != null && row.getName() != null && row.getName().equals(varName)) {
+                        isDefined = true;
+                        break;
+                    }
+                }
+
+                if (!isDefined) {
+                    System.err.println("Semantic Error: Undefined variable '" + varName + "' used in print.");
+                }
+            }
         }
 
-        Print printStatement = new Print(expr);
-
-
-
-        return printStatement;
-
+        return new Print(expr);
     }
-
-
 
     @Override
     public Object visitObject(ParserFile.ObjectContext ctx) {
@@ -900,40 +917,80 @@ row.setName("selector");
         row.setValue("declaration");
         row.setScope(st.getCurrentScope());
         st.getRow().add(row);
+//        SemanticChecker semantic=new SemanticChecker();
+//        semantic.setSymbolTable(this.st);
+//        semantic.check();
 
         return declaration;
     }
 
     @Override
     public Assign visitAssign(ParserFile.AssignContext ctx) {
-
         String variableName = ctx.ID(0).getText();
 
-        String value;
+        // Retrieve the variable's type from the symbol table
+        Row variableRow = st.getRow().stream()
+                .filter(row -> row.getName().equals(variableName) && row.getScope().equals(st.getCurrentScope()))
+                .findFirst()
+                .orElse(null);
 
+        if (variableRow == null) {
+            System.err.println("Variable " + variableName + " is not defined.");
+        }
+
+        String value;
+        String assignedType;
 
         if (ctx.VAL() != null) {
             value = ctx.VAL().getText();
+            assignedType = determineType(value); // A method to determine the type of the value
         } else if (ctx.ID().size() > 1) {
             value = ctx.ID(1).getText();
+            assignedType = getVariableType(value); // Get the type of the variable being assigned
         } else {
             throw new IllegalArgumentException("Invalid assignment context: no value found.");
         }
 
+        // Type compatibility check
+        if (!isTypeCompatible(variableRow.getType(), assignedType)) {
+            System.err.println("Type mismatch: cannot assign " + assignedType + " to " + variableRow.getType());
+        }
 
         Assign assignment = new Assign(variableName, value);
 
-
         Row row = new Row();
-
         row.setType("Assign");
         row.setValue(value);
         row.setName(variableName);
         row.setScope(st.getCurrentScope());
         st.getRow().add(row);
 
-
         return assignment;
+    }
+
+    // Helper method to determine the type of a value
+    private String determineType(String value) {
+        if (value.matches("\\d+")) {
+            return "number";
+        } else if (value.matches("\".*\"")) {
+            return "string";
+        }
+        // Add more types as needed
+        return "unknown";
+    }
+
+    // Helper method to get the type of a variable
+    private String getVariableType(String variableName) {
+        Row row = st.getRow().stream()
+                .filter(r -> r.getName().equals(variableName))
+                .findFirst()
+                .orElse(null);
+        return row != null ? row.getType() : "unknown";
+    }
+
+    // Helper method to check type compatibility
+    private boolean isTypeCompatible(String declaredType, String assignedType) {
+        return declaredType.equals(assignedType);
     }
     @Override
     public Object visitThis_exp(ParserFile.This_expContext ctx) {
@@ -1014,7 +1071,7 @@ row.setName("selector");
 
 
             Row row = new Row();
-            row.setType("Super Method");
+            row.setType("Super");
             row.setName(methodName);
             row.setValue(superExp.toString());
             row.setScope(st.getCurrentScope());
@@ -1060,6 +1117,7 @@ row.setName("selector");
 
         row.setType("Return");
         row.setValue(returnStatement.toString());
+        row.setScope(st.getCurrentScope());
         st.getRow().add(row);
 
         return returnStatement;
@@ -1084,38 +1142,9 @@ row.setName("selector");
 //        st.getRow().add(row);
         return parameter;
     }
-
-    @Override
-    public FuncBody visitFunction_body(ParserFile.Function_bodyContext ctx) {
-        FuncBody functionBody = new FuncBody();
-
-
-        if (ctx.statements() != null) {
-            for (ParserFile.StatementsContext statementCtx : ctx.statements()) {
-                Statements statement = (Statements) visit(statementCtx);
-                functionBody.addStatement(statement);
-            }
-        }
-
-
-        if (ctx.return_() != null) {
-            Return returnStatement = (Return) visit(ctx.return_());
-            functionBody.setReturnStatement(returnStatement);
-        }
-//        Row row = new Row();
-//
-//        row.setType("Function Body");
-//        row.setValue(functionBody.toString());
-//        row.setScope(st.getCurrentScope());
-//        st.getRow().add(row);
-
-        return functionBody;
-    }
-
     @Override
     public FuncDecl visitFunction_decl(ParserFile.Function_declContext ctx) {
-
-        st.enterScope("local");
+        st.enterScope("function");
 
         FuncDecl funcDecl = new FuncDecl();
         funcDecl.setName(ctx.ID().getText());
@@ -1126,34 +1155,60 @@ row.setName("selector");
             funcDecl.setReturn_type("void");
         }
 
+        Set<String> parameterNames = new HashSet<>();
 
         if (ctx.parameter() != null) {
             for (ParserFile.ParameterContext paramCtx : ctx.parameter()) {
+                String paramName = paramCtx.ID().getText();
+
+                // Check for duplicate parameter names
+                if (!parameterNames.add(paramName)) {
+                    System.err.println("Duplicate parameter name: " + paramName);
+                }
+
                 Parameter parameter = (Parameter) visit(paramCtx);
                 funcDecl.getParameters().add(parameter);
-
-//
-//                Row row = new Row();
-//                row.setType("Parameter");
-//                row.setValue(parameter.toString());
-//                row.setScope(st.getCurrentScope());
-//                st.getRow().add(row);
             }
         }
-
 
         FuncBody functionBody = (FuncBody) visit(ctx.function_body());
         funcDecl.getFunctionBodies().add(functionBody);
 
-
-//        Row row = new Row();
-//        row.setType("Function Declaration");
-//        row.setValue(funcDecl.toString());
-//        row.setScope(st.getCurrentScope());
-//        st.getRow().add(row);
-//
-//        st.exitScope();
+        st.exitScope();
         return funcDecl;
+    }
+
+    @Override
+    public FuncBody visitFunction_body(ParserFile.Function_bodyContext ctx) {
+        FuncBody functionBody = new FuncBody();
+
+        // Create a set to track variable names in the current function scope
+        Set<String> variableNames = new HashSet<>();
+
+        if (ctx.statements() != null) {
+            for (ParserFile.StatementsContext statementCtx : ctx.statements()) {
+                Statements statement = (Statements) visit(statementCtx);
+
+                // Check for variable declarations in statements
+                if (statement instanceof Init) {
+                    String varName = ((Init) statement).getId();
+
+                    // Check for duplicate variable names
+                    if (!variableNames.add(varName)) {
+                        System.err.println("Duplicate variable name in function body: " + varName);
+                    }
+                }
+
+                functionBody.addStatement(statement);
+            }
+        }
+
+        if (ctx.return_() != null) {
+            Return returnStatement = (Return) visit(ctx.return_());
+            functionBody.setReturnStatement(returnStatement);
+        }
+
+        return functionBody;
     }
     @Override
     public ClassBody visitClass_body(ParserFile.Class_bodyContext ctx) {
@@ -1188,7 +1243,7 @@ row.setName("selector");
 //        row.setValue(classDecl.toString());
 //        row.setScope(st.getCurrentScope());
 //        st.getRow().add(row);
-//        st.exitScope();
+        st.exitScope();
         return classDecl;
     }
 
@@ -1463,6 +1518,17 @@ row.setName("selector");
 //        st.getRow().add(row);
         return chardata;
     }
+
+
+    private boolean isVariableDefined(String name) {
+        for (Row row : st.getRow()) {
+            if (row.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
+
 
 

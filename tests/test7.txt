@@ -1,5 +1,7 @@
-name:string;
+
 
 buttonClicked(product: any) {
-    title:string ;
+    title:string="Sdsdfd" ;
+    title:number=12;
+
   }

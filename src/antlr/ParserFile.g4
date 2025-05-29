@@ -16,7 +16,7 @@ instruction:
 
 component:COMPONENT OPEN_B CURLY_OPEN componentBody CURLY_CLOSE CLOSE_B ;
 
-componentBody: selector (template_Url|template) imports? (style_Urls)?;
+componentBody: selector? (template_Url|template)? imports? (style_Urls)?;
 
 selector: SELECTOR COLON VAL COMMA;
 
@@ -52,7 +52,7 @@ statements:
   |return                #RETRUN_STATE
   | comment             #COMMENT_STATE;
 
-init:HELPERS?  ID (COLON DATA_TYPE)? EQUAL VAL  eos;
+init:HELPERS?  ID (COLON DATA_TYPE) EQUAL VAL  eos;
 init_array:HELPERS? ID (COLON DATA_TYPE SQUARE_OPEN SQUARE_CLOSE)? EQUAL SQUARE_OPEN value (COMMA value)* SQUARE_CLOSE eos;
 value:  VAL
       | object;
@@ -66,7 +66,7 @@ objectProperty: ID COLON VAL;
 declaration:MODIFIER? HELPERS? ID (COLON DATA_TYPE)? eos	;
 
 assign:
- ID EQUAL (VAL | ID ) eos;
+ HELPERS? ID EQUAL (VAL | ID ) eos;
 
 
 this_exp: THIS DOT ID+ EQUAL (VAL | ID) eos;

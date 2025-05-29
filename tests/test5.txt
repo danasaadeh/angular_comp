@@ -15,7 +15,7 @@ export class CounterComponent {
   count: number = 0;
 
   increment(): void {
-    retrun i++ ;
+    return i++ ;
   }
 
   decrement(): void {

@@ -28,7 +28,7 @@ import { NgForOf, NgIf } from '@angular/common';
   ],
 })
 export class AppComponent {
-  title = 'dana-angular'
+  title:string = 'dana-angular'
   selectedProduct: any = undefined;
   products = [
     { name: 'first product', image: 'https://img.freepik.com/premium-photo/cosmetic-bottle-mockup_863013-107717.jpg', details: 'first product details' },
