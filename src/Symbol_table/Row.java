@@ -1,18 +1,43 @@
 package Symbol_table;
+
 public class Row {
-    String name;
-    String type;
-    String value;
-    String scope;
+    private String name;
+    private String type;
+    private String value;
+    private String scope;
+    private boolean duplicateReported;
+
+    // New fields for semantic checks
+    private String kind;      // e.g., "variable", "component"
+    private String selector;  // for components
+    private int line;
+    private int column;
+
+    public Row() {
+        this.duplicateReported = false;
+    }
+
+    // ---- Existing Getters and Setters ----
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
+
     public String getValue() {
         return value;
     }
+
     public void setValue(String value) {
         this.value = value;
     }
@@ -25,11 +50,44 @@ public class Row {
         this.scope = scope;
     }
 
-    public String getName() {
-        return name;
+    public boolean isDuplicateReported() {
+        return duplicateReported;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDuplicateReported(boolean duplicateReported) {
+        this.duplicateReported = duplicateReported;
+    }
+
+    // ---- New Getters and Setters for Semantic Analysis ----
+    public String getKind() {
+        return kind;
+    }
+
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
+    public String getSelector() {
+        return selector;
+    }
+
+    public void setSelector(String selector) {
+        this.selector = selector;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line = line;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
     }
 }

@@ -12,27 +12,59 @@ public class SemanticChecker {
     public void setSymbolTable(SymbolTable symbolTable) {
         this.symbolTable = symbolTable;
     }
-
     public boolean check() {
+        boolean isValid = true;
+        for (Row row : symbolTable.getRow()) {
+            if (row != null) {
+                row.setDuplicateReported(false); // Reset the flag
+            }
+        }
+
+
+
         if (!checkTypeCompatibility(symbolTable)) {
-            System.out.println("Semantic Error: Type mismatch (e.g., string assigned to number)");
-            return false;
-        } else if (!checkUndefinedVariable(symbolTable)) {
+            isValid = false; // Type mismatch detected
+        }
+        if (!checkUndefinedVariable(symbolTable)) {
             System.out.println("Semantic Error: Use of undefined variable.");
-            return false;
-        } else if (!checkDuplicateVariableInScope(symbolTable)) {
+            isValid = false; // Undefined variable detected
+        }
+        if (!checkDuplicateVariableInScope(symbolTable)) {
             System.out.println("Semantic Error: Duplicate variable declaration in the same scope.");
-            return false;
-        } else if (!checkComponentSelector(symbolTable)) {
+            isValid = false; // Duplicate variable detected
+        }
+        if (!checkComponentSelector(symbolTable)) {
             System.out.println("Semantic Error: Component must have a 'selector' property.");
-            return false;
-        } else if (!checkDuplicateSelectors(symbolTable)) {
+            isValid = false; // Missing selector in component
+        }
+        if (!checkDuplicateSelectors(symbolTable)) {
             System.out.println("Semantic Error: Duplicate selectors found in components within the same file.");
             return false;}
-        else {
-            return true;
-        }
+
+
+        return isValid; // Return the overall validity of the semantic checks
     }
+
+//    public boolean check() {
+//        if (!checkTypeCompatibility(symbolTable)) {
+//            System.out.println("Semantic Error: Type mismatch (e.g., string assigned to number)");
+//            return false;
+//        } else if (!checkUndefinedVariable(symbolTable)) {
+//            System.out.println("Semantic Error: Use of undefined variable.");
+//            return false;
+//        } else if (!checkDuplicateVariableInScope(symbolTable)) {
+//            System.out.println("Semantic Error: Duplicate variable declaration in the same scope.");
+//            return false;
+//        } else if (!checkComponentSelector(symbolTable)) {
+//            System.out.println("Semantic Error: Component must have a 'selector' property.");
+//            return false;
+//        } else if (!checkDuplicateSelectors(symbolTable)) {
+//            System.out.println("Semantic Error: Duplicate selectors found in components within the same file.");
+//            return false;}
+//        else {
+//            return true;
+//        }
+//    }
 
     // 1. Type Compatibility Check
     private boolean checkTypeCompatibility(SymbolTable table) {

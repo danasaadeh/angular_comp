@@ -7,5 +7,5 @@ function checkEvenOdd(num: number): string {
     }
 }
 let numberToCheck:number= 7;
-result:string="SDs";
+result:string="Success";
 console.log(result);

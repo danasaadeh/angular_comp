@@ -1,0 +1,6 @@
+let num:number;
+num="hello";
+
+let dana:string;
+dana=20;
+

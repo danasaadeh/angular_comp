@@ -8,17 +8,17 @@ program: instruction+ eos;
 
 //ANGULAR GRAMMAR:
 instruction:
-	import_statement+ import_statement* #IMPORT_INSTRUCT
-	| component                         #COMPONENT_INSTRUCT
-	| inject                            #INJECT_INSTRUCT
-	| statements                        #STATEMENTS_INSTRUCT
+	import_statement+ import_statement*  #IMPORT_INSTRUCT
+	| component                          #COMPONENT_INSTRUCT
+	| inject                             #INJECT_INSTRUCT
+	| statements                         #STATEMENTS_INSTRUCT
 	;
 
 component:COMPONENT OPEN_B CURLY_OPEN componentBody CURLY_CLOSE CLOSE_B ;
 
 componentBody: selector? (template_Url|template)? imports? (style_Urls)?;
 
-selector: SELECTOR COLON VAL COMMA;
+selector: SELECTOR COLON VAL COMMA?;
 
 template_Url: TEMPLATE_URL COLON VAL COMMA?;
 
@@ -34,25 +34,25 @@ provided_in: PROVIDED_IN COLON VAL COMMA?;
 
 statements:
    class_decl               #CLASS_DECLAR_STATE
-  |interface               #INTERFACE_STATE
-  | function_decl          #FUNC_DECL_STATE
-  | constructor            #CONSTR_STATE
-  | init                   #INIT_STATE
-  |init_array              #INIT_ARRAY_STATE
-  | declaration            #DECLARE_STATE
-  | assign                 #ASSIGN_STATE
-  | if_condition          #IF_CONDITION_STATE
-  | for                   # FOR_LOOP_STATE
-  | while                 #WHILE_LOOP_STATE
-  |expr                   #EXPR_STATE
-  | this_exp              #THIS_EXPR_STATE
-  |super_exp             #SUPER_EXPR_STATE
-  | print                  #PRINT_STATE
-  |value                   #VALUE_STATE
-  |return                #RETRUN_STATE
-  | comment             #COMMENT_STATE;
+  |interface                #INTERFACE_STATE
+  | function_decl           #FUNC_DECL_STATE
+  | constructor             #CONSTR_STATE
+  | init                    #INIT_STATE
+  |init_array               #INIT_ARRAY_STATE
+  | declaration             #DECLARE_STATE
+  | assign                  #ASSIGN_STATE
+  | if_condition            #IF_CONDITION_STATE
+  | for                     # FOR_LOOP_STATE
+  | while                   #WHILE_LOOP_STATE
+  |expr                     #EXPR_STATE
+  | this_exp                #THIS_EXPR_STATE
+  |super_exp                #SUPER_EXPR_STATE
+  | print                   #PRINT_STATE
+  |value                    #VALUE_STATE
+  |return                   #RETRUN_STATE
+  | comment                 #COMMENT_STATE;
 
-init:HELPERS?  ID (COLON DATA_TYPE) EQUAL VAL  eos;
+init:HELPERS?  ID COLON DATA_TYPE EQUAL VAL  eos;
 init_array:HELPERS? ID (COLON DATA_TYPE SQUARE_OPEN SQUARE_CLOSE)? EQUAL SQUARE_OPEN value (COMMA value)* SQUARE_CLOSE eos;
 value:  VAL
       | object;
@@ -101,15 +101,15 @@ while:
 	WHILE OPEN_B condition (LOGICAL_OPERATION condition)* CLOSE_B body;
 
 expr:
-	  expr MUL expr    #MULTI
-	| expr DIV expr    #DIV
-	| expr PLUS expr   #PLUS
-	| expr MINUS expr  #MINUS
-	| expr PLUS_PLUS   #PLUS2
-	| expr MINUS_MINUS #MINUS2
-	| VAL             #VAL_EXPR
-	| ID              #ID_EXPR
-	| SENTENCE        #SENT_EXPR
+	  expr MUL expr      #MULTI
+	| expr DIV expr      #DIV
+	| expr PLUS expr     #PLUS
+	| expr MINUS expr    #MINUS
+	| expr PLUS_PLUS     #PLUS2
+	| expr MINUS_MINUS   #MINUS2
+	| VAL                #VAL_EXPR
+	| ID                 #ID_EXPR
+	| SENTENCE           #SENT_EXPR
 	 ;
 
 print: CONSOLE DOT LOG OPEN_B (expr)? CLOSE_B eos;
@@ -146,6 +146,8 @@ comment: SL_COMMENT
 
 eos: SEMI_COLON?
      | EOF;
+
+
 //HTML GRAMMAR:
 htmlDocument:
 	scriptletOrSeaWs* XML? scriptletOrSeaWs* DTD? scriptletOrSeaWs* htmlElements*;

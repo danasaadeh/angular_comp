@@ -34,6 +34,7 @@ import antlr.ParserFile;
 import antlr.ParserFileBaseVisitor;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import semantic.*;
 
 import javax.swing.text.DefaultCaret;
 import java.util.*;
@@ -42,6 +43,12 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
 
     public SymbolTable st = new SymbolTable();
+    private Set<String> selectorSet = new HashSet<>();
+    private List<SemanticError> semanticErrors = new ArrayList<>();
+
+    public List<SemanticError> getSemanticErrors() {
+        return semanticErrors;
+    }
 
     @Override
     public Program visitProgram(ParserFile.ProgramContext ctx) {
@@ -320,27 +327,20 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         return statements;
     }
 */
-private Set<String> selectorSet = new HashSet<>();
 
     @Override
     public Component visitComponent(ParserFile.ComponentContext ctx) {
+        // Visit the body of the component, where selector and other properties are handled
         ComponentBody componentBody = (ComponentBody) visit(ctx.componentBody());
 
-        // Check for duplicate selector
-        if (componentBody.getSelector() != null) {
-            String selectorValue = componentBody.getSelector().getValue();
-
-            if (!selectorSet.add(selectorValue)) {
-                System.err.println("Semantic Error: Duplicate selector found: " + selectorValue);
-            }
-        }
+        // You could perform additional checks here if needed
 
         return new Component(componentBody);
     }
 
     @Override
     public ComponentBody visitComponentBody(ParserFile.ComponentBodyContext ctx) {
-        Selector selector = ctx.selector() != null ? (Selector) visit(ctx.selector()) : null; // Check if selector exists
+        Selector selector = ctx.selector() != null ? (Selector) visit(ctx.selector()) : null;
         Template template = ctx.template() != null ? (Template) visit(ctx.template()) : null;
         Imports imports = ctx.imports() != null ? (Imports) visit(ctx.imports()) : null;
         Style_Urls styleUrls = ctx.style_Urls() != null ? (Style_Urls) visit(ctx.style_Urls()) : null;
@@ -348,26 +348,43 @@ private Set<String> selectorSet = new HashSet<>();
 
         ComponentBody componentBody = new ComponentBody(selector, template, imports, styleUrls, templateUrl);
 
-        // Check if selector is null and throw an error if necessary
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        String componentName = "component_" + line;
+
         if (selector == null || selector.getValue() == null || selector.getValue().isEmpty()) {
-            System.err.println("Semantic Error: Component must have a 'selector' property.");
+            semanticErrors.add(new MissingSelectorError(componentName, line, column));
+        } else {
+            String selectorValue = selector.getValue();
+            if (!selectorSet.add(selectorValue)) {
+                semanticErrors.add(new DuplicateSelectorError(selectorValue, line, column));
+            }
         }
 
         return componentBody;
     }
 
 
+
     @Override
     public Selector visitSelector(ParserFile.SelectorContext ctx) {
         String value = ctx.VAL().getText();
         Selector selector = new Selector(value);
+
+        // Also store as row in symbol table if needed
         Row row = new Row();
-        row.setName("selector");
+        row.setName("selector_" + ctx.getStart().getLine());
+        row.setKind("selector");
         row.setType("selector");
-        row.setValue(selector.toString());
-        st.getRow().add(row);
+        row.setValue(value);
+        row.setScope(st.getCurrentScope());
+        row.setLine(ctx.getStart().getLine());
+        row.setColumn(ctx.getStart().getCharPositionInLine());
+
+        st.add(row.getName(), row);
         return selector;
     }
+
 
 
     @Override
@@ -419,12 +436,12 @@ private Set<String> selectorSet = new HashSet<>();
         if (templateUrlNode != null) {
             templateUrlList.add(templateUrlNode.getText());
       }
-        Row row = new Row();
-
-        row.setType("Template_url");
-        row.setName("template_url");
-        row.setValue(templateUrlList.toString());
-        st.getRow().add(row);
+//        Row row = new Row();
+//
+//        row.setType("Template_url");
+//        row.setName("template_url");
+//        row.setValue(templateUrlList.toString());
+//        st.getRow().add(row);
         return new Template_Url(templateUrlList);
     }
 
@@ -492,18 +509,29 @@ private Set<String> selectorSet = new HashSet<>();
         String dataType = ctx.DATA_TYPE() != null ? ctx.DATA_TYPE().getText() : "unknown";
         String value = ctx.VAL() != null ? ctx.VAL().getText() : null;
 
+        String currentScope = st.getCurrentScope();
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        // Check for duplicate variable declaration in the same scope
+        for (Row existing : st.getRow()) {
+            if (existing != null && name.equals(existing.getName()) && currentScope.equals(existing.getScope())) {
+                semanticErrors.add(new DuplicateVariableError(name, line, column));
+                // Return Init anyway if you want to keep the tree structure
+                return new Init(dataType, name, value);
+            }
+        }
+
+        // Create and add new row
         Row row = new Row();
-        row.setType("init");
+        row.setType(dataType);
         row.setName(name);
         row.setValue(value);
-        row.setScope(st.getCurrentScope());
+        row.setScope(currentScope);
+        row.setLine(line);
+        row.setColumn(column);
+
         st.getRow().add(row);
-
-//        SemanticChecker semnatic2=new SemanticChecker();
-//        semnatic2.setSymbolTable(this.st);
-//        semnatic2.check();
-
-
 
         return new Init(dataType, name, value);
     }
@@ -845,7 +873,6 @@ private Set<String> selectorSet = new HashSet<>();
 
         return null;
     }*/
-
     @Override
     public Object visitPrint(ParserFile.PrintContext ctx) {
         Expression expr = null;
@@ -858,21 +885,23 @@ private Set<String> selectorSet = new HashSet<>();
 
                 boolean isDefined = false;
                 for (Row row : st.getRow()) {
-                    // Check if row is not null before accessing its methods
-                    if (row != null && row.getName() != null && row.getName().equals(varName)) {
+                    if (row != null && varName.equals(row.getName())) {
                         isDefined = true;
                         break;
                     }
                 }
 
                 if (!isDefined) {
-                    System.err.println("Semantic Error: Undefined variable '" + varName + "' used in print.");
+                    int line = ctx.getStart().getLine();
+                    int column = ctx.getStart().getCharPositionInLine();
+                    semanticErrors.add(new UndefinedVariableError(varName, line, column));
                 }
             }
         }
 
         return new Print(expr);
     }
+
 
     @Override
     public Object visitObject(ParserFile.ObjectContext ctx) {
@@ -883,7 +912,7 @@ private Set<String> selectorSet = new HashSet<>();
             properties.add(property);
         }
         Row row = new Row();
-
+row.setName("object");
         row.setType("objects");
         row.setValue(properties.toString());
         st.getRow().add(row);
@@ -927,15 +956,19 @@ private Set<String> selectorSet = new HashSet<>();
     @Override
     public Assign visitAssign(ParserFile.AssignContext ctx) {
         String variableName = ctx.ID(0).getText();
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        String currentScope = st.getCurrentScope();
 
-        // Retrieve the variable's type from the symbol table
+        // Find the variable from the symbol table (in current scope or global as fallback)
         Row variableRow = st.getRow().stream()
-                .filter(row -> row.getName().equals(variableName) && row.getScope().equals(st.getCurrentScope()))
+                .filter(row -> row.getName().equals(variableName) && row.getScope().equals(currentScope))
                 .findFirst()
                 .orElse(null);
 
         if (variableRow == null) {
-            System.err.println("Variable " + variableName + " is not defined.");
+            semanticErrors.add(new UndefinedVariableError(variableName, line, column));
+            return new Assign(variableName, null); // Return partial node
         }
 
         String value;
@@ -943,30 +976,36 @@ private Set<String> selectorSet = new HashSet<>();
 
         if (ctx.VAL() != null) {
             value = ctx.VAL().getText();
-            assignedType = determineType(value); // A method to determine the type of the value
+            assignedType = determineType(value); // Custom helper to infer type from value (e.g., "number", "string")
         } else if (ctx.ID().size() > 1) {
             value = ctx.ID(1).getText();
-            assignedType = getVariableType(value); // Get the type of the variable being assigned
+            assignedType = getVariableType(value); // Get type of another variable
         } else {
-            throw new IllegalArgumentException("Invalid assignment context: no value found.");
+            semanticErrors.add(new TypeMismatchError(variableName, "unknown", variableRow.getType(), line, column));
+            return new Assign(variableName, null);
         }
 
         // Type compatibility check
         if (!isTypeCompatible(variableRow.getType(), assignedType)) {
-            System.err.println("Type mismatch: cannot assign " + assignedType + " to " + variableRow.getType());
+            semanticErrors.add(new TypeMismatchError(variableName, assignedType, variableRow.getType(), line, column));
         }
 
         Assign assignment = new Assign(variableName, value);
 
+        // Optional: store the assignment in the symbol table
         Row row = new Row();
         row.setType("Assign");
-        row.setValue(value);
         row.setName(variableName);
-        row.setScope(st.getCurrentScope());
+        row.setValue(value);
+        row.setScope(currentScope);
+        row.setLine(line);
+        row.setColumn(column);
+
         st.getRow().add(row);
 
         return assignment;
     }
+
 
     // Helper method to determine the type of a value
     private String determineType(String value) {
@@ -1116,6 +1155,7 @@ private Set<String> selectorSet = new HashSet<>();
         Row row = new Row();
 
         row.setType("Return");
+        row.setName("return");
         row.setValue(returnStatement.toString());
         row.setScope(st.getCurrentScope());
         st.getRow().add(row);
@@ -1182,20 +1222,20 @@ private Set<String> selectorSet = new HashSet<>();
     public FuncBody visitFunction_body(ParserFile.Function_bodyContext ctx) {
         FuncBody functionBody = new FuncBody();
 
-        // Create a set to track variable names in the current function scope
-        Set<String> variableNames = new HashSet<>();
+        // Track variable names declared in this function scope
+        Set<String> declaredNames = new HashSet<>();
 
         if (ctx.statements() != null) {
             for (ParserFile.StatementsContext statementCtx : ctx.statements()) {
                 Statements statement = (Statements) visit(statementCtx);
 
-                // Check for variable declarations in statements
                 if (statement instanceof Init) {
                     String varName = ((Init) statement).getId();
 
-                    // Check for duplicate variable names
-                    if (!variableNames.add(varName)) {
-                        System.err.println("Duplicate variable name in function body: " + varName);
+                    if (!declaredNames.add(varName)) {
+                        int line = statementCtx.getStart().getLine();
+                        int column = statementCtx.getStart().getCharPositionInLine();
+                        semanticErrors.add(new DuplicateVariableError(varName, line, column));
                     }
                 }
 
@@ -1210,6 +1250,7 @@ private Set<String> selectorSet = new HashSet<>();
 
         return functionBody;
     }
+
     @Override
     public ClassBody visitClass_body(ParserFile.Class_bodyContext ctx) {
         ClassBody classBody = new ClassBody();
@@ -1339,11 +1380,11 @@ private Set<String> selectorSet = new HashSet<>();
 
         HtmlDocument htmlDocument = (HtmlDocument) visitHtmlDocument(ctx.htmlDocument());
         template.setHtmlDocument(htmlDocument);
-        Row row = new Row();
-        row.setName("template");
-        row.setType("Template");
-        row.setValue("template value");
-        st.getRow().add(row);
+//        Row row = new Row();
+//        row.setName("template");
+//        row.setType("Template");
+//        row.setValue("template value");
+//        st.getRow().add(row);
 
         return template;
     }

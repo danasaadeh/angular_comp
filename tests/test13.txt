@@ -1,0 +1,4 @@
+function dana(){
+let i:number=5;
+let i:string="hello";
+}
