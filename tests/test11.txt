@@ -1,2 +1,2 @@
-let dana:string="hello";
-console.log(dana);
+let x:string="hello";
+console.log(x);

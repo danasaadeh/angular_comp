@@ -46,7 +46,7 @@ AWAIT      : 'await';
 SUPER   : 'super';
 
 ENUM    : 'enum';
-OF    : 'of';
+OF      : 'of';
 ABSTRACT: 'abstract';
 IMPLEMENTS : 'implements';
 IS: 'is';
@@ -66,7 +66,11 @@ INTERFACE  : 'interface';
 PACKAGE    : 'package';
 PROTECTED  : 'protected';
 STATIC     : 'static';
-DATA_TYPE: ANY_TYPE | NUMBER_TYPE | BOOLEAN_TYPE | STRING_TYPE |ARRAY_TYPE;
+DATA_TYPE: ANY_TYPE
+          | NUMBER_TYPE
+          | BOOLEAN_TYPE
+          | STRING_TYPE
+          | ARRAY_TYPE;
 
 SEA_WS: (' ' | '\t' | '\r'? '\n')+ ->skip;
 IF:'if';
@@ -90,11 +94,15 @@ VAR_TYPE       :'var';
 BOOLEAN_TYPE   : 'boolean';
 STRING_TYPE    : 'string';
 UNIQUE_TYPE    : 'unique';
-VAL:BOOLEAN_VAL|NUM_VAL|DOUBLE_VAL|STRING_VAL|UNDEFINED;
+VAL:BOOLEAN_VAL
+    |NUM_VAL
+    |DOUBLE_VAL
+    |STRING_VAL
+    |UNDEFINED;
 UNDEFINED:'undefined';
 BOOLEAN_VAL:'TRUE'|'true'|'FALSE'|'false';
-STRING_VAL: ('"' (~["\r\n] | '\\"')* '"') |
-            ('\'' (~['\r\n] | '\\"')* '\'');
+STRING_VAL: ('"' (~["\r\n] | '\\"')* '"')
+            |('\'' (~['\r\n] | '\\"')* '\'');
 NUM_VAL:'0'|'-'?[1-9][0-9]*;
 DOUBLE_VAL:NUM_VAL('.' [0-9]+)* ;
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
@@ -112,7 +120,12 @@ PLUS_PLUS:'++';
 MINUS_MINUS:'--';
 DIV:'/';
 MUL:'*';
-OPERATION:GREATER_THAN|LESS_THAN|GREATER_THAN_EQUALS|LESS_THAN_EQUALS|EQUALS|NOT_EQUALS;
+OPERATION:GREATER_THAN
+          |LESS_THAN
+          |GREATER_THAN_EQUALS
+          |LESS_THAN_EQUALS
+          |EQUALS
+          |NOT_EQUALS;
 EQUALS: '==';
 NOT: '!';
 NOT_EQUALS: '!=';
@@ -123,7 +136,8 @@ GREATER_THAN: '>';
 LESS_THAN_EQUALS: '<=';
 GREATER_THAN_EQUALS: '>=';
 
-LOGICAL_OPERATION: '&&' | '||' ;
+LOGICAL_OPERATION: '&&'
+                  | '||' ;
 
 
 

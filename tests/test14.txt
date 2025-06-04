@@ -1,0 +1,22 @@
+@Component({
+  selector: 'app-root'
+
+})
+@Component({
+  selector: 'app-root'
+
+})
+@Component({
+ template:`<div>hello</div> `
+
+})
+let num:number;
+num="hello";
+
+
+function enter(){
+let i:number=5;
+let i:string="hello";
+}
+
+console.log(hola);

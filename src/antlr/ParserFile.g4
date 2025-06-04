@@ -22,9 +22,9 @@ selector: SELECTOR COLON VAL COMMA?;
 
 template_Url: TEMPLATE_URL COLON VAL COMMA?;
 
-template:TEMPLATE COLON BACKTICK htmlDocument BACKTICK_CLOSE COMMA;
+template:TEMPLATE COLON BACKTICK htmlDocument BACKTICK_CLOSE COMMA?;
 
-imports:IMPORTS COLON SQUARE_OPEN ID (COMMA ID*)? SQUARE_CLOSE COMMA;
+imports:IMPORTS COLON SQUARE_OPEN ID (COMMA ID*)? SQUARE_CLOSE COMMA?;
 
 style_Urls: (STYLE_URL | STYLE_URLS) COLON VAL COMMA?;
 
@@ -127,7 +127,7 @@ return:
 function_body:
 	CURLY_OPEN (statements)* return? eos CURLY_CLOSE ;
 
- function_decl: (OVERRIDE)? FUNCTION ?  ID OPEN_B (parameter(COMMA parameter)*)? CLOSE_B (COLON (VOID|DATA_TYPE))? function_body
+function_decl: (OVERRIDE)? FUNCTION ?  ID OPEN_B (parameter(COMMA parameter)*)? CLOSE_B (COLON (VOID|DATA_TYPE))? function_body
     ;
 
 

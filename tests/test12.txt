@@ -1,6 +1,6 @@
 let num:number;
 num="hello";
 
-let dana:string;
-dana=20;
+let y:string;
+y=20;
 

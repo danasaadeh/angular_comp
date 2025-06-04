@@ -5,7 +5,7 @@ public class Row {
     private String type;
     private String value;
     private String scope;
-    private boolean duplicateReported;
+
 
     // New fields for semantic checks
     private String kind;      // e.g., "variable", "component"
@@ -14,7 +14,7 @@ public class Row {
     private int column;
 
     public Row() {
-        this.duplicateReported = false;
+
     }
 
     // ---- Existing Getters and Setters ----
@@ -50,13 +50,13 @@ public class Row {
         this.scope = scope;
     }
 
-    public boolean isDuplicateReported() {
-        return duplicateReported;
-    }
-
-    public void setDuplicateReported(boolean duplicateReported) {
-        this.duplicateReported = duplicateReported;
-    }
+//    public boolean isDuplicateReported() {
+//        return duplicateReported;
+//    }
+//
+//    public void setDuplicateReported(boolean duplicateReported) {
+//        this.duplicateReported = duplicateReported;
+//    }
 
     // ---- New Getters and Setters for Semantic Analysis ----
     public String getKind() {

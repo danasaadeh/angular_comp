@@ -15,7 +15,7 @@ import static org.antlr.v4.runtime.CharStreams.fromFileName;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String source = "tests/test8.txt";
+        String source = "tests/test14.txt";
         CharStream sc = fromFileName(source);
         LexerFile lexer = new LexerFile(sc);
         CommonTokenStream token = new CommonTokenStream(lexer);
