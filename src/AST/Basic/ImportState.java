@@ -1,33 +1,25 @@
 package AST.Basic;
 
 import AST.Instruction;
+import java.util.List;
 
-public  class ImportState extends Instruction {
-    private String importType; //  or 'ID'
-
+public class ImportState extends Instruction {
+    private List<String> importTypes; // List of IDs (e.g., NgForOf, NgIf, ...)
     private String fromPath;
 
-    public ImportState() {
+    public ImportState() {}
 
-        this.importType = importType;
-
-        this.fromPath = fromPath;
+    public List<String> getImportTypes() {
+        return importTypes;
     }
 
-    public String getImportType() {
-        return importType;
+    public void setImportTypes(List<String> importTypes) {
+        this.importTypes = importTypes;
     }
-
-    public void setImportType(String importType) {
-        this.importType = importType;
-    }
-
 
     public void setFromPath(String fromPath) {
         this.fromPath = fromPath;
     }
-
-
 
     public String getFromPath() {
         return fromPath;
@@ -35,19 +27,14 @@ public  class ImportState extends Instruction {
 
     @Override
     public String toString() {
-        return
-                "\n \t\t\t\t\t\t\t importType='" + importType + '\'' +
-
-                "\n \t\t\t\t\t\t\t fromPath='" + fromPath + '\''
-                ;
+        return "\n \t\t\t\t\t\t\t importTypes=" + importTypes +
+                "\n \t\t\t\t\t\t\t fromPath='" + fromPath + '\'';
     }
-    public String print(){
 
-            return "\n Import{" +
-                    "\n importType='" + importType + '\'' +
-
-                    "\n fromPath='" + fromPath + '\'' +
-                    '}';
-
+    public String print() {
+        return "\n Import{" +
+                "\n importTypes=" + importTypes +
+                "\n fromPath='" + fromPath + '\'' +
+                '}';
     }
 }

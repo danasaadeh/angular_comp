@@ -26,6 +26,7 @@ import AST.Basic.Loop.While;
 import AST.Html.*;
 import AST.Instruction;
 import AST.Program;
+
 import AST.Statements;
 import Symbol_table.Row;
 import Symbol_table.SymbolTable;
@@ -38,6 +39,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AngularVisitor extends ParserFileBaseVisitor {
 
@@ -53,16 +55,28 @@ public class AngularVisitor extends ParserFileBaseVisitor {
     @Override
     public Program visitProgram(ParserFile.ProgramContext ctx) {
         st.enterScope("global");
-        Program program = new Program();
-        for (int i = 0; i<ctx.instruction().size(); i++) {
-            if (ctx.instruction(i)!=null)
+        Program program = new Instruction(); // Use interface type, concrete class instantiation
+        for (int i = 0; i < ctx.instruction().size(); i++) {
+            if (ctx.instruction(i) != null)
                 program.setInstructions_list((Instruction) visit(ctx.instruction(i)));
         }
-        // this.st.print();
         st.exitScope();
         return program;
-
     }
+
+//    @Override
+//    public Program visitProgram(ParserFile.ProgramContext ctx) {
+//        st.enterScope("global");
+//        Program program = new Program();
+//        for (int i = 0; i<ctx.instruction().size(); i++) {
+//            if (ctx.instruction(i)!=null)
+//                program.setInstructions_list((Instruction) visit(ctx.instruction(i)));
+//        }
+//        // this.st.print();
+//        st.exitScope();
+//        return program;
+//
+//    }
 
     @Override
     public Object visitIMPORT_INSTRUCT(ParserFile.IMPORT_INSTRUCTContext ctx) {
@@ -202,12 +216,22 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         int column = ctx.getStart().getCharPositionInLine();
         String componentName = "component_" + line;
 
+        // Duplicate/Missing selector checks
         if (selector == null || selector.getValue() == null || selector.getValue().isEmpty()) {
             semanticErrors.add(new MissingSelectorError(componentName, line, column));
         } else {
             String selectorValue = selector.getValue();
             if (!selectorSet.add(selectorValue)) {
                 semanticErrors.add(new DuplicateSelectorError(selectorValue, line, column));
+            }
+        }
+
+        // ✅ Check that each ID in the `imports: [...]` list has a corresponding import
+        if (imports != null) {
+            for (String used : imports.getImports()) {
+                if (st.lookup(used) == null) {
+                    semanticErrors.add(new MissingComponentImportError(used, line, column));
+                }
             }
         }
 
@@ -249,7 +273,10 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
         Imports imports = new Imports(importsList);
 
-
+        Row row = new Row();
+        row.setType("Imports");
+        row.setValue(importsList.toString());
+        st.getRow().add(row);
 
         return imports;
 
@@ -1086,35 +1113,35 @@ row.setName("object");
 
 
     @Override
-    public ImportState visitImport_statement(ParserFile.Import_statementContext ctx) {  ImportState importStatement = new ImportState();
+    public ImportState visitImport_statement(ParserFile.Import_statementContext ctx) {
+        ImportState importStatement = new ImportState();
 
+        List<String> importedIds = ctx.ID().stream()
+                .map(TerminalNode::getText)
+                .collect(Collectors.toList());
 
-        if (ctx.ID() != null && !ctx.ID().isEmpty()) {
+        importStatement.setImportTypes(importedIds);
 
-            importStatement.setImportType(ctx.ID().get(0).getText());
-
-
-            if (ctx.VAL() != null ) {
-
-                importStatement.setFromPath(ctx.VAL().getText());
-            } else {
-
-                System.err.println("Warning: No 'from' path found in import statement.");
-            }
-        } else {
-
-            System.err.println("Warning: No IDs found in import statement.");
+        if (ctx.VAL() != null) {
+            importStatement.setFromPath(ctx.VAL().getText());
         }
 
-
-        Row row = new Row();
-        row.setType("Import");
-        row.setValue(importStatement.toString());
-        st.getRow().add(row);
-
+        // Add individual entries to symbol table
+        for (String id : importedIds) {
+            Row row = new Row();
+            row.setName(id);
+            row.setType("Import");
+            row.setValue(importStatement.getFromPath());
+            row.setScope(st.getCurrentScope());
+            row.setKind("import");
+            row.setLine(ctx.getStart().getLine());
+            row.setColumn(ctx.getStart().getCharPositionInLine());
+            st.add(id, row); // Add per-symbol entry
+        }
 
         return importStatement;
     }
+
 
     @Override
     public Object visitEos(ParserFile.EosContext ctx) {
