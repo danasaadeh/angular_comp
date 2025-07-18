@@ -1,0 +1,7 @@
+Semantic check errors:
+Line 6: (Error: Duplicate selector in same file: 'app-root')
+Line 10: (Error: Component component_10 is missing a selector)
+Line 14: (Error: Type mismatch for variable 'num'. Assigned: string, Expected: number)
+Line 19: (Error: Redeclared variable in the same scope: i)
+Line 19: (Error: Redeclared variable in the same scope: i)
+Line 22: (Error: Undefined variable: hola)

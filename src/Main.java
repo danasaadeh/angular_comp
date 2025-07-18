@@ -1,5 +1,4 @@
 import AST.Program;
-import Symbol_table.SymbolTable;
 import Visitors.AngularVisitor;
 import antlr.LexerFile;
 import antlr.ParserFile;
@@ -17,7 +16,7 @@ import static org.antlr.v4.runtime.CharStreams.fromFileName;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String source = "tests/test11.txt";
+        String source = "tests/test14.txt";
         String output = "output.txt";
 
         CharStream sc = fromFileName(source);
@@ -26,11 +25,11 @@ public class Main {
         ParserFile parser = new ParserFile(token);
         ParseTree tree = parser.program();
 
-        SymbolTable symbolTable = new SymbolTable();
         AngularVisitor visitor = new AngularVisitor();
         Program doc = (Program) visitor.visit(tree);
         List<SemanticError> errors = visitor.getSemanticErrors();
 
+        // Write semantic errors to output file
         try (PrintWriter writer = new PrintWriter(new FileWriter(output))) {
             if (!errors.isEmpty()) {
                 writer.println("Semantic check errors:");
@@ -40,14 +39,20 @@ public class Main {
             } else {
                 writer.println("No semantic errors found.");
             }
+        }
 
-            // Write AST
-            writer.println();
-            writer.println(doc.print());
+        // Output AST and symbol table to console
+        System.out.println("Abstract Syntax Tree:");
+        System.out.println(doc.print());
+        System.out.println();
 
-            writer.println();
-            visitor.st.writeTo(writer);}
+        // Print the populated symbol table to console
+        visitor.st.writeTo();
 
-        System.out.println("Compilation output written to: " + output);
+        // --------------------------------------------------
+        // Print five semantic-error tables in console
+        semantic.SemanticErrorTablePrinter.printTables(errors);
+
+
     }
 }

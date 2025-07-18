@@ -5,7 +5,6 @@ import semantic.DuplicateVariableError;
 import semantic.MissingSelectorError;
 import semantic.SemanticError;
 
-import java.io.PrintWriter;
 import java.util.*;
 
 public class SymbolTable {
@@ -106,21 +105,21 @@ public class SymbolTable {
         return all;
     }
 
-    public void writeTo(PrintWriter writer) {
-        writer.println("Symbol Table:");
-        writer.println("ID\t| Variable Name\t\t| Type\t\t | \t\t Value  \t\t\t | Scope");
-        writer.println("=============================================================================");
+    public void writeTo() {
+        System.out.println("Symbol Table:");
+        System.out.println("ID\t| Variable Name\t\t| Type\t\t | \t\t Value  \t\t\t | Scope");
+        System.out.println("=============================================================================");
 
         for (int i = 0; i < row.size(); i++) {
             Row currentRow = row.get(i);
             if (currentRow != null) {
-                writer.printf("%d\t| %s\t\t| %s \t\t| %s\t\t| %s%n",
+                System.out.printf("%d\t| %s\t\t| %s \t\t| %s\t\t| %s%n",
                         i + 1,
                         currentRow.getName(),
                         currentRow.getType(),
                         currentRow.getValue(),
                         currentRow.getScope());
-                writer.println("---------------------------------------------------------------------------");
+                System.out.println("---------------------------------------------------------------------------");
             }
         }
     }
