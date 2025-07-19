@@ -52,12 +52,13 @@ statements:
   |return                   #RETRUN_STATE
   | comment                 #COMMENT_STATE;
 
-init:HELPERS?  ID COLON DATA_TYPE EQUAL VAL  eos;
-init_array:HELPERS? ID (COLON DATA_TYPE SQUARE_OPEN SQUARE_CLOSE)? EQUAL SQUARE_OPEN value (COMMA value)* SQUARE_CLOSE eos;
 value:  VAL
       | object;
+init:HELPERS?  ID COLON DATA_TYPE EQUAL value  eos;
+init_array:HELPERS? ID (COLON DATA_TYPE SQUARE_OPEN SQUARE_CLOSE)? EQUAL SQUARE_OPEN value (COMMA value)* SQUARE_CLOSE eos;
 
-object:CURLY_OPEN objectProperty (COMMA objectProperty)* CURLY_CLOSE;
+
+object:CURLY_OPEN objectProperty (COMMA objectProperty)* COMMA? CURLY_CLOSE COMMA?;
 
 objectProperty: ID COLON VAL;
 
@@ -114,7 +115,9 @@ expr:
 
 print: CONSOLE DOT LOG OPEN_B (expr)? CLOSE_B eos;
 
-parameter: MODIFIER? ID (COLON (DATA_TYPE|ID))?;
+parameter: MODIFIER? ID COLON typeReference;
+
+typeReference: DATA_TYPE | ID; // DATA_TYPE includes primitives
 
 return:
 	RETURN (ID

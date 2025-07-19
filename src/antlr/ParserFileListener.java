@@ -382,6 +382,16 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitCOMMENT_STATE(ParserFile.COMMENT_STATEContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ParserFile#value}.
+	 * @param ctx the parse tree
+	 */
+	void enterValue(ParserFile.ValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#value}.
+	 * @param ctx the parse tree
+	 */
+	void exitValue(ParserFile.ValueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ParserFile#init}.
 	 * @param ctx the parse tree
 	 */
@@ -401,16 +411,6 @@ public interface ParserFileListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitInit_array(ParserFile.Init_arrayContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ParserFile#value}.
-	 * @param ctx the parse tree
-	 */
-	void enterValue(ParserFile.ValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ParserFile#value}.
-	 * @param ctx the parse tree
-	 */
-	void exitValue(ParserFile.ValueContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ParserFile#object}.
 	 * @param ctx the parse tree
@@ -743,6 +743,16 @@ public interface ParserFileListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParameter(ParserFile.ParameterContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ParserFile#typeReference}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeReference(ParserFile.TypeReferenceContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#typeReference}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeReference(ParserFile.TypeReferenceContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ParserFile#return}.
 	 * @param ctx the parse tree
