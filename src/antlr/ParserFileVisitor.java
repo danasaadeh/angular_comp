@@ -57,6 +57,12 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitComponentBody(ParserFile.ComponentBodyContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ParserFile#stanalone}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStanalone(ParserFile.StanaloneContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ParserFile#selector}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

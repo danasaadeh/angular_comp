@@ -101,6 +101,18 @@ public class ParserFileBaseListener implements ParserFileListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStanalone(ParserFile.StanaloneContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStanalone(ParserFile.StanaloneContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterSelector(ParserFile.SelectorContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -3,6 +3,7 @@ lexer grammar TSLexer;
 COMPONENT: '@Component';
 INJECTABLE: '@Injectable';
 PROVIDED_IN: 'providedIn';
+STANDALONE:'standalone';
 SELECTOR: 'selector';
 TEMPLATE: 'template';
 
@@ -70,7 +71,10 @@ DATA_TYPE: ANY_TYPE
           | NUMBER_TYPE
           | BOOLEAN_TYPE
           | STRING_TYPE
-          | ARRAY_TYPE;
+          | ARRAY_TYPE
+          |ROUTER
+          ;
+
 
 SEA_WS: (' ' | '\t' | '\r'? '\n')+ ->skip;
 IF:'if';
@@ -87,6 +91,7 @@ CURLY_CLOSE:'}';
 ARRAY_TYPE     :'array';
 ANY_TYPE       : 'any';
 NUMBER_TYPE    : 'number';
+ROUTER:        'Router';
 HELPERS:LET|VAR_TYPE|CONST;
 LET:'let';
 CONST   : 'const';

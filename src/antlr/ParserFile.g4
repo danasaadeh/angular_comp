@@ -16,8 +16,8 @@ instruction:
 
 component:COMPONENT OPEN_B CURLY_OPEN componentBody CURLY_CLOSE CLOSE_B ;
 
-componentBody: selector? (template_Url|template)? imports? (style_Urls)?;
-
+componentBody: selector? stanalone? (template_Url|template)? imports? (style_Urls)?;
+stanalone:STANDALONE COLON VAL COMMA?;
 selector: SELECTOR COLON VAL COMMA?;
 
 template_Url: TEMPLATE_URL COLON VAL COMMA?;
@@ -114,7 +114,7 @@ expr:
 
 print: CONSOLE DOT LOG OPEN_B (expr)? CLOSE_B eos;
 
-parameter: MODIFIER? ID (COLON DATA_TYPE)?;
+parameter: MODIFIER? ID (COLON (DATA_TYPE|ID))?;
 
 return:
 	RETURN (ID

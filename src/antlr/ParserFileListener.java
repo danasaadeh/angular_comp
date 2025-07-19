@@ -86,6 +86,16 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitComponentBody(ParserFile.ComponentBodyContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ParserFile#stanalone}.
+	 * @param ctx the parse tree
+	 */
+	void enterStanalone(ParserFile.StanaloneContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#stanalone}.
+	 * @param ctx the parse tree
+	 */
+	void exitStanalone(ParserFile.StanaloneContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ParserFile#selector}.
 	 * @param ctx the parse tree
 	 */
