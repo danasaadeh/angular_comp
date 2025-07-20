@@ -161,8 +161,8 @@ scriptletOrSeaWs: SCRIPTLET
 htmlElements: htmlMisc* htmlElement htmlMisc*;
 
 htmlElement:
-	TAG_OPEN TAG_NAME htmlAttribute* binding? directive?
-	| directive? htmlAttribute* binding? (
+	TAG_OPEN TAG_NAME htmlAttribute* binding? hash? directive?
+	| directive? htmlAttribute* binding?  hash?(
 		TAG_CLOSE (
 			htmlContent TAG_OPEN TAG_SLASH TAG_NAME TAG_CLOSE
 		)?
@@ -174,6 +174,7 @@ htmlElement:
 
 directive: DIRECTIVE TAG_EQUALS ATTVALUE_VALUE;
 binding: BINDING TAG_EQUALS ATTVALUE_VALUE;
+hash:HASH TAG_EQUALS ATTVALUE_VALUE;
 
 htmlContent:
 	htmlChardata? ((htmlElement | CDATA | htmlComment) htmlChardata?)*;
