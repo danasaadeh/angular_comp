@@ -5,7 +5,7 @@ INJECTABLE: '@Injectable';
 PROVIDED_IN: 'providedIn';
 SELECTOR: 'selector';
 TEMPLATE: 'template';
-
+SPREAD         : '...';
 
 IMPORTS:'imports';
 TEMPLATE_URL:'templateUrl';
@@ -105,7 +105,8 @@ STRING_VAL: ('"' (~["\r\n] | '\\"')* '"')
             |('\'' (~['\r\n] | '\\"')* '\'');
 NUM_VAL:'0'|'-'?[1-9][0-9]*;
 DOUBLE_VAL:NUM_VAL('.' [0-9]+)* ;
-ID: [a-zA-Z_][a-zA-Z0-9_]*;
+ID: [a-zA-Z_$][a-zA-Z0-9_$]*;
+
 //ID:(('_')?[a-zA-Z])[a-zA-Z0-9]*;
 COLON:':';
 COMMA:',';

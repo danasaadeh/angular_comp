@@ -69,7 +69,7 @@ assign:
  HELPERS? ID EQUAL (VAL | ID ) eos;
 
 
-this_exp: THIS DOT ID+ EQUAL (VAL | ID) eos;
+
 
 super_exp: SUPER DOT ID+(DOT ID)* EQUAL (VAL|ID) eos
           | SUPER OPEN_B ID (COMMA ID)* CLOSE_B eos;
@@ -100,17 +100,80 @@ for:FOR OPEN_B init SEMI_COLON condition SEMI_COLON expr CLOSE_B body;
 while:
 	WHILE OPEN_B condition (LOGICAL_OPERATION condition)* CLOSE_B body;
 
-expr:
-	  expr MUL expr      #MULTI
-	| expr DIV expr      #DIV
-	| expr PLUS expr     #PLUS
-	| expr MINUS expr    #MINUS
-	| expr PLUS_PLUS     #PLUS2
-	| expr MINUS_MINUS   #MINUS2
-	| VAL                #VAL_EXPR
-	| ID                 #ID_EXPR
-	| SENTENCE           #SENT_EXPR
-	 ;
+expr
+  : expr EQUAL expr          #ASSIGN_EXPR
+  | expr MUL expr            #MULTI
+  | expr DIV expr            #DIV
+  | expr PLUS expr           #PLUS
+  | expr MINUS expr          #MINUS
+  | expr PLUS_PLUS           #PLUS2
+  | expr MINUS_MINUS         #MINUS2
+  | VAL                      #VAL_EXPR
+  | ID                       #ID_EXPR
+  | SENTENCE                 #SENT_EXPR
+  | object                   #OBJECT_EXPR
+  | array                    #ARRAY_EXPR
+  | method_call              #METHOD_CALL_EXPR
+  | THIS DOT property_chain  #THIS_PROP_EXPR
+  | NEW ID (LESS_THAN DATA_TYPE GREATER_THAN)? OPEN_B (expr (COMMA expr)*)? CLOSE_B   #NEW_EXPR
+  | arrowFunction            #ARROW_FUNC_EXPR
+  ;
+
+
+
+
+
+//this_exp: THIS DOT ID+ EQUAL (VAL | ID) eos;
+this_exp
+  : THIS DOT property_chain (assignment | post_op)? eos
+  ;
+
+
+// property_chain supports nested method and property access
+property_chain
+  : ID (DOT ID)* (DOT method_call)?
+  ;
+// method call like: .next(), .addItem(arg)
+
+method_call
+  : ID OPEN_B (expr (COMMA expr)*)? CLOSE_B
+  ;
+
+
+// supports assignments like = [], = new Something(), etc.
+assignment
+  : EQUAL expr
+  ;
+
+
+// ++ or -- after the expression
+post_op
+  : PLUS_PLUS
+  | MINUS_MINUS
+  ;
+
+
+
+
+array
+  : SQUARE_OPEN (arrayElement (COMMA arrayElement)*)? SQUARE_CLOSE
+  ;
+
+
+
+arrayElement
+  : spreadElement
+  | expr
+  ;
+
+  spreadElement
+    : SPREAD expr
+    ;
+
+arrowFunction
+  : OPEN_B ID CLOSE_B ARROW OPEN_B (expr | assignment) CLOSE_B
+  ;
+
 
 print: CONSOLE DOT LOG OPEN_B (expr)? CLOSE_B eos;
 
