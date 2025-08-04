@@ -16,8 +16,8 @@ instruction:
 
 component:COMPONENT OPEN_B CURLY_OPEN componentBody CURLY_CLOSE CLOSE_B ;
 
-componentBody: selector? (template_Url|template)? imports? (style_Urls)?;
-
+componentBody: selector? stanalone? (template_Url|template)? imports? (style_Urls)?;
+stanalone:STANDALONE COLON VAL COMMA?;
 selector: SELECTOR COLON VAL COMMA?;
 
 template_Url: TEMPLATE_URL COLON VAL COMMA?;
@@ -52,14 +52,15 @@ statements:
   |return                   #RETRUN_STATE
   | comment                 #COMMENT_STATE;
 
-init:HELPERS?  ID COLON DATA_TYPE EQUAL VAL  eos;
-init_array:HELPERS? ID (COLON DATA_TYPE SQUARE_OPEN SQUARE_CLOSE)? EQUAL SQUARE_OPEN value (COMMA value)* SQUARE_CLOSE eos;
 value:  VAL
       | object;
+init:HELPERS?  ID COLON DATA_TYPE EQUAL value  eos;
+init_array :EXPORT? HELPERS?   ID (COLON typeReference (SQUARE_OPEN SQUARE_CLOSE)?)? EQUAL SQUARE_OPEN value (COMMA value)* SQUARE_CLOSE eos;
 
-object:CURLY_OPEN objectProperty (COMMA objectProperty)* CURLY_CLOSE;
 
-objectProperty: ID COLON VAL;
+object:CURLY_OPEN objectProperty (COMMA objectProperty)* COMMA? CURLY_CLOSE COMMA?;
+
+objectProperty: ID COLON (VAL|ID);
 
 
 
@@ -177,7 +178,9 @@ arrowFunction
 
 print: CONSOLE DOT LOG OPEN_B (expr)? CLOSE_B eos;
 
-parameter: MODIFIER? ID (COLON DATA_TYPE)?;
+parameter: MODIFIER? ID COLON typeReference;
+
+typeReference: DATA_TYPE | ID; // DATA_TYPE includes primitives
 
 return:
 	RETURN (ID
@@ -221,8 +224,8 @@ scriptletOrSeaWs: SCRIPTLET
 htmlElements: htmlMisc* htmlElement htmlMisc*;
 
 htmlElement:
-	TAG_OPEN TAG_NAME htmlAttribute* binding? directive?
-	| directive? htmlAttribute* binding? (
+	TAG_OPEN TAG_NAME htmlAttribute* binding? hash? directive?
+	| directive? htmlAttribute* binding?  hash?(
 		TAG_CLOSE (
 			htmlContent TAG_OPEN TAG_SLASH TAG_NAME TAG_CLOSE
 		)?
@@ -234,6 +237,7 @@ htmlElement:
 
 directive: DIRECTIVE TAG_EQUALS ATTVALUE_VALUE;
 binding: BINDING TAG_EQUALS ATTVALUE_VALUE;
+hash:HASH TAG_EQUALS ATTVALUE_VALUE;
 
 htmlContent:
 	htmlChardata? ((htmlElement | CDATA | htmlComment) htmlChardata?)*;
