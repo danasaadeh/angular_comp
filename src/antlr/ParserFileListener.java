@@ -238,6 +238,18 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitINIT_ARRAY_STATE(ParserFile.INIT_ARRAY_STATEContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code READ_ONLY_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterREAD_ONLY_STATE(ParserFile.READ_ONLY_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code READ_ONLY_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitREAD_ONLY_STATE(ParserFile.READ_ONLY_STATEContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code DECLARE_STATE}
 	 * labeled alternative in {@link ParserFile#statements}.
 	 * @param ctx the parse tree
@@ -432,6 +444,26 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitObjectProperty(ParserFile.ObjectPropertyContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ParserFile#readOnly}.
+	 * @param ctx the parse tree
+	 */
+	void enterReadOnly(ParserFile.ReadOnlyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#readOnly}.
+	 * @param ctx the parse tree
+	 */
+	void exitReadOnly(ParserFile.ReadOnlyContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ParserFile#instance}.
+	 * @param ctx the parse tree
+	 */
+	void enterInstance(ParserFile.InstanceContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#instance}.
+	 * @param ctx the parse tree
+	 */
+	void exitInstance(ParserFile.InstanceContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ParserFile#declaration}.
 	 * @param ctx the parse tree
 	 */
@@ -451,16 +483,6 @@ public interface ParserFileListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAssign(ParserFile.AssignContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ParserFile#this_exp}.
-	 * @param ctx the parse tree
-	 */
-	void enterThis_exp(ParserFile.This_expContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ParserFile#this_exp}.
-	 * @param ctx the parse tree
-	 */
-	void exitThis_exp(ParserFile.This_expContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ParserFile#super_exp}.
 	 * @param ctx the parse tree
@@ -616,6 +638,90 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitWhile(ParserFile.WhileContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code SENT_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterSENT_EXPR(ParserFile.SENT_EXPRContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code SENT_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitSENT_EXPR(ParserFile.SENT_EXPRContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code METHOD_CALL_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterMETHOD_CALL_EXPR(ParserFile.METHOD_CALL_EXPRContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code METHOD_CALL_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitMETHOD_CALL_EXPR(ParserFile.METHOD_CALL_EXPRContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code MINUS2}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterMINUS2(ParserFile.MINUS2Context ctx);
+	/**
+	 * Exit a parse tree produced by the {@code MINUS2}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitMINUS2(ParserFile.MINUS2Context ctx);
+	/**
+	 * Enter a parse tree produced by the {@code THIS_PROP_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterTHIS_PROP_EXPR(ParserFile.THIS_PROP_EXPRContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code THIS_PROP_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitTHIS_PROP_EXPR(ParserFile.THIS_PROP_EXPRContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code NEW_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterNEW_EXPR(ParserFile.NEW_EXPRContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code NEW_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitNEW_EXPR(ParserFile.NEW_EXPRContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ARROW_FUNC_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterARROW_FUNC_EXPR(ParserFile.ARROW_FUNC_EXPRContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ARROW_FUNC_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitARROW_FUNC_EXPR(ParserFile.ARROW_FUNC_EXPRContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code MINUS}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterMINUS(ParserFile.MINUSContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code MINUS}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitMINUS(ParserFile.MINUSContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code DIV}
 	 * labeled alternative in {@link ParserFile#expr}.
 	 * @param ctx the parse tree
@@ -640,6 +746,18 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitID_EXPR(ParserFile.ID_EXPRContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code ASSIGN_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterASSIGN_EXPR(ParserFile.ASSIGN_EXPRContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ASSIGN_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitASSIGN_EXPR(ParserFile.ASSIGN_EXPRContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code PLUS2}
 	 * labeled alternative in {@link ParserFile#expr}.
 	 * @param ctx the parse tree
@@ -651,18 +769,6 @@ public interface ParserFileListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPLUS2(ParserFile.PLUS2Context ctx);
-	/**
-	 * Enter a parse tree produced by the {@code SENT_EXPR}
-	 * labeled alternative in {@link ParserFile#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterSENT_EXPR(ParserFile.SENT_EXPRContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code SENT_EXPR}
-	 * labeled alternative in {@link ParserFile#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitSENT_EXPR(ParserFile.SENT_EXPRContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code VAL_EXPR}
 	 * labeled alternative in {@link ParserFile#expr}.
@@ -676,17 +782,29 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitVAL_EXPR(ParserFile.VAL_EXPRContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code MINUS2}
+	 * Enter a parse tree produced by the {@code OBJECT_EXPR}
 	 * labeled alternative in {@link ParserFile#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterMINUS2(ParserFile.MINUS2Context ctx);
+	void enterOBJECT_EXPR(ParserFile.OBJECT_EXPRContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code MINUS2}
+	 * Exit a parse tree produced by the {@code OBJECT_EXPR}
 	 * labeled alternative in {@link ParserFile#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitMINUS2(ParserFile.MINUS2Context ctx);
+	void exitOBJECT_EXPR(ParserFile.OBJECT_EXPRContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ARRAY_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterARRAY_EXPR(ParserFile.ARRAY_EXPRContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ARRAY_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitARRAY_EXPR(ParserFile.ARRAY_EXPRContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code MULTI}
 	 * labeled alternative in {@link ParserFile#expr}.
@@ -712,17 +830,95 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitPLUS(ParserFile.PLUSContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code MINUS}
-	 * labeled alternative in {@link ParserFile#expr}.
+	 * Enter a parse tree produced by {@link ParserFile#this_exp}.
 	 * @param ctx the parse tree
 	 */
-	void enterMINUS(ParserFile.MINUSContext ctx);
+	void enterThis_exp(ParserFile.This_expContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code MINUS}
-	 * labeled alternative in {@link ParserFile#expr}.
+	 * Exit a parse tree produced by {@link ParserFile#this_exp}.
 	 * @param ctx the parse tree
 	 */
-	void exitMINUS(ParserFile.MINUSContext ctx);
+	void exitThis_exp(ParserFile.This_expContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ParserFile#property_chain}.
+	 * @param ctx the parse tree
+	 */
+	void enterProperty_chain(ParserFile.Property_chainContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#property_chain}.
+	 * @param ctx the parse tree
+	 */
+	void exitProperty_chain(ParserFile.Property_chainContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ParserFile#method_call}.
+	 * @param ctx the parse tree
+	 */
+	void enterMethod_call(ParserFile.Method_callContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#method_call}.
+	 * @param ctx the parse tree
+	 */
+	void exitMethod_call(ParserFile.Method_callContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ParserFile#assignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssignment(ParserFile.AssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#assignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssignment(ParserFile.AssignmentContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ParserFile#post_op}.
+	 * @param ctx the parse tree
+	 */
+	void enterPost_op(ParserFile.Post_opContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#post_op}.
+	 * @param ctx the parse tree
+	 */
+	void exitPost_op(ParserFile.Post_opContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ParserFile#array}.
+	 * @param ctx the parse tree
+	 */
+	void enterArray(ParserFile.ArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#array}.
+	 * @param ctx the parse tree
+	 */
+	void exitArray(ParserFile.ArrayContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ParserFile#arrayElement}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrayElement(ParserFile.ArrayElementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#arrayElement}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrayElement(ParserFile.ArrayElementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ParserFile#spreadElement}.
+	 * @param ctx the parse tree
+	 */
+	void enterSpreadElement(ParserFile.SpreadElementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#spreadElement}.
+	 * @param ctx the parse tree
+	 */
+	void exitSpreadElement(ParserFile.SpreadElementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ParserFile#arrowFunction}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrowFunction(ParserFile.ArrowFunctionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#arrowFunction}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrowFunction(ParserFile.ArrowFunctionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ParserFile#print}.
 	 * @param ctx the parse tree
@@ -913,6 +1109,16 @@ public interface ParserFileListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBinding(ParserFile.BindingContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ParserFile#hash}.
+	 * @param ctx the parse tree
+	 */
+	void enterHash(ParserFile.HashContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ParserFile#hash}.
+	 * @param ctx the parse tree
+	 */
+	void exitHash(ParserFile.HashContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ParserFile#htmlContent}.
 	 * @param ctx the parse tree

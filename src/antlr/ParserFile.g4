@@ -39,6 +39,8 @@ statements:
   | constructor             #CONSTR_STATE
   | init                    #INIT_STATE
   |init_array               #INIT_ARRAY_STATE
+  |readOnly                #READ_ONLY_STATE
+  |instance                  #INSTANCE_STATE
   | declaration             #DECLARE_STATE
   | assign                  #ASSIGN_STATE
   | if_condition            #IF_CONDITION_STATE
@@ -52,9 +54,10 @@ statements:
   |return                   #RETRUN_STATE
   | comment                 #COMMENT_STATE;
 
+
 value:  VAL
       | object;
-init:HELPERS?  ID COLON DATA_TYPE EQUAL value  eos;
+init:MODIFIER? HELPERS?  ID COLON DATA_TYPE EQUAL value  eos;
 init_array :EXPORT? HELPERS?   ID (COLON typeReference (SQUARE_OPEN SQUARE_CLOSE)?)? EQUAL SQUARE_OPEN value (COMMA value)* SQUARE_CLOSE eos;
 
 
@@ -63,7 +66,8 @@ object:CURLY_OPEN objectProperty (COMMA objectProperty)* COMMA? CURLY_CLOSE COMM
 objectProperty: ID COLON (VAL|ID);
 
 
-
+readOnly:declaration EQUAL this_exp;
+instance : declaration EQUAL NEW ID OPERATION DATA_TYPE SQUARE_OPEN SQUARE_CLOSE OPERATION OPEN_B array CLOSE_B SEMI_COLON;
 declaration:MODIFIER? HELPERS? ID (COLON DATA_TYPE)? eos	;
 
 assign:

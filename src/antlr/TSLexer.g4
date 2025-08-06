@@ -61,9 +61,12 @@ MODIFIER
     : PUBLIC
     | PRIVATE
     | PROTECTED
+    |READ_ONLY
     ;
 PRIVATE    : 'private';
 PUBLIC     : 'public';
+READ_ONLY  : 'readonly';
+
 INTERFACE  : 'interface';
 PACKAGE    : 'package';
 PROTECTED  : 'protected';

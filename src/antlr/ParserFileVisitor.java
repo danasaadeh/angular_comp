@@ -147,6 +147,13 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitINIT_ARRAY_STATE(ParserFile.INIT_ARRAY_STATEContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code READ_ONLY_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitREAD_ONLY_STATE(ParserFile.READ_ONLY_STATEContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code DECLARE_STATE}
 	 * labeled alternative in {@link ParserFile#statements}.
 	 * @param ctx the parse tree
@@ -261,6 +268,18 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitObjectProperty(ParserFile.ObjectPropertyContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ParserFile#readOnly}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReadOnly(ParserFile.ReadOnlyContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ParserFile#instance}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInstance(ParserFile.InstanceContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ParserFile#declaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -272,12 +291,6 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAssign(ParserFile.AssignContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ParserFile#this_exp}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitThis_exp(ParserFile.This_expContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ParserFile#super_exp}.
 	 * @param ctx the parse tree
@@ -370,6 +383,55 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitWhile(ParserFile.WhileContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code SENT_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSENT_EXPR(ParserFile.SENT_EXPRContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code METHOD_CALL_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMETHOD_CALL_EXPR(ParserFile.METHOD_CALL_EXPRContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code MINUS2}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMINUS2(ParserFile.MINUS2Context ctx);
+	/**
+	 * Visit a parse tree produced by the {@code THIS_PROP_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTHIS_PROP_EXPR(ParserFile.THIS_PROP_EXPRContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NEW_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNEW_EXPR(ParserFile.NEW_EXPRContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ARROW_FUNC_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitARROW_FUNC_EXPR(ParserFile.ARROW_FUNC_EXPRContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code MINUS}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMINUS(ParserFile.MINUSContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code DIV}
 	 * labeled alternative in {@link ParserFile#expr}.
 	 * @param ctx the parse tree
@@ -384,19 +446,19 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitID_EXPR(ParserFile.ID_EXPRContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code ASSIGN_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitASSIGN_EXPR(ParserFile.ASSIGN_EXPRContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code PLUS2}
 	 * labeled alternative in {@link ParserFile#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitPLUS2(ParserFile.PLUS2Context ctx);
-	/**
-	 * Visit a parse tree produced by the {@code SENT_EXPR}
-	 * labeled alternative in {@link ParserFile#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSENT_EXPR(ParserFile.SENT_EXPRContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code VAL_EXPR}
 	 * labeled alternative in {@link ParserFile#expr}.
@@ -405,12 +467,19 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVAL_EXPR(ParserFile.VAL_EXPRContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code MINUS2}
+	 * Visit a parse tree produced by the {@code OBJECT_EXPR}
 	 * labeled alternative in {@link ParserFile#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMINUS2(ParserFile.MINUS2Context ctx);
+	T visitOBJECT_EXPR(ParserFile.OBJECT_EXPRContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ARRAY_EXPR}
+	 * labeled alternative in {@link ParserFile#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitARRAY_EXPR(ParserFile.ARRAY_EXPRContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code MULTI}
 	 * labeled alternative in {@link ParserFile#expr}.
@@ -426,12 +495,59 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPLUS(ParserFile.PLUSContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code MINUS}
-	 * labeled alternative in {@link ParserFile#expr}.
+	 * Visit a parse tree produced by {@link ParserFile#this_exp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMINUS(ParserFile.MINUSContext ctx);
+	T visitThis_exp(ParserFile.This_expContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ParserFile#property_chain}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProperty_chain(ParserFile.Property_chainContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ParserFile#method_call}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMethod_call(ParserFile.Method_callContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ParserFile#assignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignment(ParserFile.AssignmentContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ParserFile#post_op}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPost_op(ParserFile.Post_opContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ParserFile#array}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArray(ParserFile.ArrayContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ParserFile#arrayElement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayElement(ParserFile.ArrayElementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ParserFile#spreadElement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSpreadElement(ParserFile.SpreadElementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ParserFile#arrowFunction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrowFunction(ParserFile.ArrowFunctionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ParserFile#print}.
 	 * @param ctx the parse tree
@@ -546,6 +662,12 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBinding(ParserFile.BindingContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ParserFile#hash}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHash(ParserFile.HashContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ParserFile#htmlContent}.
 	 * @param ctx the parse tree
