@@ -1,39 +1,104 @@
+//package AST.Basic;
+//
+//import AST.Statements;
+//
+//import java.util.List;
+//
+//public class ThisExpression extends Statements {
+//    private String identifier;
+//    private List<String> chainedIdentifiers;
+//
+//    // Constructor
+//    public ThisExpression(String identifier, List<String> chainedIdentifiers) {
+//        this.identifier = identifier;
+//        this.chainedIdentifiers = chainedIdentifiers;
+//    }
+//
+//    // Getters
+//    public String getIdentifier() {
+//        return identifier;
+//    }
+//
+//    public List<String> getChainedIdentifiers() {
+//        return chainedIdentifiers;
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return
+//
+//                " identifier = " + identifier ;
+//    }
+//
+//    public String print() {
+//        return
+//
+//                ",\n identifier = " + identifier
+//                ;
+//    }
+//}
 package AST.Basic;
 
+import AST.Basic.This.Expr.Assignment;
+import AST.Basic.This.Expr.PostOp;
+import AST.Basic.This.Expr.PropertyChain;
 import AST.Statements;
 
-import java.util.List;
-
 public class ThisExpression extends Statements {
-    private String identifier;
-    private List<String> chainedIdentifiers;
+    private PropertyChain propertyChain;
+    private Assignment assignment; // nullable
+    private PostOp postOp;         // nullable
 
-    // Constructor
-    public ThisExpression(String identifier, List<String> chainedIdentifiers) {
-        this.identifier = identifier;
-        this.chainedIdentifiers = chainedIdentifiers;
+    // Constructor with assignment
+    public ThisExpression(PropertyChain propertyChain, Assignment assignment) {
+        this.propertyChain = propertyChain;
+        this.assignment = assignment;
+        this.postOp = null;
     }
 
-    // Getters
-    public String getIdentifier() {
-        return identifier;
+    // Constructor with post operation
+    public ThisExpression(PropertyChain propertyChain, PostOp postOp) {
+        this.propertyChain = propertyChain;
+        this.postOp = postOp;
+        this.assignment = null;
     }
 
-    public List<String> getChainedIdentifiers() {
-        return chainedIdentifiers;
+    // Constructor with only propertyChain (no assignment/postOp)
+    public ThisExpression(PropertyChain propertyChain) {
+        this.propertyChain = propertyChain;
+        this.assignment = null;
+        this.postOp = null;
+    }
+
+    public PropertyChain getPropertyChain() {
+        return propertyChain;
+    }
+
+    public Assignment getAssignment() {
+        return assignment;
+    }
+
+    public PostOp getPostOp() {
+        return postOp;
     }
 
     @Override
     public String toString() {
-        return
-
-                " identifier = " + identifier ;
+        return "ThisExpression{" +
+                "propertyChain=" + propertyChain +
+                ", assignment=" + assignment +
+                ", postOp=" + postOp +
+                '}';
     }
 
     public String print() {
-        return
-
-                ",\n identifier = " + identifier
-                ;
+        StringBuilder sb = new StringBuilder();
+        sb.append("this.").append(propertyChain.toString());
+        if (assignment != null) {
+            sb.append(" = ").append(assignment.getValue());
+        } else if (postOp != null) {
+            sb.append(postOp.getOperation());
+        }
+        return sb.toString();
     }
 }

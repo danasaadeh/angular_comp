@@ -1,0 +1,32 @@
+package AST.Basic.This.Expr;
+
+
+import AST.Statements;
+import java.util.List;
+
+public class MethodCall extends Statements {
+    private String methodName;
+    private List<Statements> arguments;
+
+    public MethodCall(String methodName, List<Statements> arguments) {
+        this.methodName = methodName;
+        this.arguments = arguments;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public List<Statements> getArguments() {
+        return arguments;
+    }
+
+    @Override
+    public String toString() {
+        return "MethodCall{" +
+                "methodName='" + methodName + '\'' +
+                ", arguments=" + arguments +
+                '}';
+    }
+}
+

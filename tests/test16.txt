@@ -1,0 +1,11 @@
+this.user.name = "John";
+this.list.addItem("milk");
+this.count++;
+ this.profile.address.city = "Cairo";
+
+ this.productService.addProduct(this.product);
+   this.router.navigate(['/']);
+     this.selected_product = product;
+      this.productService.products$.subscribe((data) => (this.products = data));
+      this._products.getValue();
+       this._products.next([...current, product]);
