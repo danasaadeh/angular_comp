@@ -281,6 +281,18 @@ public class ParserFileBaseListener implements ParserFileListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterINSTANCE_STATE(ParserFile.INSTANCE_STATEContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitINSTANCE_STATE(ParserFile.INSTANCE_STATEContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDECLARE_STATE(ParserFile.DECLARE_STATEContext ctx) { }
 	/**
 	 * {@inheritDoc}

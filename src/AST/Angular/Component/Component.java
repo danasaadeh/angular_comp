@@ -18,7 +18,7 @@ public class Component extends Instruction {
     }
 
     @Override
-    public String toString() {
+    public String print() {
         return "Component: " + (componentBody != null ? componentBody.toString() : "No component body");
     }
 }

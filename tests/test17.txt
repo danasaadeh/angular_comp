@@ -1,0 +1,100 @@
+
+@Component({
+  selector: 'app-add-product',
+  standalone: true,
+  template: `
+    <div
+      style="
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       min-height: 100vh;
+       background-color: #f8f8f8;
+     "
+    >
+      <form
+        (ngSubmit)="submit()"
+        #form="ngForm"
+        style="
+         display: flex;
+         flex-direction: column;
+         gap: 15px;
+         max-width: 300px;
+         width: 100%;
+         background: white;
+         padding: 20px;
+         border-radius: 8px;
+         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+       "
+      >
+        <h2 style="text-align: center; margin-bottom: 10px;">Add Product</h2>
+        <div style="display: flex; flex-direction: column;">
+          <label for="name">Name:</label>
+          <input
+            id="name"
+            type="text"
+            name="name"
+            [(ngModel)]="product.name"
+            required
+          />
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <label for="image">Image URL:</label>
+          <input
+            id="image"
+            type="text"
+            name="image"
+            [(ngModel)]="product.image"
+            required
+          />
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <label for="details">Details:</label>
+          <input
+            id="details"
+            type="text"
+            name="details"
+            [(ngModel)]="product.details"
+            required
+          />
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <label for="price">Price:</label>
+          <input
+            id="price"
+            type="number"
+            name="price"
+            step="0.1"
+            [(ngModel)]="product.price"
+            required
+          />
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <label for="size">Size:</label>
+          <input
+            id="size"
+            type="text"
+            name="size"
+            [(ngModel)]="product.size"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          style="
+           background-color: #CB6F6E;
+           color: white;
+           padding: 10px;
+           border: none;
+           border-radius: 4px;
+           cursor: pointer;
+           font-weight: bold;
+         "
+        >
+          Add Product
+        </button>
+      </form>
+    </div>
+  `,
+  imports: [CommonModule, FormsModule],
+})

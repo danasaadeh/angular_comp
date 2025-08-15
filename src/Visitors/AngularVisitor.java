@@ -34,6 +34,7 @@ import Symbol_table.SymbolTable;
 import antlr.ParserFile;
 import antlr.ParserFileBaseVisitor;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import semantic.*;
 
 import java.io.BufferedWriter;
@@ -42,7 +43,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class AngularVisitor extends ParserFileBaseVisitor {
+public class AngularVisitor extends ParserFileBaseVisitor<Object> {
 
 
     public SymbolTable st = new SymbolTable();
@@ -69,7 +70,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 //    public Program visitProgram(ParserFile.ProgramContext ctx) {
 //        st.enterScope("global");
 //        Program program = new Program();
-//        for (int i = 0; i<ctx.instruction().size(); i++) {
+//        for (int i=ctx.instruction().size(); i<ctx.instruction().size(); i++) {
 //            if (ctx.instruction(i)!=null)
 //                program.setInstructions_list((Instruction) visit(ctx.instruction(i)));
 //        }
@@ -96,84 +97,181 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
     @Override
     public Object visitSTATEMENTS_INSTRUCT(ParserFile.STATEMENTS_INSTRUCTContext ctx) {
-        return super.visitSTATEMENTS_INSTRUCT(ctx);
+        // The statements() method returns a single StatementsContext, not a list
+        if (ctx.statements() != null) {
+            return visit(ctx.statements());
+        }
+        return new Statements();
     }
-
-
 
     @Override
     public Object visitCLASS_DECLAR_STATE(ParserFile.CLASS_DECLAR_STATEContext ctx) {
-        return super.visitCLASS_DECLAR_STATE(ctx);
+        Statements statements = new Statements();
+        ClassDecl classDecl = (ClassDecl) visit(ctx.class_decl());
+        if (classDecl != null) {
+            statements.getClassDecls().add(classDecl);
+        }
+        return statements;
     }
 
     @Override
     public Statements visitINTERFACE_STATE(ParserFile.INTERFACE_STATEContext ctx) {
-        return (Statements) super.visitINTERFACE_STATE(ctx);
+        Statements statements = new Statements();
+        Interface interfaceDecl = (Interface) visit(ctx.interface_());
+        if (interfaceDecl != null) {
+            statements.getInterfaces().add(interfaceDecl);
+        }
+        return statements;
     }
 
     @Override
     public Object visitFUNC_DECL_STATE(ParserFile.FUNC_DECL_STATEContext ctx) {
-        return super.visitFUNC_DECL_STATE(ctx);
+        Statements statements = new Statements();
+        FuncDecl funcDecl = (FuncDecl) visit(ctx.function_decl());
+        if (funcDecl != null) {
+            statements.getFuncDecls().add(funcDecl);
+        }
+        return statements;
     }
 
     @Override
     public Object visitCONSTR_STATE(ParserFile.CONSTR_STATEContext ctx) {
-        return super.visitCONSTR_STATE(ctx);
+        Statements statements = new Statements();
+        Constructor constructor = (Constructor) visit(ctx.constructor());
+        if (constructor != null) {
+            statements.getCons().add(constructor);
+        }
+        return statements;
     }
 
     @Override
     public Object visitINIT_STATE(ParserFile.INIT_STATEContext ctx) {
-        return super.visitINIT_STATE(ctx);
+        Statements statements = new Statements();
+        Init init = (Init) visit(ctx.init());
+        if (init != null) {
+            statements.getInits().add(init);
+        }
+        return statements;
     }
 
     @Override
     public Object visitINIT_ARRAY_STATE(ParserFile.INIT_ARRAY_STATEContext ctx) {
-        return super.visitINIT_ARRAY_STATE(ctx);
+        Statements statements = new Statements();
+        InitArray initArray = (InitArray) visit(ctx.init_array());
+        if (initArray != null) {
+            statements.getInitArrays().add(initArray);
+        }
+        return statements;
+    }
+
+    @Override
+    public Object visitREAD_ONLY_STATE(ParserFile.READ_ONLY_STATEContext ctx) {
+        Statements statements = new Statements();
+        ReadOnly readOnly = (ReadOnly) visit(ctx.readOnly());
+        if (readOnly != null) {
+            statements.getReads().add(readOnly);
+        }
+        return statements;
+    }
+
+    @Override
+    public Object visitINSTANCE_STATE(ParserFile.INSTANCE_STATEContext ctx) {
+        Statements statements = new Statements();
+        Instance instance = (Instance) visit(ctx.instance());
+        if (instance != null) {
+            statements.getInst().add(instance);
+        }
+        return statements;
     }
 
     @Override
     public Object visitDECLARE_STATE(ParserFile.DECLARE_STATEContext ctx) {
-        return super.visitDECLARE_STATE(ctx);
+        Statements statements = new Statements();
+        Declaration declaration = (Declaration) visit(ctx.declaration());
+        if (declaration != null) {
+            statements.getDeclarations().add(declaration);
+        }
+        return statements;
     }
 
     @Override
     public Object visitASSIGN_STATE(ParserFile.ASSIGN_STATEContext ctx) {
-        return super.visitASSIGN_STATE(ctx);
+        Statements statements = new Statements();
+        Assign assign = (Assign) visit(ctx.assign());
+        if (assign != null) {
+            statements.getAssigns().add(assign);
+        }
+        return statements;
     }
 
     @Override
     public Object visitIF_CONDITION_STATE(ParserFile.IF_CONDITION_STATEContext ctx) {
-        return super.visitIF_CONDITION_STATE(ctx);
+        Statements statements = new Statements();
+        IfStatement ifStatement = (IfStatement) visit(ctx.if_condition());
+        if (ifStatement != null) {
+            statements.getIfStatements().add(ifStatement);
+        }
+        return statements;
     }
 
     @Override
     public Object visitFOR_LOOP_STATE(ParserFile.FOR_LOOP_STATEContext ctx) {
-        return super.visitFOR_LOOP_STATE(ctx);
+        Statements statements = new Statements();
+        ForLoop forLoop = (ForLoop) visit(ctx.for_());
+        if (forLoop != null) {
+            statements.getForLoops().add(forLoop);
+        }
+        return statements;
     }
 
     @Override
     public Object visitWHILE_LOOP_STATE(ParserFile.WHILE_LOOP_STATEContext ctx) {
-        return super.visitWHILE_LOOP_STATE(ctx);
+        Statements statements = new Statements();
+        While whileLoop = (While) visit(ctx.while_());
+        if (whileLoop != null) {
+            statements.getWhiles().add(whileLoop);
+        }
+        return statements;
     }
 
     @Override
     public Object visitEXPR_STATE(ParserFile.EXPR_STATEContext ctx) {
-        return super.visitEXPR_STATE(ctx);
+        Statements statements = new Statements();
+        Expression expression = (Expression) visit(ctx.expr());
+        if (expression != null) {
+            statements.getExps().add(expression);
+        }
+        return statements;
     }
 
     @Override
     public Object visitTHIS_EXPR_STATE(ParserFile.THIS_EXPR_STATEContext ctx) {
-        return super.visitTHIS_EXPR_STATE(ctx);
+        Statements statements = new Statements();
+        ThisExpression thisExpression = (ThisExpression) visit(ctx.this_exp());
+        if (thisExpression != null) {
+            statements.getThisExpressions().add(thisExpression);
+        }
+        return statements;
     }
 
     @Override
     public Object visitSUPER_EXPR_STATE(ParserFile.SUPER_EXPR_STATEContext ctx) {
-        return super.visitSUPER_EXPR_STATE(ctx);
+        Statements statements = new Statements();
+        SuperExp superExpression = (SuperExp) visit(ctx.super_exp());
+        if (superExpression != null) {
+            statements.getSuperExpressions().add(superExpression);
+        }
+        return statements;
     }
 
     @Override
     public Object visitPRINT_STATE(ParserFile.PRINT_STATEContext ctx) {
-        return super.visitPRINT_STATE(ctx);
+        Statements statements = new Statements();
+        Print printStatement = (Print) visit(ctx.print());
+        if (printStatement != null) {
+            statements.getPrintStatements().add(printStatement);
+        }
+        return statements;
     }
 
     @Override
@@ -183,7 +281,12 @@ public class AngularVisitor extends ParserFileBaseVisitor {
 
     @Override
     public Object visitRETRUN_STATE(ParserFile.RETRUN_STATEContext ctx) {
-        return super.visitRETRUN_STATE(ctx);
+        Statements statements = new Statements();
+        Return returnStatement = (Return) visit(ctx.return_());
+        if (returnStatement != null) {
+            statements.getReturns().add(returnStatement);
+        }
+        return statements;
     }
 
     @Override
@@ -210,8 +313,8 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         Imports imports = ctx.imports() != null ? (Imports) visit(ctx.imports()) : null;
         Style_Urls styleUrls = ctx.style_Urls() != null ? (Style_Urls) visit(ctx.style_Urls()) : null;
         Template_Url templateUrl = ctx.template_Url() != null ? (Template_Url) visit(ctx.template_Url()) : null;
-
-        ComponentBody componentBody = new ComponentBody(selector, template, imports, styleUrls, templateUrl);
+        Standalone standalone=ctx.stanalone()!=null?(Standalone)visit(ctx.stanalone()):null;
+        ComponentBody componentBody = new ComponentBody(selector, template, imports, styleUrls, templateUrl,standalone);
 
         int line = ctx.getStart().getLine();
         int column = ctx.getStart().getCharPositionInLine();
@@ -239,6 +342,24 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         return componentBody;
     }
 
+    @Override
+    public Standalone visitStanalone(ParserFile.StanaloneContext ctx) {
+        String value = ctx.VAL().getText();
+        Standalone standalone = new Standalone(value);
+
+        // Also store as row in symbol table if needed
+        Row row = new Row();
+        row.setName("standalone" + ctx.getStart().getLine());
+        row.setKind("standalone");
+        row.setType("standalone");
+        row.setValue(value);
+        row.setScope(st.getCurrentScope());
+        row.setLine(ctx.getStart().getLine());
+        row.setColumn(ctx.getStart().getCharPositionInLine());
+
+        st.add(row.getName(), row);
+        return standalone;
+    }
 
 
     @Override
@@ -304,7 +425,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         TerminalNode templateUrlNode = ctx.VAL();
         if (templateUrlNode != null) {
             templateUrlList.add(templateUrlNode.getText());
-      }
+        }
 
         return new Template_Url(templateUrlList);
     }
@@ -341,16 +462,13 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         Value value = new Value();
 
         if (ctx.VAL() != null) {
-
             value.getValues().add(ctx.VAL().getText());
         } else if (ctx.object() != null) {
-
             MyObject myObject = (MyObject) visit(ctx.object());
             value.getObjects().add(myObject);
         }
 
         Row row = new Row();
-
         row.setType("Value");
         row.setValue(value.toString());
         st.getRow().add(row);
@@ -358,82 +476,103 @@ public class AngularVisitor extends ParserFileBaseVisitor {
         return value;
     }
 
-//    @Override
-//    public Init visitInit(ParserFile.InitContext ctx) {
-//        String name = ctx.ID().getText();
-//        String dataType = ctx.DATA_TYPE() != null ? ctx.DATA_TYPE().getText() : "unknown";
-//        String value = ctx.VAL() != null ? ctx.VAL().getText() : null;
-//
-//        // Check for duplicate variable initialization in the same scope
-//        for (Row existing : st.getRow()) {
-//            if (existing != null && name.equals(existing.getName()) && st.getCurrentScope().equals(existing.getScope())) {
-//                int line = ctx.getStart().getLine();
-//                int column = ctx.getStart().getCharPositionInLine();
-//                semanticErrors.add(new DuplicateVariableError(name, line, column));
-//                return new Init(dataType, name, value); // Return init even if there's an error
-//            }
-//        }
-//
-//        // Check if the value is compatible with the declared type
-//        if ("number".equals(dataType) && (value == null || !value.matches("\\d+"))) {
-//            int line = ctx.getStart().getLine();
-//            int column = ctx.getStart().getCharPositionInLine();
-//            semanticErrors.add(new TypeMismatchError(name, value, dataType, line, column));
-//        } else if ("boolean".equals(dataType) && (value == null || !value.matches("true|false"))) {
-//            int line = ctx.getStart().getLine();
-//            int column = ctx.getStart().getCharPositionInLine();
-//            semanticErrors.add(new TypeMismatchError(name, value, dataType, line, column));
-//        } else if ("string".equals(dataType) && (value == null || !value.matches("\".*\""))) {
-//            int line = ctx.getStart().getLine();
-//            int column = ctx.getStart().getCharPositionInLine();
-//            semanticErrors.add(new TypeMismatchError(name, value, dataType, line, column));
-//        }
-//
-//        // Continue with the existing logic
-//        Row row = new Row();
-//        row.setType(dataType);
-//        row.setName(name);
-//        row.setValue(value);
-//        row.setScope(st.getCurrentScope());
-//        row.setLine(ctx.getStart().getLine());
-//        row.setColumn(ctx.getStart().getCharPositionInLine());
-//
-//        st.getRow().add(row);
-//
-//        return new Init(dataType, name, value);
-//    }
+
+    @Override
+    public Init visitInit(ParserFile.InitContext ctx) {
+        String name = ctx.ID().getText();
+        String dataType = ctx.DATA_TYPE() != null ? ctx.DATA_TYPE().getText() : "unknown";
+
+        // value now comes from the `value` subrule (not a VAL token on InitContext)
+        String valueText = ctx.value() != null ? ctx.value().getText() : null;
+        // If you want the structured value node, you can also do:
+        // Value valueNode = ctx.value() != null ? (Value) visit(ctx.value()) : null;
+
+        // Duplicate variable check (unchanged)
+        for (Row existing : st.getRow()) {
+            if (existing != null
+                    && name.equals(existing.getName())
+                    && st.getCurrentScope().equals(existing.getScope())) {
+                int line = ctx.getStart().getLine();
+                int column = ctx.getStart().getCharPositionInLine();
+                semanticErrors.add(new DuplicateVariableError(name, line, column));
+                return new Init(dataType, name, valueText);
+            }
+        }
+
+        // Simple type checks against the textual value (unchanged)
+        if ("number".equals(dataType) && (valueText == null || !valueText.matches("\\d+"))) {
+            int line = ctx.getStart().getLine();
+            int column = ctx.getStart().getCharPositionInLine();
+            semanticErrors.add(new TypeMismatchError(name, valueText, dataType, line, column));
+        } else if ("boolean".equals(dataType) && (valueText == null || !valueText.matches("true|false"))) {
+            int line = ctx.getStart().getLine();
+            int column = ctx.getStart().getCharPositionInLine();
+            semanticErrors.add(new TypeMismatchError(name, valueText, dataType, line, column));
+        } else if ("string".equals(dataType) && (valueText == null || !valueText.matches("\".*\""))) {
+            int line = ctx.getStart().getLine();
+            int column = ctx.getStart().getCharPositionInLine();
+            semanticErrors.add(new TypeMismatchError(name, valueText, dataType, line, column));
+        }
+
+        Row row = new Row();
+        row.setType(dataType);
+        row.setName(name);
+        row.setValue(valueText);
+        row.setScope(st.getCurrentScope());
+        row.setLine(ctx.getStart().getLine());
+        row.setColumn(ctx.getStart().getCharPositionInLine());
+        st.getRow().add(row);
+
+        return new Init(dataType, name, valueText);
+    }
 
 
 
+    @Override
+    public String visitTypeReference(ParserFile.TypeReferenceContext ctx) {
+        if (ctx.DATA_TYPE() != null) return ctx.DATA_TYPE().getText();
+        if (ctx.ID() != null)       return ctx.ID().getText();
+        return "unknown";
+    }
 
-//    @Override
-//    public InitArray visitInit_array(ParserFile.Init_arrayContext ctx) {
-//
-//        String name = ctx.ID() != null ? ctx.ID().getText() : "unnamed";
-//        InitArray initArray = new InitArray(name);
-//        String dataType = ctx.DATA_TYPE() != null ? ctx.DATA_TYPE().getText() :"undefined";
-//
-//        Row arrayRow = new Row();
-//        arrayRow.setType(dataType);
-//        arrayRow.setName(name);
-//        arrayRow.setScope(st.getCurrentScope());
-//        st.getRow().add(arrayRow);
-//
-//
-//        if (ctx.value() != null) {
-//            for (ParserFile.ValueContext valueCtx : ctx.value()) {
-//                Value value = (Value) visit(valueCtx);
-//                initArray.addValue(value);
-//            }
-//        }
-//
-//
-//        arrayRow.setValue(initArray.getValues().toString());
-//
-//        return initArray;
-//    }
-//
-//
+
+
+    @Override
+    public InitArray visitInit_array(ParserFile.Init_arrayContext ctx) {
+        String name = ctx.ID().getText();
+
+        // type is now via `typeReference` (optional)
+        String dataType = null;
+        if (ctx.typeReference() != null) {
+            dataType = visitTypeReference(ctx.typeReference());
+            // If you want to reflect the optional [] after the typeReference, you could append "[]"
+            // but beware there is also an array literal with brackets. Easiest is to skip appending here
+            // or do it only if you track positions in the tree.
+        }
+
+        InitArray initArray = new InitArray(name,dataType);
+
+        Row arrayRow = new Row();
+        arrayRow.setType(dataType != null ? dataType : "array");
+        arrayRow.setName(name);
+        arrayRow.setScope(st.getCurrentScope());
+        st.getRow().add(arrayRow);
+
+        // `value` appears multiple times: first element + (COMMA value)*
+        if (ctx.value() != null && !ctx.value().isEmpty()) {
+            for (ParserFile.ValueContext vctx : ctx.value()) {
+                Value v = (Value) visit(vctx);
+                initArray.addValue(v);
+            }
+            arrayRow.setValue(initArray.getValues().toString());
+        } else {
+            arrayRow.setValue("[]");
+        }
+
+        return initArray;
+    }
+
+
 
     @Override
     public IfStatement visitIf_condition(ParserFile.If_conditionContext ctx) {
@@ -675,6 +814,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
     }
 
 
+
     @Override
     public Object visitObject(ParserFile.ObjectContext ctx) {
         List<ObjectProperty> properties = new ArrayList<>();
@@ -684,7 +824,7 @@ public class AngularVisitor extends ParserFileBaseVisitor {
             properties.add(property);
         }
         Row row = new Row();
-row.setName("object");
+        row.setName("object");
         row.setType("objects");
         row.setValue(properties.toString());
         st.getRow().add(row);
@@ -692,13 +832,101 @@ row.setName("object");
         return new MyObject(properties);
     }
 
-//    @Override
-//    public Object visitObjectProperty(ParserFile.ObjectPropertyContext ctx) {
-//        String id = ctx.ID().getText();
-//        String value = ctx.VAL().getText();
-//        return new ObjectProperty(id, value);
-//
-//    }
+    @Override
+    public ReadOnly visitReadOnly(ParserFile.ReadOnlyContext ctx) {
+        // readOnly: declaration EQUAL this_exp;
+        Declaration declaration = (Declaration) visit(ctx.declaration());
+        ThisExpression thisExpression = (ThisExpression) visit(ctx.this_exp());
+
+        ReadOnly node = new ReadOnly(declaration, thisExpression);
+
+        // Symbol table bookkeeping (name/type/scope/value)
+        try {
+            Row row = new Row();
+            String name, type;
+            try {
+                name = (String) Declaration.class.getMethod("getName").invoke(declaration);
+                type = (String) Declaration.class.getMethod("getDataType").invoke(declaration);
+            } catch (Exception ignore) {
+                name = ctx.declaration().ID() != null ? ctx.declaration().ID().getText() : "unnamed";
+                type = ctx.declaration().DATA_TYPE() != null ? ctx.declaration().DATA_TYPE().getText() : "undefined";
+            }
+            row.setName(name);
+            row.setType(type);
+            row.setScope(st.getCurrentScope());
+            row.setValue("readonly = " + (thisExpression != null ? thisExpression.toString() : "this"));
+            st.getRow().add(row);
+        } catch (Throwable t) {
+            // keep going even if symbol table update isn't possible
+        }
+
+        return node;
+    }
+    @Override
+    public Instance visitInstance(ParserFile.InstanceContext ctx) {
+        // Parse declaration first
+        Declaration declaration = (Declaration) visit(ctx.declaration());
+
+        // Directly get the ID after NEW
+        String typeName = ctx.ID() != null ? ctx.ID().getText() : "UnknownType";
+
+        // Generic type from DATA_TYPE
+        String genericType = ctx.DATA_TYPE() != null ? ctx.DATA_TYPE().getText() : null;
+
+        // Visit array part if present
+        Object arrayNode = ctx.array() != null ? visit(ctx.array()) : null;
+
+        // Build AST node
+        Instance node = new Instance(declaration, typeName, genericType, true, arrayNode);
+
+        // Symbol table bookkeeping
+        try {
+            Row row = new Row();
+            String name, declaredType;
+            try {
+                name = (String) Declaration.class.getMethod("getName").invoke(declaration);
+                declaredType = (String) Declaration.class.getMethod("getDataType").invoke(declaration);
+            } catch (Exception ignore) {
+                name = ctx.declaration().ID() != null ? ctx.declaration().ID().getText() : "unnamed";
+                declaredType = ctx.declaration().DATA_TYPE() != null ? ctx.declaration().DATA_TYPE().getText() : "undefined";
+            }
+            row.setName(name);
+
+            String composedType = (typeName != null ? typeName : declaredType);
+            if (genericType != null) composedType += "<" + genericType + ">";
+            composedType += "[]";
+            row.setType(composedType);
+
+            row.setScope(st.getCurrentScope());
+            row.setValue("new " + typeName
+                    + (genericType != null ? "<" + genericType + ">" : "")
+                    + "[](" + (arrayNode != null ? arrayNode.toString() : "") + ")");
+            st.getRow().add(row);
+        } catch (Throwable t) {
+            // Ignore symbol table errors
+        }
+
+        return node;
+    }
+
+
+    @Override
+    public ObjectProperty visitObjectProperty(ParserFile.ObjectPropertyContext ctx) {
+        String id = ctx.ID(0).getText(); // first ID is the key
+        String value;
+
+        if (ctx.VAL() != null) {
+            value = ctx.VAL().getText();
+        } else if (ctx.ID().size() > 1) {
+            // second ID is the value if VAL is absent
+            value = ctx.ID(1).getText();
+        } else {
+            value = ""; // fallback if grammar ever changes
+        }
+
+        return new ObjectProperty(id, value);
+    }
+
 
 
 
@@ -1110,25 +1338,26 @@ row.setName("object");
         return returnStatement;
     }
 
-//    @Override
-//    public Parameter visitParameter(ParserFile.ParameterContext ctx) {
-//        Parameter parameter = new Parameter();
-//
-//        parameter.setName(ctx.ID().getText());
-//
-//
-//        if (ctx.DATA_TYPE() != null) {
-//       //     parameter.setType(ctx.DATA_TYPE().getText());
-//        } else {
-//        //    parameter.setType("unknown");
-//        }
-    //    Row row = new Row();
-//
-//        row.setType("Parameters");
-//        row.setValue(parameter.toString());
-//        st.getRow().add(row);
-//        return parameter;
-//    }
+    @Override
+    public Parameter visitParameter(ParserFile.ParameterContext ctx) {
+        Parameter parameter = new Parameter();
+
+        // Parameter name comes directly from ctx.ID()
+        parameter.setName(ctx.ID().getText());
+
+        // Type is inside typeReference
+        String type = visitTypeReference(ctx.typeReference());
+        parameter.setType(type);
+
+        // Log into your symbol table or rows
+        Row row = new Row();
+        row.setType("Parameters");
+        row.setValue(parameter.toString());
+        st.getRow().add(row);
+
+        return parameter;
+    }
+
     @Override
     public FuncDecl visitFunction_decl(ParserFile.Function_declContext ctx) {
         st.enterScope("function");
@@ -1406,6 +1635,10 @@ row.setName("object");
             Directive directive = (Directive) visitDirective(ctx.directive());
             htmlElement.setDirectives(directive);
         }
+        if (ctx.hash() != null) {
+            Hash hash = (Hash) visitHash(ctx.hash());
+            htmlElement.setHash(hash);
+        }
 
 
         if (ctx.htmlContent() != null) {
@@ -1424,8 +1657,13 @@ row.setName("object");
     @Override
     public HtmlAttribute visitHtmlAttribute(ParserFile.HtmlAttributeContext ctx) {
         HtmlAttribute htmlAttribute = new HtmlAttribute();
-        htmlAttribute.setTagName(ctx.TAG_NAME().getText());
-        htmlAttribute.setValue(ctx.ATTVALUE_VALUE().getText());
+        if (ctx.TAG_NAME() != null) {
+            htmlAttribute.setTagName(ctx.TAG_NAME().getText());
+        }
+        // Handle boolean attributes (e.g., required) that may not have a value
+        if (ctx.ATTVALUE_VALUE() != null) {
+            htmlAttribute.setValue(ctx.ATTVALUE_VALUE().getText());
+        }
 
 //        Row row = new Row();
 //        row.setType("Html Attribute");
@@ -1447,6 +1685,20 @@ row.setName("object");
 //        row.setValue(binding.toString());
 //        st.getRow().add(row);
         return binding;
+    }
+
+    @Override
+    public Hash visitHash(ParserFile.HashContext ctx) {
+        Hash hash= new Hash();
+        hash.setHash(ctx.HASH().getText());
+        hash.setValue(ctx.ATTVALUE_VALUE().getText());
+
+
+//        Row row = new Row();
+//        row.setType("Binding");
+//        row.setValue(binding.toString());
+//        st.getRow().add(row);
+        return hash;
     }
 
     @Override
@@ -1516,7 +1768,6 @@ row.setName("object");
         }
         return false;
     }
-
 
 }
 

@@ -134,10 +134,13 @@ import java.util.List;
 
 public class InitArray extends Statements {
     private String id;              // Identifier
+    private String elementType; // <- add
     private List<Value> values;     // Values in the array
 
-    public InitArray(String id) {
+    public InitArray(String id,String elementType) {
         this.id = id;
+        this.elementType=elementType;
+
         this.values = new ArrayList<>(); // Initialize the values list
     }
 
@@ -164,5 +167,13 @@ public class InitArray extends Statements {
     @Override
     public String toString() {
         return   " = " + values;
+    }
+
+    public String getElementType() {
+        return elementType;
+    }
+
+    public void setElementType(String elementType) {
+        this.elementType = elementType;
     }
 }

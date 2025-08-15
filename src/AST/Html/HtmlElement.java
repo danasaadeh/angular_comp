@@ -9,12 +9,14 @@ public class HtmlElement {
     private Directive directives;
     private Binding bindings;
     private HtmlContent htmlContents;
+    private  Hash hash;
 
     public HtmlElement() {
         this.bindings = new Binding();
         this.directives = new Directive();
         this.htmlAttributes = new ArrayList<>();
         this.htmlContents = new HtmlContent();
+        this.hash=new Hash();
         this.tagName = "";
     }
 
@@ -65,6 +67,7 @@ public class HtmlElement {
                 "\n \t\t\t\t\t\t\t tagName='" + tagName + '\'' +
                 "\n \t\t\t\t\t\t\t htmlAttributes=" + htmlAttributes +
                 " \n \t\t\t\t\t\t\t directives=" + directives +
+                ",\n hash=" + hash +
                 "\n \t\t\t\t\t\t\t htmlContents=" + htmlContents
                 ;
     }
@@ -74,7 +77,16 @@ public class HtmlElement {
                 ", tagName='" + tagName + '\'' +
                 ",\n htmlAttributes=" + htmlAttributes +
                 ",\n directives=" + directives +
+                ",\n hash=" + hash +
                 ",\n htmlContents=" + htmlContents +
                 '}';
+    }
+
+    public Hash getHash() {
+        return hash;
+    }
+
+    public void setHash(Hash hash) {
+        this.hash = hash;
     }
 }

@@ -250,6 +250,18 @@ public interface ParserFileListener extends ParseTreeListener {
 	 */
 	void exitREAD_ONLY_STATE(ParserFile.READ_ONLY_STATEContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code INSTANCE_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void enterINSTANCE_STATE(ParserFile.INSTANCE_STATEContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code INSTANCE_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 */
+	void exitINSTANCE_STATE(ParserFile.INSTANCE_STATEContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code DECLARE_STATE}
 	 * labeled alternative in {@link ParserFile#statements}.
 	 * @param ctx the parse tree

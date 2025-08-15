@@ -6,13 +6,15 @@ public class ComponentBody {
     private Imports imports;
     private Style_Urls style_Urls;
     private Template_Url templateUrl;
+    private  Standalone standalone;
 
-    public ComponentBody(Selector selector, Template template, Imports imports, Style_Urls style_Urls, Template_Url templateUrl) {
+    public ComponentBody(Selector selector, Template template, Imports imports, Style_Urls style_Urls, Template_Url templateUrl,Standalone standalone) {
         this.selector = selector;
         this.template = template;
         this.imports = imports;
         this.style_Urls = style_Urls;
         this.templateUrl = templateUrl;
+        this.standalone=standalone;
     }
 
     public Selector getSelector() {
@@ -67,6 +69,9 @@ public class ComponentBody {
         if (templateUrl != null) {
             sb.append("  ").append(templateUrl).append("\n");
         }
+        if (standalone != null) {
+            sb.append("  ").append(standalone).append("\n");
+        }
 
         return sb.toString();
     }
@@ -82,6 +87,9 @@ public class ComponentBody {
 
         if (style_Urls != null) {
             sb.append("  ").append(style_Urls).append("\n");
+        }
+        if (standalone != null) {
+            sb.append("  ").append(standalone).append("\n");
         }
 
         return sb.toString();
@@ -101,5 +109,13 @@ public class ComponentBody {
 
     public void setTemplateUrl(Template_Url templateUrl) {
         this.templateUrl = templateUrl;
+    }
+
+    public Standalone getStandalone() {
+        return standalone;
+    }
+
+    public void setStandalone(Standalone standalone) {
+        this.standalone = standalone;
     }
 }

@@ -56,7 +56,7 @@ public class Instruction implements Program {
         }
 
         if (!statements.isEmpty()) {
-            sb.append("\n classDecls=").append(statements);
+            sb.append("\n statements=").append(statements);
         }
         if (!importStates.isEmpty()) {
             sb.append("\n importStates=").append(importStates);

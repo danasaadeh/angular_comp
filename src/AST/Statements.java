@@ -33,6 +33,8 @@ public class Statements  extends Instruction{
     private List<Constructor> cons;
     private List<While> whiles;
     private  List<Expression> exps;
+    private List<Instance> inst;
+    private  List<ReadOnly> reads;
 
     public Statements() {
         this.exps=new ArrayList<>();
@@ -51,6 +53,8 @@ public class Statements  extends Instruction{
         this.ifStatements = new ArrayList<>();
         this.whiles=new ArrayList<>();
         this.returns=new ArrayList<>();
+        this.inst=new ArrayList<>();
+        this.reads=new ArrayList<>();
         this.type = null;
     }
 
@@ -153,6 +157,8 @@ public class Statements  extends Instruction{
         return sb.toString();
     }
 
+
+
     public String print() {
         StringBuilder sb = new StringBuilder();
         sb.append("\n Statements {");
@@ -188,6 +194,12 @@ public class Statements  extends Instruction{
         }
         if (printStatements != null && !printStatements.isEmpty()) {
             sb.append(" print=").append(printStatements);
+        }
+        if (reads != null && !reads.isEmpty()) {
+            sb.append(" read_only=").append(reads);
+        }
+        if (inst != null && !inst.isEmpty()) {
+            sb.append("instance=").append(inst);
         }
         sb.append(" }");
         return sb.toString();
@@ -287,5 +299,21 @@ public class Statements  extends Instruction{
 
     public void setExps(List<Expression> exps) {
         this.exps = exps;
+    }
+
+    public List<Instance> getInst() {
+        return inst;
+    }
+
+    public void setInst(List<Instance> inst) {
+        this.inst = inst;
+    }
+
+    public List<ReadOnly> getReads() {
+        return reads;
+    }
+
+    public void setReads(List<ReadOnly> reads) {
+        this.reads = reads;
     }
 }
