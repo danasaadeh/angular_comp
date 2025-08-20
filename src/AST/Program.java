@@ -11,6 +11,9 @@ public interface Program {
     List<Instruction> getInstructions_list();
     void setInstructions_list(Instruction instruction);
     String print();
+    String convertToHtml();
+    String convertToCss();
+    String convertToJs();
 }
 
 

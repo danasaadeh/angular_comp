@@ -1,4 +1,5 @@
 import AST.Program;
+import CodeGeneration.Generation;
 import Visitors.AngularVisitor;
 import antlr.LexerFile;
 import antlr.ParserFile;
@@ -26,7 +27,7 @@ public class Main {
         ParseTree tree = parser.program();
 
         AngularVisitor visitor = new AngularVisitor();
-        Program doc = (Program) visitor.visit(tree);
+        Program program = (Program) visitor.visit(tree);
         List<SemanticError> errors = visitor.getSemanticErrors();
 
         // Write semantic errors to output file
@@ -43,7 +44,7 @@ public class Main {
 
         // Output AST and symbol table to console
         System.out.println("Abstract Syntax Tree:");
-        System.out.println(doc.print());
+        System.out.println(program.print());
         System.out.println();
 
         // Print the populated symbol table to console
@@ -52,7 +53,8 @@ public class Main {
         // --------------------------------------------------
         // Print five semantic-error tables in console
         semantic.SemanticErrorTablePrinter.printTables(errors);
-
+        Generation codeGeneration = new Generation();
+        codeGeneration.generateOutputFiles(program);
 
     }
 }
