@@ -118,4 +118,11 @@ public class ComponentBody {
     public void setStandalone(Standalone standalone) {
         this.standalone = standalone;
     }
+
+    public String convertToHtml() {
+        if (template != null) {
+            return template.convertToHtml();
+        }
+        return "";
+    }
 }

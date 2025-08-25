@@ -7,7 +7,8 @@ public class ImportState extends Instruction {
     private List<String> importTypes; // List of IDs (e.g., NgForOf, NgIf, ...)
     private String fromPath;
 
-    public ImportState() {}
+    public ImportState() {
+    }
 
     public List<String> getImportTypes() {
         return importTypes;
@@ -37,4 +38,22 @@ public class ImportState extends Instruction {
                 "\n fromPath='" + fromPath + '\'' +
                 '}';
     }
+
+
+    @Override
+    public String convertToJs() {
+        StringBuilder jsBuilder = new StringBuilder();
+
+        // Generate the equivalent JS import statement
+        if (importTypes != null && !importTypes.isEmpty() && fromPath != null) {
+            jsBuilder.append("import { ");
+            jsBuilder.append(String.join(", ", importTypes));
+            jsBuilder.append(" } from '");
+            jsBuilder.append(fromPath);
+            jsBuilder.append("';");
+        }
+
+        return jsBuilder.toString();
+    }
+
 }

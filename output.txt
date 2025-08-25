@@ -1,3 +1,2 @@
 Semantic check errors:
-Line 3: (Error: Component dependency 'CommonModule' is used in the component's imports but is not imported.)
-Line 3: (Error: Component dependency 'FormsModule' is used in the component's imports but is not imported.)
+Line 3: (Error: Component component_3 is missing a selector)

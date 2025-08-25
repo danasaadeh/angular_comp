@@ -40,4 +40,25 @@ public class HtmlChardata {
                 ", inter='" + inter + '\'' +
                 '}';
     }
+
+    public String convertToHtml() {
+        StringBuilder htmlBuilder = new StringBuilder();
+        
+        // Add HTML text
+        if (htmlText != null && !htmlText.isEmpty()) {
+            htmlBuilder.append(htmlText);
+        }
+        
+        // Add interpolation (Angular template expressions)
+        if (inter != null && !inter.isEmpty()) {
+            htmlBuilder.append(inter);
+        }
+        
+        return htmlBuilder.toString();
+    }
+    
+    public boolean hasContent() {
+        return (htmlText != null && !htmlText.isEmpty()) || 
+               (inter != null && !inter.isEmpty());
+    }
 }

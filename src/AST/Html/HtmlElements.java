@@ -34,4 +34,21 @@ public class HtmlElements
     public void setHtmlElements(List<HtmlElement> htmlElements) {
         this.htmlElements = htmlElements;
     }
+
+    public String convertToHtml() {
+        StringBuilder htmlBuilder = new StringBuilder();
+        
+        if (htmlElements != null) {
+            for (HtmlElement element : htmlElements) {
+                if (element != null) {
+                    String elementHtml = element.convertToHtml();
+                    if (!elementHtml.isEmpty()) {
+                        htmlBuilder.append(elementHtml);
+                    }
+                }
+            }
+        }
+        
+        return htmlBuilder.toString();
+    }
 }

@@ -37,4 +37,23 @@ public class HtmlAttribute {
                 ", value='" + value + '\'' +
                 '}';
     }
+
+    public String convertToHtml() {
+        if (tagName == null || tagName.isEmpty()) {
+            return "";
+        }
+        
+        StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append(" ").append(tagName);
+        
+        if (value != null && !value.isEmpty()) {
+            // Remove any existing quotes from the value to prevent double-quoting
+            String cleanValue = value.replace("\"", "").trim();
+            if (!cleanValue.isEmpty()) {
+                htmlBuilder.append("=\"").append(cleanValue).append("\"");
+            }
+        }
+        
+        return htmlBuilder.toString();
+    }
 }

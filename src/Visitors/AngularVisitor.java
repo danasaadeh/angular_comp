@@ -294,6 +294,10 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
         return super.visitCOMMENT_STATE(ctx);
     }
 
+    @Override
+    public Object visitARRAY_STATE(ParserFile.ARRAY_STATEContext ctx) {
+        return super.visitARRAY_STATE(ctx);
+    }
 
 
     @Override

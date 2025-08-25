@@ -37,4 +37,23 @@ public class Directive {
                 ", value='" + value + '\'' +
                 '}';
     }
+
+    public String convertToHtml() {
+        if (ng == null || ng.isEmpty()) {
+            return "";
+        }
+        
+        StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append(" ").append(ng);
+        
+        if (value != null && !value.isEmpty()) {
+            // Remove any existing quotes from the value
+            String cleanValue = value.replace("\"", "").trim();
+            if (!cleanValue.isEmpty()) {
+                htmlBuilder.append("=\"").append(cleanValue).append("\"");
+            }
+        }
+        
+        return htmlBuilder.toString();
+    }
 }

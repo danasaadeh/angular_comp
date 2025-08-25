@@ -29,5 +29,12 @@ public class Template {
                 "htmlDocument=" + htmlDocument +
                 '}';
     }
+
+    public String convertToHtml() {
+        if (htmlDocument != null) {
+            return htmlDocument.convertToHtml();
+        }
+        return "";
+    }
 }
 

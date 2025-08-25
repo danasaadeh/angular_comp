@@ -52,7 +52,8 @@ statements:
   | print                   #PRINT_STATE
   |value                    #VALUE_STATE
   |return                   #RETRUN_STATE
-  | comment                 #COMMENT_STATE;
+  | comment                 #COMMENT_STATE
+  |array                    #ARRAY_STATE;
 
 
 value:  VAL
@@ -67,9 +68,9 @@ objectProperty: ID COLON (VAL|ID);
 
 
 readOnly:declaration EQUAL this_exp;
-instance : declaration EQUAL NEW ID OPERATION DATA_TYPE SQUARE_OPEN SQUARE_CLOSE OPERATION OPEN_B array CLOSE_B SEMI_COLON;
-declaration:MODIFIER? HELPERS? ID (COLON DATA_TYPE)? eos	;
 
+declaration:MODIFIER? HELPERS? ID (COLON DATA_TYPE)? eos?	;
+instance : declaration EQUAL NEW ID OPERATION DATA_TYPE SQUARE_OPEN SQUARE_CLOSE OPERATION OPEN_B array CLOSE_B SEMI_COLON;
 assign:
  HELPERS? ID EQUAL (VAL | ID ) eos;
 

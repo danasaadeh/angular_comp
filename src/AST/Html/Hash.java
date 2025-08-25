@@ -32,6 +32,25 @@ public class Hash {
                 '}';
     }
 
+    public String convertToHtml() {
+        if (hash == null || hash.isEmpty()) {
+            return "";
+        }
+        
+        StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append(" ").append(hash);
+        
+        if (value != null && !value.isEmpty()) {
+            // Remove any existing quotes from the value
+            String cleanValue = value.replace("\"", "").trim();
+            if (!cleanValue.isEmpty()) {
+                htmlBuilder.append("=\"").append(cleanValue).append("\"");
+            }
+        }
+        
+        return htmlBuilder.toString();
+    }
+
     public String getHash() {
         return hash;
     }

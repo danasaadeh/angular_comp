@@ -21,4 +21,12 @@ public class Component extends Instruction {
     public String print() {
         return "Component: " + (componentBody != null ? componentBody.toString() : "No component body");
     }
+
+    @Override
+    public String convertToHtml() {
+        if (componentBody != null) {
+            return componentBody.convertToHtml();
+        }
+        return "";
+    }
 }

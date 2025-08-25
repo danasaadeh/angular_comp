@@ -39,4 +39,33 @@ public class Binding {
                 ", value='" + value + '\'' +
                 '}';
     }
+
+    public String convertToHtml() {
+        if (binding == null || binding.isEmpty()) {
+            return "";
+        }
+        
+        StringBuilder htmlBuilder = new StringBuilder();
+        
+        // Handle Angular two-way binding [(ngModel)]
+        if (binding.equals("(ngModel)") && value != null && !value.isEmpty()) {
+            // Remove any existing quotes from the value
+            String cleanValue = value.replace("\"", "").trim();
+            if (!cleanValue.isEmpty()) {
+                htmlBuilder.append(" [(ngModel)]=\"").append(cleanValue).append("\"");
+            }
+        } else {
+            htmlBuilder.append(" ").append(binding);
+            
+            if (value != null && !value.isEmpty()) {
+                // Remove any existing quotes from the value
+                String cleanValue = value.replace("\"", "").trim();
+                if (!cleanValue.isEmpty()) {
+                    htmlBuilder.append("=\"").append(cleanValue).append("\"");
+                }
+            }
+        }
+        
+        return htmlBuilder.toString();
+    }
 }

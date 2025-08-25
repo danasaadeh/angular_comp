@@ -245,6 +245,13 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCOMMENT_STATE(ParserFile.COMMENT_STATEContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code ARRAY_STATE}
+	 * labeled alternative in {@link ParserFile#statements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitARRAY_STATE(ParserFile.ARRAY_STATEContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ParserFile#value}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -281,17 +288,17 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReadOnly(ParserFile.ReadOnlyContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ParserFile#instance}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInstance(ParserFile.InstanceContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link ParserFile#declaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitDeclaration(ParserFile.DeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ParserFile#instance}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInstance(ParserFile.InstanceContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ParserFile#assign}.
 	 * @param ctx the parse tree

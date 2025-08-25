@@ -1,0 +1,73 @@
+
+import { NgForOf, NgIf } from '@angular/common';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { ProductService } from '../product.service';
+
+@Component({
+  selector: 'app-home',
+  template: `
+    <div
+      style="display: flex; justify-content: center; align-items: flex-start; min-height: 100vh"
+    >
+      <!-- Left dev -->
+      <div
+        style="width: 50%; display: flex; flex-direction: column; align-items: center;"
+        *ngIf="selected_product"
+      >
+        <div style="margin-top: 20px;">Name: {{ selected_product.name }}</div>
+        <div>
+          <img
+            [src]="selected_product.image"
+            alt="{{ selected_product.name }}"
+            style="max-width: 400px; height: 450px;"
+          />
+        </div>
+        <div>Details: {{ selected_product.details }}</div>
+        <div>Price: &#36;{{ selected_product.price }}</div>
+        <div>Size: {{ selected_product.size }}</div>
+      </div>
+      <!-- Right dev -->
+      <div style="width: 50%; display: flex; flex-direction: column;">
+        <button
+          style="margin-bottom: 20px; padding: 15px; background-color: #CB6F6E; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"
+          (click)="goToAddProduct()"
+        >
+          Add Product
+        </button>
+        <button
+          *ngFor="let product of products"
+          style="padding: 20px;"
+          (click)="buttonClicked(product)"
+        >
+          <div style="padding: 10px">Name: {{ product.name }}</div>
+          <div>
+            <img
+              [src]="product.image"
+              alt="{{ product.name }}"
+              style="max-width: 200px; height: 250px;"
+            />
+          </div>
+        </button>
+      </div>
+    </div>
+  `,
+
+  imports: [NgForOf, NgIf],
+})
+export class HomeComponent {
+  selected_product: any;
+  products: any[] = [];
+
+  constructor(private router: Router, private productService: ProductService) {
+    this.productService.products$.subscribe((data) => (this.products = data));
+  }
+
+  buttonClicked(product: any) {
+    this.selected_product = product;
+  }
+
+  goToAddProduct() {
+    this.router.navigate(['/add-product']);
+  }
+}

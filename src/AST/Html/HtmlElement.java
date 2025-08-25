@@ -89,4 +89,108 @@ public class HtmlElement {
     public void setHash(Hash hash) {
         this.hash = hash;
     }
+
+    public String convertToHtml() {
+        StringBuilder htmlBuilder = new StringBuilder();
+        
+        // Start tag
+        String tag = (tagName != null && !tagName.isEmpty()) ? tagName : "div";
+        htmlBuilder.append("<").append(tag);
+        
+        // Add HTML attributes
+        if (htmlAttributes != null) {
+            for (HtmlAttribute attr : htmlAttributes) {
+                if (attr != null) {
+                    String attrHtml = attr.convertToHtml();
+                    if (!attrHtml.isEmpty()) {
+                        htmlBuilder.append(attrHtml);
+                    }
+                }
+            }
+        }
+        
+        // Add bindings (Angular property bindings)
+        if (bindings != null) {
+            String bindingHtml = bindings.convertToHtml();
+            if (!bindingHtml.isEmpty()) {
+                htmlBuilder.append(bindingHtml);
+            }
+        }
+        
+        // Add directives (Angular structural directives)
+        if (directives != null) {
+            String directiveHtml = directives.convertToHtml();
+            if (!directiveHtml.isEmpty()) {
+                htmlBuilder.append(directiveHtml);
+            }
+        }
+        
+        // Add hash (Angular event bindings)
+        if (hash != null) {
+            String hashHtml = hash.convertToHtml();
+            if (!hashHtml.isEmpty()) {
+                htmlBuilder.append(hashHtml);
+            }
+        }
+        
+        // Check if this is a self-closing tag or has content
+        boolean hasContent = false;
+        if (htmlContents != null) {
+            hasContent = htmlContents.hasContent();
+        }
+        
+        // Don't render empty divs unless they have attributes
+        boolean hasAttributes = hasAttributes();
+        
+        if (isSelfClosingTag(tag) || (!hasContent && !hasAttributes)) {
+            htmlBuilder.append(" />");
+        } else {
+            htmlBuilder.append(">");
+            
+            // Add content
+            if (htmlContents != null) {
+                htmlBuilder.append(htmlContents.convertToHtml());
+            }
+            
+            // Close tag
+            htmlBuilder.append("</").append(tag).append(">");
+        }
+        
+        return htmlBuilder.toString();
+    }
+    
+    private boolean hasAttributes() {
+        // Check if element has any meaningful attributes
+        if (htmlAttributes != null) {
+            for (HtmlAttribute attr : htmlAttributes) {
+                if (attr != null && attr.getTagName() != null && !attr.getTagName().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        
+        if (bindings != null && bindings.getBinding() != null && !bindings.getBinding().isEmpty()) {
+            return true;
+        }
+        
+        if (directives != null && directives.getNg() != null && !directives.getNg().isEmpty()) {
+            return true;
+        }
+        
+        if (hash != null && hash.getHash() != null && !hash.getHash().isEmpty()) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private boolean isSelfClosingTag(String tag) {
+        String[] selfClosingTags = {"input", "img", "br", "hr", "meta", "link"};
+        for (String selfClosingTag : selfClosingTags) {
+            if (selfClosingTag.equalsIgnoreCase(tag)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

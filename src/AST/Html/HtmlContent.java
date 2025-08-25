@@ -42,5 +42,53 @@ public class HtmlContent {
                 ", htmlElements=" + htmlElements +
                 '}';
     }
+
+    public String convertToHtml() {
+        StringBuilder htmlBuilder = new StringBuilder();
+        
+        // Render text data
+        if (data != null) {
+            for (HtmlChardata chardata : data) {
+                if (chardata != null) {
+                    String chardataHtml = chardata.convertToHtml();
+                    if (!chardataHtml.isEmpty()) {
+                        htmlBuilder.append(chardataHtml);
+                    }
+                }
+            }
+        }
+        
+        // Render nested HTML elements
+        if (htmlElements != null) {
+            for (HtmlElement element : htmlElements) {
+                if (element != null) {
+                    String elementHtml = element.convertToHtml();
+                    if (!elementHtml.isEmpty()) {
+                        htmlBuilder.append(elementHtml);
+                    }
+                }
+            }
+        }
+        
+        return htmlBuilder.toString();
+    }
+    
+    public boolean hasContent() {
+        // Check if there's any text data
+        if (data != null) {
+            for (HtmlChardata chardata : data) {
+                if (chardata != null && chardata.hasContent()) {
+                    return true;
+                }
+            }
+        }
+        
+        // Check if there are any nested elements
+        if (htmlElements != null && !htmlElements.isEmpty()) {
+            return true;
+        }
+        
+        return false;
+    }
 }
 

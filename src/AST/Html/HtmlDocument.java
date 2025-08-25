@@ -69,4 +69,21 @@ public class HtmlDocument {
     public void setScriptlets(List<Object> scriptlets) {
         this.scriptlets = scriptlets;
     }
+
+    public String convertToHtml() {
+        StringBuilder htmlBuilder = new StringBuilder();
+        
+        if (htmlElements != null) {
+            for (HtmlElement element : htmlElements) {
+                if (element != null) {
+                    String elementHtml = element.convertToHtml();
+                    if (!elementHtml.isEmpty()) {
+                        htmlBuilder.append(elementHtml);
+                    }
+                }
+            }
+        }
+        
+        return htmlBuilder.toString();
+    }
 }
