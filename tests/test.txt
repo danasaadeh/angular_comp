@@ -1,113 +1,3 @@
-// import { NgForOf, NgIf } from '@angular/common';
-// import { Component } from '@angular/core';
-// import { Router } from '@angular/router';
-
-// @Component({
-//   selector: 'app-home',
-//   template: `
-//     <div
-//       style="display: flex; justify-content: center; align-items: flex-start; min-height: 100vh"
-//     >
-//       <!-- Left dev -->
-//       <div
-//         style="width: 50%; display: flex; flex-direction: column; align-items: center;"
-//         *ngIf="selected_product"
-//       >
-//         <div style="margin-top: 20px;">Name: {{ selected_product.name }}</div>
-//         <div>
-//           <img
-//             [src]="selected_product.image"
-//             alt="{{ selected_product.name }}"
-//             style="max-width: 400px; height: 450px;"
-//           />
-//         </div>
-//         <div>Details: {{ selected_product.details }}</div>
-//         <div>Price: &#36;{{ selected_product.price }}</div>
-
-//         <div>Size: {{ selected_product.size }}</div>
-//       </div>
-
-//       <!-- Right dev -->
-//       <div style="width: 50%; display: flex; flex-direction: column;">
-//         <button
-//           style="margin-bottom: 20px; padding: 15px; background-color: #CB6F6E; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"
-//           (click)="goToAddProduct()"
-//         >
-//           Add Product
-//         </button>
-//         <button
-//           *ngFor="let product of products"
-//           style="padding: 20px;"
-//           (click)="buttonClicked(product)"
-//         >
-//           <div style="padding: 10px">Name: {{ product.name }}</div>
-//           <div>
-//             <img
-//               [src]="product.image"
-//               alt="{{ product.name }}"
-//               style="max-width: 200px; height: 250px;"
-//             />
-//           </div>
-//         </button>
-//       </div>
-//     </div>
-//   `,
-//   imports: [NgForOf, NgIf],
-// })
-// export class HomeComponent {
-//   title = 'dana-angular';
-
-//   selected_product: any = undefined;
-
-//   products = [
-//     {
-//       name: 'first product',
-//       image:
-//         'https://img.freepik.com/premium-photo/cosmetic-bottle-mockup_863013-107717.jpg',
-//       details: 'first product details',
-//       price: 19.99,
-//       size: '200ml',
-//     },
-//     {
-//       name: 'second product',
-//       image:
-//         'https://img.freepik.com/premium-photo/cosmetic-bottle-mockup_863013-107608.jpg',
-//       details: 'second product details',
-//       price: 24.99,
-//       size: '250ml',
-//     },
-//     {
-//       name: 'third product',
-//       image:
-//         'https://img.freepik.com/premium-photo/cosmetic-bottle-mockup_863013-107632.jpg?w=360',
-//       details: 'third product details',
-//       price: 15.49,
-//       size: '150ml',
-//     },
-//     {
-//       name: 'fourth product',
-//       image:
-//         'https://img.freepik.com/premium-photo/cosmetic-bottle-mockup_863013-107603.jpg?w=360',
-//       details: 'fourth product details',
-//       price: 29.99,
-//       size: '300ml',
-//     },
-//   ];
-
-//   constructor(private router: Router) {}
-
-//   buttonClicked(product: any) {
-//     this.selected_product = product;
-//   }
-
-//   goToAddProduct() {
-//     this.router.navigate(['/add-product']);
-//   }
-// }
-import { NgForOf, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { ProductService } from '../product.service';
 
 @Component({
   selector: 'app-home',
@@ -160,19 +50,103 @@ import { ProductService } from '../product.service';
 
   imports: [NgForOf, NgIf],
 })
-export class HomeComponent {
-  selected_product: any;
-  products: any[] = [];
 
-  constructor(private router: Router, private productService: ProductService) {
-    this.productService.products$.subscribe((data) => (this.products = data));
-  }
-
-  buttonClicked(product: any) {
-    this.selected_product = product;
-  }
-
-  goToAddProduct() {
-    this.router.navigate(['/add-product']);
-  }
-}
+@Component({
+  selector: 'app-add-product',
+  standalone: true,
+  template: `
+    <div
+      style="
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       min-height: 100vh;
+       background-color: #f8f8f8;
+     "
+    >
+      <form
+        (ngSubmit)="submit()"
+        #form="ngForm"
+        style="
+         display: flex;
+         flex-direction: column;
+         gap: 15px;
+         max-width: 300px;
+         width: 100%;
+         background: white;
+         padding: 20px;
+         border-radius: 8px;
+         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+       "
+      >
+        <h2 style="text-align: center; margin-bottom: 10px;">Add Product</h2>
+        <div style="display: flex; flex-direction: column;">
+          <label for="name">Name:</label>
+          <input
+            id="name"
+            type="text"
+            name="name"
+            [(ngModel)]="product.name"
+            required
+          />
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <label for="image">Image URL:</label>
+          <input
+            id="image"
+            type="text"
+            name="image"
+            [(ngModel)]="product.image"
+            required
+          />
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <label for="details">Details:</label>
+          <input
+            id="details"
+            type="text"
+            name="details"
+            [(ngModel)]="product.details"
+            required
+          />
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <label for="price">Price:</label>
+          <input
+            id="price"
+            type="number"
+            name="price"
+            step="0.1"
+            [(ngModel)]="product.price"
+            required
+          />
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <label for="size">Size:</label>
+          <input
+            id="size"
+            type="text"
+            name="size"
+            [(ngModel)]="product.size"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          style="
+           background-color: #CB6F6E;
+           color: white;
+           padding: 10px;
+           border: none;
+           border-radius: 4px;
+           cursor: pointer;
+           font-weight: bold;
+         "
+        >
+          Add Product
+        </button>
+      </form>
+    </div>
+  `,
+  imports: [CommonModule, FormsModule],
+})

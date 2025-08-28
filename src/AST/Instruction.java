@@ -194,42 +194,74 @@ public class Instruction implements Program {
         if (element == null) return "";
         String tag = element.getTagName() != null ? element.getTagName() : "div";
         StringBuilder sb = new StringBuilder();
+
+        // --- Opening tag ---
         sb.append("<").append(tag);
+
+        // ✅ Regular attributes
         if (element.getHtmlAttributes() != null) {
             for (AST.Html.HtmlAttribute attr : element.getHtmlAttributes()) {
-                if (attr.getTagName() != null && !attr.getTagName().isEmpty()) {
-                    sb.append(" ").append(attr.getTagName());
-                    if (attr.getValue() != null && !attr.getValue().isEmpty()) {
-                        sb.append("=\"").append(escapeHtml(attr.getValue())).append("\"");
-                    }
-                }
+                sb.append(attr.convertToHtml());
             }
         }
+
+        // ✅ Directives (e.g. *ngIf, *ngFor)
+        if (element.getDirectives() != null) {
+            for (AST.Html.Directive dir : element.getDirectives()) {
+                sb.append(" ").append(dir.convertToHtml());
+            }
+        }
+
+        // ✅ Bindings (e.g. [src], [value])
+        if (element.getBindings() != null) {
+            for (AST.Html.Binding bind : element.getBindings()) {
+                sb.append(" ").append(bind.convertToHtml());
+            }
+        }
+
+
+
+        // ✅ Hashes (id selectors or Angular reference variables, e.g. #myInput)
+        if (element.getHashes() != null) {
+            for (AST.Html.Hash h : element.getHashes()) {
+                sb.append(" ").append(h.convertToHtml());
+            }
+        }
+
+        // Self-closing check
+        if (element.isSelfClosing()) {
+            sb.append(" />");
+            return sb.toString();
+        }
+
         sb.append(">");
 
-        if (element.getHtmlContents() != null) {
-            // text data
-            if (element.getHtmlContents().getData() != null) {
-                for (AST.Html.HtmlChardata d : element.getHtmlContents().getData()) {
+        // --- Children ---
+        if (element.getHtmlContents() != null && element.getHtmlContents().getChildren() != null) {
+            for (Object child : element.getHtmlContents().getChildren()) {
+                if (child instanceof AST.Html.HtmlChardata) {
+                    AST.Html.HtmlChardata d = (AST.Html.HtmlChardata) child;
+
+                    // ✅ Plain text (escaped)
                     if (d.getHtmlText() != null && !d.getHtmlText().isEmpty()) {
-                        sb.append(escapeHtml(d.getHtmlText()));
+                        sb.append(d.getHtmlText());
                     }
+
+                    // ✅ Interpolation (Angular {{ ... }}) should NOT be escaped
                     if (d.getInter() != null && !d.getInter().isEmpty()) {
                         sb.append(d.getInter());
                     }
-                }
-            }
-            // nested elements
-            if (element.getHtmlContents().getHtmlElements() != null) {
-                for (AST.Html.HtmlElement child : element.getHtmlContents().getHtmlElements()) {
-                    sb.append(renderHtmlElement(child));
+                } else if (child instanceof AST.Html.HtmlElement) {
+                    sb.append(renderHtmlElement((AST.Html.HtmlElement) child));
                 }
             }
         }
 
+        // --- Closing tag ---
         sb.append("</").append(tag).append(">");
         return sb.toString();
     }
+
 
     private String escapeHtml(String s) {
         return s.replace("&", "&amp;")
