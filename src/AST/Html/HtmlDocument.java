@@ -86,4 +86,21 @@ public class HtmlDocument {
         
         return htmlBuilder.toString();
     }
+
+    public String convertToJs() {
+        StringBuilder htmlBuilder = new StringBuilder();
+
+        if (htmlElements != null) {
+            for (HtmlElement element : htmlElements) {
+                if (element != null) {
+                    String elementHtml = element.convertToJs();
+                    if (!elementHtml.isEmpty()) {
+                       htmlBuilder.append(elementHtml);
+                    }
+                }
+            }
+        }
+
+        return htmlBuilder.toString();
+    }
 }

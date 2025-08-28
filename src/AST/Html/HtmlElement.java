@@ -25,33 +25,85 @@ public class HtmlElement {
     }
 
     // ==== Getters & Setters ====
-    public int getOrder() { return order; }
-    public void setOrder(int order) { this.order = order; }
+    public int getOrder() {
+        return order;
+    }
 
-    public List<Binding> getBindings() { return bindings; }
-    public void setBindings(List<Binding> bindings) { this.bindings = bindings; }
-    public void addBinding(Binding binding) { if (binding != null) this.bindings.add(binding); }
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
-    public List<Directive> getDirectives() { return directives; }
-    public void setDirectives(List<Directive> directives) { this.directives = directives; }
-    public void addDirective(Directive directive) { if (directive != null) this.directives.add(directive); }
+    public List<Binding> getBindings() {
+        return bindings;
+    }
 
-    public List<HtmlAttribute> getHtmlAttributes() { return htmlAttributes; }
-    public void setHtmlAttributes(List<HtmlAttribute> htmlAttributes) { this.htmlAttributes = htmlAttributes; }
-    public void addHtmlAttribute(HtmlAttribute attr) { if (attr != null) this.htmlAttributes.add(attr); }
+    public void setBindings(List<Binding> bindings) {
+        this.bindings = bindings;
+    }
 
-    public HtmlContent getHtmlContents() { return htmlContents; }
-    public void setHtmlContents(HtmlContent htmlContents) { this.htmlContents = htmlContents; }
+    public void addBinding(Binding binding) {
+        if (binding != null) this.bindings.add(binding);
+    }
 
-    public String getTagName() { return tagName; }
-    public void setTagName(String tagName) { this.tagName = tagName; }
+    public List<Directive> getDirectives() {
+        return directives;
+    }
 
-    public List<Hash> getHashes() { return hashes; }
-    public void setHashes(List<Hash> hashes) { this.hashes = hashes; }
-    public void addHash(Hash hash) { if (hash != null) this.hashes.add(hash); }
+    public void setDirectives(List<Directive> directives) {
+        this.directives = directives;
+    }
 
-    public boolean isSelfClosing() { return selfClosing; }
-    public void setSelfClosing(boolean selfClosing) { this.selfClosing = selfClosing; }
+    public void addDirective(Directive directive) {
+        if (directive != null) this.directives.add(directive);
+    }
+
+    public List<HtmlAttribute> getHtmlAttributes() {
+        return htmlAttributes;
+    }
+
+    public void setHtmlAttributes(List<HtmlAttribute> htmlAttributes) {
+        this.htmlAttributes = htmlAttributes;
+    }
+
+    public void addHtmlAttribute(HtmlAttribute attr) {
+        if (attr != null) this.htmlAttributes.add(attr);
+    }
+
+    public HtmlContent getHtmlContents() {
+        return htmlContents;
+    }
+
+    public void setHtmlContents(HtmlContent htmlContents) {
+        this.htmlContents = htmlContents;
+    }
+
+    public String getTagName() {
+        return tagName;
+    }
+
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
+    }
+
+    public List<Hash> getHashes() {
+        return hashes;
+    }
+
+    public void setHashes(List<Hash> hashes) {
+        this.hashes = hashes;
+    }
+
+    public void addHash(Hash hash) {
+        if (hash != null) this.hashes.add(hash);
+    }
+
+    public boolean isSelfClosing() {
+        return selfClosing;
+    }
+
+    public void setSelfClosing(boolean selfClosing) {
+        this.selfClosing = selfClosing;
+    }
 
     // ==== Debug Output ====
     @Override
@@ -147,8 +199,8 @@ public class HtmlElement {
 
     public static boolean isSelfClosingTag(String tag) {
         String[] voidTags = {
-                "area","base","br","col","embed","hr","img",
-                "input","link","meta","param","source","track","wbr"
+                "area", "base", "br", "col", "embed", "hr", "img",
+                "input", "link", "meta", "param", "source", "track", "wbr"
         };
         if (tag == null) return false;
         for (String t : voidTags) {
@@ -157,4 +209,126 @@ public class HtmlElement {
         return false;
     }
 
+
+    public String convertToJs() {
+        StringBuilder jsBuilder = new StringBuilder();
+
+        if (htmlAttributes != null) {
+            for (HtmlAttribute attr : htmlAttributes) {
+                if ("id".equalsIgnoreCase(attr.getName()) && attr.getValue() != null && !attr.getValue().isEmpty()) {
+                    String rawId = attr.getValue().trim();
+                    String cleanId = stripQuotes(rawId);                  // <-- remove wrapping quotes if any
+                    String varName = sanitizeIdentifier(toCamelCase(cleanId)); // <-- make a valid JS identifier
+
+                    jsBuilder.append("const ")
+                            .append(varName)                              // <-- NO quotes here
+                            .append(" = document.getElementById(\"")      // <-- quote the string literal id
+                            .append(escapeJsString(cleanId))
+                            .append("\");\n");
+                }
+            }
+        }
+
+        if (htmlContents != null && htmlContents.hasContent()) {
+            for (Object child : htmlContents.getChildren()) {
+                if (child instanceof HtmlElement) {
+                    jsBuilder.append(((HtmlElement) child).convertToJs());
+                }
+            }
+        }
+
+        return jsBuilder.toString();
+    }
+
+    // Utility: convert kebab-case or snake_case to camelCase
+    private String toCamelCase(String value) {
+        if (value == null || value.isEmpty()) return "";
+        String[] parts = value.split("[-_]");
+        StringBuilder camelCase = new StringBuilder(parts[0]);
+        for (int i = 1; i < parts.length; i++) {
+            if (!parts[i].isEmpty()) {
+                camelCase.append(parts[i].substring(0, 1).toUpperCase())
+                        .append(parts[i].substring(1));
+            }
+        }
+        return camelCase.toString();
+    }
+
+    // Remove wrapping single/double quotes if present
+    private String stripQuotes(String s) {
+        if (s == null || s.length() < 2) return s;
+        char first = s.charAt(0), last = s.charAt(s.length() - 1);
+        if ((first == '"' && last == '"') || (first == '\'' && last == '\'')) {
+            return s.substring(1, s.length() - 1);
+        }
+        return s;
+    }
+
+    // Ensure it's a valid, non-reserved JS identifier
+    private String sanitizeIdentifier(String s) {
+        if (s == null || s.isEmpty()) return "_el";
+        // Replace invalid characters
+        String out = s.replaceAll("[^A-Za-z0-9_$]", "_");
+        // Cannot start with a digit
+        if (out.matches("^[0-9].*")) out = "_" + out;
+        // Avoid reserved words
+        if (isReservedWord(out)) out = out + "El";
+        return out;
+    }
+
+    private boolean isReservedWord(String s) {
+        switch (s) {
+            case "break":
+            case "case":
+            case "catch":
+            case "class":
+            case "const":
+            case "continue":
+            case "debugger":
+            case "default":
+            case "delete":
+            case "do":
+            case "else":
+            case "export":
+            case "extends":
+            case "finally":
+            case "for":
+            case "function":
+            case "if":
+            case "import":
+            case "in":
+            case "instanceof":
+            case "new":
+            case "return":
+            case "super":
+            case "switch":
+            case "this":
+            case "throw":
+            case "try":
+            case "typeof":
+            case "var":
+            case "void":
+            case "while":
+            case "with":
+            case "yield":
+            case "let":
+            case "enum":
+            case "await":
+            case "implements":
+            case "package":
+            case "protected":
+            case "static":
+            case "interface":
+            case "private":
+            case "public":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    // Escape quotes/backslashes for JS string literal
+    private String escapeJsString(String s) {
+        return s.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
 }

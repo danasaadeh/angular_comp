@@ -175,7 +175,6 @@ public class Instruction implements Program {
         return jsBuilder.toString();
     }
 
-
     // ---- Helpers to render HTML with inline attributes/styles ----
     private String renderTemplate(AST.Angular.Component.Template template) {
         if (template == null || template.getHtmlDocument() == null) return "";
@@ -185,80 +184,8 @@ public class Instruction implements Program {
     private String renderHtmlDocument(AST.Html.HtmlDocument document) {
         StringBuilder sb = new StringBuilder();
         for (AST.Html.HtmlElement el : document.getHtmlElements()) {
-            sb.append(renderHtmlElement(el));
+            sb.append(el.convertToHtml());   // ✅ use HtmlElement’s built-in renderer
         }
-        return sb.toString();
-    }
-
-    private String renderHtmlElement(AST.Html.HtmlElement element) {
-        if (element == null) return "";
-        String tag = element.getTagName() != null ? element.getTagName() : "div";
-        StringBuilder sb = new StringBuilder();
-
-        // --- Opening tag ---
-        sb.append("<").append(tag);
-
-        // ✅ Regular attributes
-        if (element.getHtmlAttributes() != null) {
-            for (AST.Html.HtmlAttribute attr : element.getHtmlAttributes()) {
-                sb.append(attr.convertToHtml());
-            }
-        }
-
-        // ✅ Directives (e.g. *ngIf, *ngFor)
-        if (element.getDirectives() != null) {
-            for (AST.Html.Directive dir : element.getDirectives()) {
-                sb.append(" ").append(dir.convertToHtml());
-            }
-        }
-
-        // ✅ Bindings (e.g. [src], [value])
-        if (element.getBindings() != null) {
-            for (AST.Html.Binding bind : element.getBindings()) {
-                sb.append(" ").append(bind.convertToHtml());
-            }
-        }
-
-
-
-        // ✅ Hashes (id selectors or Angular reference variables, e.g. #myInput)
-        if (element.getHashes() != null) {
-            for (AST.Html.Hash h : element.getHashes()) {
-                sb.append(" ").append(h.convertToHtml());
-            }
-        }
-
-        // Self-closing check
-        if (element.isSelfClosing()) {
-            sb.append(" />");
-            return sb.toString();
-        }
-
-        sb.append(">");
-
-        // --- Children ---
-        if (element.getHtmlContents() != null && element.getHtmlContents().getChildren() != null) {
-            for (Object child : element.getHtmlContents().getChildren()) {
-                if (child instanceof AST.Html.HtmlChardata) {
-                    AST.Html.HtmlChardata d = (AST.Html.HtmlChardata) child;
-
-                    // ✅ Plain text (escaped)
-                    if (d.getHtmlText() != null && !d.getHtmlText().isEmpty()) {
-                        sb.append(d.getHtmlText());
-                    }
-
-                    // ✅ Interpolation (Angular {{ ... }}) should NOT be escaped
-                    if (d.getInter() != null && !d.getInter().isEmpty()) {
-                        sb.append(d.getInter());
-                    }
-                } else if (child instanceof AST.Html.HtmlElement) {
-                    sb.append(renderHtmlElement((AST.Html.HtmlElement) child));
-                }
-            }
-        }
-
-        // --- Closing tag ---
-        sb.append("</").append(tag).append(">");
         return sb.toString();
     }
 

@@ -1,5 +1,5 @@
 Semantic check errors:
-Line 3: (Error: Component dependency 'NgForOf' is used in the component's imports but is not imported.)
-Line 3: (Error: Component dependency 'NgIf' is used in the component's imports but is not imported.)
-Line 55: (Error: Component dependency 'CommonModule' is used in the component's imports but is not imported.)
-Line 55: (Error: Component dependency 'FormsModule' is used in the component's imports but is not imported.)
+Line 2: (Error: Component dependency 'NgForOf' is used in the component's imports but is not imported.)
+Line 2: (Error: Component dependency 'NgIf' is used in the component's imports but is not imported.)
+Line 56: (Error: Component dependency 'CommonModule' is used in the component's imports but is not imported.)
+Line 56: (Error: Component dependency 'FormsModule' is used in the component's imports but is not imported.)
