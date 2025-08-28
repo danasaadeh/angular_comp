@@ -1,2 +1,1 @@
-Semantic check errors:
-Line 3: (Error: Component component_3 is missing a selector)
+No semantic errors found.

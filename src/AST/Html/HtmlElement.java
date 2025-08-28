@@ -6,191 +6,155 @@ import java.util.List;
 public class HtmlElement {
     private String tagName;
     private List<HtmlAttribute> htmlAttributes;
-    private Directive directives;
-    private Binding bindings;
+    private List<Directive> directives;
+    private List<Binding> bindings;
     private HtmlContent htmlContents;
-    private  Hash hash;
+    private List<Hash> hashes;
+    private boolean selfClosing;
+    private int order;   // NEW field
 
     public HtmlElement() {
-        this.bindings = new Binding();
-        this.directives = new Directive();
+        this.bindings = new ArrayList<>();
+        this.directives = new ArrayList<>();
         this.htmlAttributes = new ArrayList<>();
         this.htmlContents = new HtmlContent();
-        this.hash=new Hash();
+        this.hashes = new ArrayList<>();
         this.tagName = "";
+        this.selfClosing = false;
+        this.order = -1;
     }
 
+    // ==== Getters & Setters ====
+    public int getOrder() { return order; }
+    public void setOrder(int order) { this.order = order; }
 
-    public Binding getBindings() {
-        return bindings;
-    }
+    public List<Binding> getBindings() { return bindings; }
+    public void setBindings(List<Binding> bindings) { this.bindings = bindings; }
+    public void addBinding(Binding binding) { if (binding != null) this.bindings.add(binding); }
 
-    public void setBindings(Binding bindings) {
-        this.bindings = bindings;
-    }
+    public List<Directive> getDirectives() { return directives; }
+    public void setDirectives(List<Directive> directives) { this.directives = directives; }
+    public void addDirective(Directive directive) { if (directive != null) this.directives.add(directive); }
 
-    public Directive getDirectives() {
-        return directives;
-    }
+    public List<HtmlAttribute> getHtmlAttributes() { return htmlAttributes; }
+    public void setHtmlAttributes(List<HtmlAttribute> htmlAttributes) { this.htmlAttributes = htmlAttributes; }
+    public void addHtmlAttribute(HtmlAttribute attr) { if (attr != null) this.htmlAttributes.add(attr); }
 
-    public void setDirectives(Directive directives) {
-        this.directives = directives;
-    }
+    public HtmlContent getHtmlContents() { return htmlContents; }
+    public void setHtmlContents(HtmlContent htmlContents) { this.htmlContents = htmlContents; }
 
-    public List<HtmlAttribute> getHtmlAttributes() {
-        return htmlAttributes;
-    }
+    public String getTagName() { return tagName; }
+    public void setTagName(String tagName) { this.tagName = tagName; }
 
-    public void setHtmlAttributes(List<HtmlAttribute> htmlAttributes) {
-        this.htmlAttributes = htmlAttributes;
-    }
+    public List<Hash> getHashes() { return hashes; }
+    public void setHashes(List<Hash> hashes) { this.hashes = hashes; }
+    public void addHash(Hash hash) { if (hash != null) this.hashes.add(hash); }
 
-    public HtmlContent getHtmlContents() {
-        return htmlContents;
-    }
+    public boolean isSelfClosing() { return selfClosing; }
+    public void setSelfClosing(boolean selfClosing) { this.selfClosing = selfClosing; }
 
-    public void setHtmlContents(HtmlContent htmlContents) {
-        this.htmlContents = htmlContents;
-    }
-
-    public String getTagName() {
-        return tagName;
-    }
-
-    public void setTagName(String tagName) {
-        this.tagName = tagName;
-    }
-
+    // ==== Debug Output ====
     @Override
     public String toString() {
-        return "\n \t\t\t\t\t\t\t bindings=" + bindings +
-                "\n \t\t\t\t\t\t\t tagName='" + tagName + '\'' +
-                "\n \t\t\t\t\t\t\t htmlAttributes=" + htmlAttributes +
-                " \n \t\t\t\t\t\t\t directives=" + directives +
-                ",\n hash=" + hash +
-                "\n \t\t\t\t\t\t\t htmlContents=" + htmlContents
-                ;
-    }
-    public String print() {
-        return "\n HtmlElement{" +
+        return "\nHtmlElement{" +
+                "\n tagName='" + tagName + '\'' +
+                "\n htmlAttributes=" + htmlAttributes +
                 "\n bindings=" + bindings +
-                ", tagName='" + tagName + '\'' +
-                ",\n htmlAttributes=" + htmlAttributes +
-                ",\n directives=" + directives +
-                ",\n hash=" + hash +
-                ",\n htmlContents=" + htmlContents +
-                '}';
+                "\n directives=" + directives +
+                "\n hashes=" + hashes +
+                "\n htmlContents=" + htmlContents +
+                "\n selfClosing=" + selfClosing +
+                "\n order=" + order +
+                "\n}";
     }
 
-    public Hash getHash() {
-        return hash;
-    }
-
-    public void setHash(Hash hash) {
-        this.hash = hash;
-    }
-
+    // ==== HTML Conversion ====
     public String convertToHtml() {
-        StringBuilder htmlBuilder = new StringBuilder();
-        
-        // Start tag
-        String tag = (tagName != null && !tagName.isEmpty()) ? tagName : "div";
-        htmlBuilder.append("<").append(tag);
-        
-        // Add HTML attributes
+        if (tagName == null || tagName.trim().isEmpty()) {
+            return htmlContents != null ? htmlContents.convertToHtml() : "";
+        }
+
+        String tag = tagName.trim();
+
+        StringBuilder attrBuilder = new StringBuilder();
+
         if (htmlAttributes != null) {
             for (HtmlAttribute attr : htmlAttributes) {
-                if (attr != null) {
-                    String attrHtml = attr.convertToHtml();
-                    if (!attrHtml.isEmpty()) {
-                        htmlBuilder.append(attrHtml);
-                    }
+                String a = attr.convertToHtml();
+                if (a != null && !a.isEmpty()) {
+                    if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                    attrBuilder.append(a);
                 }
             }
         }
-        
-        // Add bindings (Angular property bindings)
+
         if (bindings != null) {
-            String bindingHtml = bindings.convertToHtml();
-            if (!bindingHtml.isEmpty()) {
-                htmlBuilder.append(bindingHtml);
+            for (Binding binding : bindings) {
+                String b = binding.convertToHtml();
+                if (b != null && !b.isEmpty()) {
+                    if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                    attrBuilder.append(b.trim());
+                }
             }
         }
-        
-        // Add directives (Angular structural directives)
+
         if (directives != null) {
-            String directiveHtml = directives.convertToHtml();
-            if (!directiveHtml.isEmpty()) {
-                htmlBuilder.append(directiveHtml);
+            for (Directive directive : directives) {
+                String d = directive.convertToHtml();
+                if (d != null && !d.isEmpty()) {
+                    if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                    attrBuilder.append(d.trim());
+                }
             }
         }
-        
-        // Add hash (Angular event bindings)
-        if (hash != null) {
-            String hashHtml = hash.convertToHtml();
-            if (!hashHtml.isEmpty()) {
-                htmlBuilder.append(hashHtml);
+
+        if (hashes != null) {
+            for (Hash hash : hashes) {
+                String h = hash.convertToHtml();
+                if (h != null && !h.isEmpty()) {
+                    if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                    attrBuilder.append(h.trim());
+                }
             }
         }
-        
-        // Check if this is a self-closing tag or has content
-        boolean hasContent = false;
-        if (htmlContents != null) {
-            hasContent = htmlContents.hasContent();
+
+        String attrString = attrBuilder.toString().trim();
+        boolean hasContent = htmlContents != null && htmlContents.hasContent();
+        boolean voidTag = isSelfClosingTag(tag);
+
+        if (!selfClosing && !voidTag && attrString.isEmpty() && !hasContent) {
+            return "";
         }
-        
-        // Don't render empty divs unless they have attributes
-        boolean hasAttributes = hasAttributes();
-        
-        if (isSelfClosingTag(tag) || (!hasContent && !hasAttributes)) {
+
+        StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append("<").append(tag);
+        if (!attrString.isEmpty()) {
+            htmlBuilder.append(" ").append(attrString);
+        }
+
+        if (selfClosing || voidTag) {
             htmlBuilder.append(" />");
+        } else if (!hasContent) {
+            htmlBuilder.append("></").append(tag).append(">");
         } else {
             htmlBuilder.append(">");
-            
-            // Add content
-            if (htmlContents != null) {
-                htmlBuilder.append(htmlContents.convertToHtml());
-            }
-            
-            // Close tag
+            htmlBuilder.append(htmlContents.convertToHtml());
             htmlBuilder.append("</").append(tag).append(">");
         }
-        
+
         return htmlBuilder.toString();
     }
-    
-    private boolean hasAttributes() {
-        // Check if element has any meaningful attributes
-        if (htmlAttributes != null) {
-            for (HtmlAttribute attr : htmlAttributes) {
-                if (attr != null && attr.getTagName() != null && !attr.getTagName().isEmpty()) {
-                    return true;
-                }
-            }
-        }
-        
-        if (bindings != null && bindings.getBinding() != null && !bindings.getBinding().isEmpty()) {
-            return true;
-        }
-        
-        if (directives != null && directives.getNg() != null && !directives.getNg().isEmpty()) {
-            return true;
-        }
-        
-        if (hash != null && hash.getHash() != null && !hash.getHash().isEmpty()) {
-            return true;
-        }
-        
-        return false;
-    }
-    
-    private boolean isSelfClosingTag(String tag) {
-        String[] selfClosingTags = {"input", "img", "br", "hr", "meta", "link"};
-        for (String selfClosingTag : selfClosingTags) {
-            if (selfClosingTag.equalsIgnoreCase(tag)) {
-                return true;
-            }
+
+    public static boolean isSelfClosingTag(String tag) {
+        String[] voidTags = {
+                "area","base","br","col","embed","hr","img",
+                "input","link","meta","param","source","track","wbr"
+        };
+        if (tag == null) return false;
+        for (String t : voidTags) {
+            if (t.equalsIgnoreCase(tag)) return true;
         }
         return false;
     }
+
 }

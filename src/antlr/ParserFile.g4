@@ -227,18 +227,45 @@ scriptletOrSeaWs: SCRIPTLET
                   | SEA_WS;
 
 htmlElements: htmlMisc* htmlElement htmlMisc*;
+//
+//htmlElement:
+//	TAG_OPEN TAG_NAME htmlAttribute* binding? hash? directive?
+//	| directive? htmlAttribute* binding?  hash?(
+//		TAG_CLOSE
+//			htmlContent? (TAG_OPEN TAG_SLASH TAG_NAME TAG_CLOSE)?
+//
+//		| TAG_SLASH_CLOSE
+//	)
+//	| SCRIPTLET
+//	| script
+//	| style;
 
-htmlElement:
-	TAG_OPEN TAG_NAME htmlAttribute* binding? hash? directive?
-	| directive? htmlAttribute* binding?  hash?(
-		TAG_CLOSE (
-			htmlContent TAG_OPEN TAG_SLASH TAG_NAME TAG_CLOSE
-		)?
-		| TAG_SLASH_CLOSE
-	)
-	| SCRIPTLET
-	| script
-	| style;
+//htmlElement
+//  : TAG_OPEN TAG_NAME (htmlAttribute
+//    | binding
+//    | directive
+//    | hash)* ( TAG_CLOSE| TAG_SLASH_CLOSE) (htmlContent TAG_OPEN TAG_SLASH TAG_NAME TAG_CLOSE )?
+//    | TAG_SLASH_CLOSE
+//    | SCRIPTLET
+//    | script
+//    | style;
+
+
+htmlElement
+
+  : TAG_OPEN TAG_NAME (htmlAttribute | binding | directive | hash)* TAG_SLASH_CLOSE
+  // normal: <tag ...> content </tag>
+  | TAG_OPEN TAG_NAME (htmlAttribute | binding | directive | hash)* TAG_CLOSE
+      htmlContent?
+      TAG_OPEN TAG_SLASH TAG_NAME TAG_CLOSE
+  | SCRIPTLET
+  | script
+  | style
+  ;
+
+
+
+
 
 directive: DIRECTIVE TAG_EQUALS ATTVALUE_VALUE;
 binding: BINDING TAG_EQUALS ATTVALUE_VALUE;
@@ -248,7 +275,12 @@ htmlContent:
 	htmlChardata? ((htmlElement | CDATA | htmlComment) htmlChardata?)*;
 
 htmlAttribute: TAG_NAME (TAG_EQUALS ATTVALUE_VALUE)?;
-htmlChardata: HTML_TEXT? INTERPOLATION? | SEA_WS;
+//htmlChardata: HTML_TEXT? INTERPOLATION? | SEA_WS;
+htmlChardata
+  : (HTML_TEXT INTERPOLATION?)      // text, optionally followed by {{...}}
+  | INTERPOLATION                   // standalone {{...}}
+  | SEA_WS                          // preserve whitespace separately if you want
+  ;
 
 
 htmlMisc: htmlComment

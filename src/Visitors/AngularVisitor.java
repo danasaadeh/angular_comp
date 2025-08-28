@@ -33,6 +33,7 @@ import Symbol_table.Row;
 import Symbol_table.SymbolTable;
 import antlr.ParserFile;
 import antlr.ParserFileBaseVisitor;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import semantic.*;
@@ -1617,52 +1618,110 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitHtmlElement(ParserFile.HtmlElementContext ctx) {
+    public HtmlElement visitHtmlElement(ParserFile.HtmlElementContext ctx) {
         HtmlElement htmlElement = new HtmlElement();
-        if(ctx.TAG_NAME()!=null){
-            htmlElement.setTagName(ctx.TAG_NAME().getText());}
 
+        // Opening tag name
+        if (ctx.TAG_NAME() != null && !ctx.TAG_NAME().isEmpty()) {
+            String tagName = ctx.TAG_NAME(0).getText();
+            htmlElement.setTagName(tagName);
+        }
 
+        // Attributes
         for (ParserFile.HtmlAttributeContext attribute : ctx.htmlAttribute()) {
             HtmlAttribute htmlAttribute = (HtmlAttribute) visitHtmlAttribute(attribute);
-            htmlElement.getHtmlAttributes().add(htmlAttribute);
+            htmlElement.addHtmlAttribute(htmlAttribute);
         }
 
-
-        if (ctx.binding() != null) {
-            Binding binding = (Binding) visitBinding(ctx.binding());
-            htmlElement.setBindings(binding);
+        // Bindings
+        for (ParserFile.BindingContext bindingCtx : ctx.binding()) {
+            Binding binding = (Binding) visitBinding(bindingCtx);
+            htmlElement.addBinding(binding);
         }
 
-
-        if (ctx.directive() != null) {
-            Directive directive = (Directive) visitDirective(ctx.directive());
-            htmlElement.setDirectives(directive);
-        }
-        if (ctx.hash() != null) {
-            Hash hash = (Hash) visitHash(ctx.hash());
-            htmlElement.setHash(hash);
+        // Directives
+        for (ParserFile.DirectiveContext directiveCtx : ctx.directive()) {
+            Directive directive = (Directive) visitDirective(directiveCtx);
+            htmlElement.addDirective(directive);
         }
 
+        // Hashes
+        for (ParserFile.HashContext hashCtx : ctx.hash()) {
+            Hash hash = (Hash) visitHash(hashCtx);
+            htmlElement.addHash(hash);
+        }
 
-        if (ctx.htmlContent() != null) {
+        // Decide if this is self-closing (by grammar alternative OR by tag name)
+        boolean explicitSelfClose = ctx.TAG_SLASH_CLOSE() != null;
+        boolean voidByName = HtmlElement.isSelfClosingTag(htmlElement.getTagName());
+        htmlElement.setSelfClosing(explicitSelfClose || voidByName);
+
+        // Attach children only if not self-closing
+        if (!htmlElement.isSelfClosing() && ctx.htmlContent() != null) {
             HtmlContent htmlContent = (HtmlContent) visitHtmlContent(ctx.htmlContent());
             htmlElement.setHtmlContents(htmlContent);
         }
 
-//        Row row = new Row();
-//        row.setType("Html Element");
-//        row.setValue(htmlElement.toString());
-//        st.getRow().add(row);
+        // Normal tags: check for matching closing name
+        if (!htmlElement.isSelfClosing() && ctx.TAG_NAME().size() > 1) {
+            String openName = ctx.TAG_NAME(0).getText();
+            String closeName = ctx.TAG_NAME(1).getText();
+            if (!openName.equalsIgnoreCase(closeName)) {
+                System.err.println("Warning: mismatched tag names: <" + openName + "> ... </" + closeName + ">");
+            }
+        }
+
         return htmlElement;
     }
+
+    @Override
+    public HtmlContent visitHtmlContent(ParserFile.HtmlContentContext ctx) {
+        HtmlContent htmlContent = new HtmlContent();
+        int order = 0;
+
+        for (ParseTree child : ctx.children) {
+            if (child instanceof ParserFile.HtmlElementContext) {
+                HtmlElement htmlElement = (HtmlElement) visitHtmlElement((ParserFile.HtmlElementContext) child);
+                htmlElement.setOrder(order++);
+                htmlContent.getChildren().add(htmlElement);
+            } else if (child instanceof ParserFile.HtmlChardataContext) {
+                HtmlChardata data = (HtmlChardata) visitHtmlChardata((ParserFile.HtmlChardataContext) child);
+                if (data.hasContent()) {
+                    data.setOrder(order++);
+                    htmlContent.getChildren().add(data);
+                }
+            } else if (child instanceof TerminalNode) {
+                // Skip structural tokens
+            }
+        }
+
+        return htmlContent;
+    }
+
+    @Override
+    public HtmlChardata visitHtmlChardata(ParserFile.HtmlChardataContext ctx) {
+        HtmlChardata chardata = new HtmlChardata();
+
+        if (ctx.HTML_TEXT() != null) {
+            chardata.setHtmlText(ctx.HTML_TEXT().getText());
+        }
+        if (ctx.INTERPOLATION() != null) {
+            chardata.setInter(ctx.INTERPOLATION().getText());
+        }
+        // SEA_WS is preserved separately if you decide to keep whitespace nodes
+
+        return chardata;
+    }
+
+
+
 
 
     @Override
     public HtmlAttribute visitHtmlAttribute(ParserFile.HtmlAttributeContext ctx) {
         HtmlAttribute htmlAttribute = new HtmlAttribute();
         if (ctx.TAG_NAME() != null) {
-            htmlAttribute.setTagName(ctx.TAG_NAME().getText());
+            htmlAttribute.setName(ctx.TAG_NAME().getText());
         }
         // Handle boolean attributes (e.g., required) that may not have a value
         if (ctx.ATTVALUE_VALUE() != null) {
@@ -1720,48 +1779,7 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
         return directive;
     }
 
-    @Override
-    public HtmlContent visitHtmlContent(ParserFile.HtmlContentContext ctx) {
-        HtmlContent htmlContent = new HtmlContent();
 
-        if(ctx.htmlElement() !=null){
-            for (ParserFile.HtmlElementContext element : ctx.htmlElement()) {
-                HtmlElement htmlElement = (HtmlElement) visitHtmlElement(element);
-                htmlContent.getHtmlElements().add(htmlElement);
-            }}
-
-        for (ParserFile.HtmlChardataContext chardata : ctx.htmlChardata()) {
-            HtmlChardata data = (HtmlChardata) visit(chardata);
-            htmlContent.getData().add(data);
-
-//            Row row = new Row();
-//            row.setType("Html Content");
-//            row.setValue(htmlContent.toString());
-//            st.getRow().add(row);
-        }
-
-        return htmlContent;
-    }
-
-
-
-    @Override
-    public HtmlChardata visitHtmlChardata(ParserFile.HtmlChardataContext ctx) {
-        HtmlChardata chardata = new HtmlChardata();
-        if(ctx.HTML_TEXT()!=null) {
-            chardata.setHtmlText(ctx.HTML_TEXT().getText());
-        }
-        if(ctx.INTERPOLATION()!=null) {
-            chardata.setInter(ctx.INTERPOLATION().getText());
-        }
-
-
-//        Row row = new Row();
-//        row.setType("CharData");
-//        row.setValue(chardata.toString());
-//        st.getRow().add(row);
-        return chardata;
-    }
 
 
     private boolean isVariableDefined(String name) {

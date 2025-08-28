@@ -1,20 +1,20 @@
 package AST.Html;
 
 public class HtmlAttribute {
-    private String tagName;
+    private String name;
     private String value;
 
     public HtmlAttribute() {
-        this.tagName = "";
+        this.name = "";
         this.value = "";
     }
 
-    public String getTagName() {
-        return tagName;
+    public String getName() {
+        return name;
     }
 
-    public void setTagName(String tagName) {
-        this.tagName = tagName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getValue() {
@@ -28,23 +28,23 @@ public class HtmlAttribute {
     @Override
     public String toString() {
         return
-                "\n \t\t\t\t\t\t\t tagName='" + tagName + '\'' +
+                "\n \t\t\t\t\t\t\t name='" + name + '\'' +
                 "\n \t\t\t\t\t\t\t value='" + value + '\'' ;
     }
     public String print() {
         return "\n HtmlAttribute{" +
-                "tagName='" + tagName + '\'' +
+                "name='" + name + '\'' +
                 ", value='" + value + '\'' +
                 '}';
     }
 
     public String convertToHtml() {
-        if (tagName == null || tagName.isEmpty()) {
+        if (name == null || name.isEmpty()) {
             return "";
         }
         
         StringBuilder htmlBuilder = new StringBuilder();
-        htmlBuilder.append(" ").append(tagName);
+        htmlBuilder.append(" ").append(name);
         
         if (value != null && !value.isEmpty()) {
             // Remove any existing quotes from the value to prevent double-quoting

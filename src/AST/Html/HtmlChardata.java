@@ -1,14 +1,14 @@
 package AST.Html;
 
-import java.util.List;
-
 public class HtmlChardata {
-    private String inter;
-    private   String htmlText;
+    private String htmlText;
+    private String inter;   // interpolation {{...}}
+    private int order;
 
     public HtmlChardata() {
         this.htmlText = "";
-        this.inter="";
+        this.inter = "";
+        this.order = -1;
     }
 
     public String getHtmlText() {
@@ -19,7 +19,6 @@ public class HtmlChardata {
         this.htmlText = htmlText;
     }
 
-
     public String getInter() {
         return inter;
     }
@@ -28,37 +27,37 @@ public class HtmlChardata {
         this.inter = inter;
     }
 
-    @Override
-    public String toString() {
-        return
-                "\n \t\t\t\t\t\t\t htmlText='" + htmlText + '\'' +
-                "\n \t\t\t\t\t\t\t inter='" + inter + '\'';
+    public int getOrder() {
+        return order;
     }
-    public String print() {
-        return "\n HtmlChardata{" +
-                "htmlText='" + htmlText + '\'' +
-                ", inter='" + inter + '\'' +
-                '}';
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public boolean hasContent() {
+        return (htmlText != null && !htmlText.trim().isEmpty())
+                || (inter != null && !inter.trim().isEmpty());
     }
 
     public String convertToHtml() {
-        StringBuilder htmlBuilder = new StringBuilder();
-        
-        // Add HTML text
+        StringBuilder sb = new StringBuilder();
         if (htmlText != null && !htmlText.isEmpty()) {
-            htmlBuilder.append(htmlText);
+            sb.append(htmlText);  // keep spaces and formatting
         }
-        
-        // Add interpolation (Angular template expressions)
         if (inter != null && !inter.isEmpty()) {
-            htmlBuilder.append(inter);
+            sb.append(inter);
         }
-        
-        return htmlBuilder.toString();
+        return sb.toString();
     }
-    
-    public boolean hasContent() {
-        return (htmlText != null && !htmlText.isEmpty()) || 
-               (inter != null && !inter.isEmpty());
+
+
+    @Override
+    public String toString() {
+        return "HtmlChardata{" +
+                "htmlText='" + htmlText + '\'' +
+                ", inter='" + inter + '\'' +
+                ", order=" + order +
+                '}';
     }
 }
