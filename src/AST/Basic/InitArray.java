@@ -176,4 +176,17 @@ public class InitArray extends Statements {
     public void setElementType(String elementType) {
         this.elementType = elementType;
     }
+    public String convertToJs() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("let ").append(id).append(" = [");
+
+        for (int i = 0; i < values.size(); i++) {
+            sb.append(values.get(i));
+            if (i < values.size() - 1) sb.append(", ");
+        }
+
+        sb.append("];");
+        return sb.toString();
+    }
+
 }

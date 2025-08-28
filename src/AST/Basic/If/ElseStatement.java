@@ -19,4 +19,11 @@ public class ElseStatement {
                 "\n \t\t\t\t\t\t\tbody=" + body +
                 '}';
     }
+    public String convertToJs() {
+        StringBuilder js = new StringBuilder();
+        js.append("else {\n");
+        js.append(body.convertToJs());
+        js.append("}\n");
+        return js.toString();
+    }
 }

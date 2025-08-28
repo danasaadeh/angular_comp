@@ -28,4 +28,8 @@ public class UnaryExpression extends Expression {
                 "\n \t\t\t\t\t\t\t operand=" + operand +
                 '}';
     }
+    public String convertToJs() {
+        // Example: for -a, return "-(a)"
+        return operator + "(" + operand.convertToJs() + ")";
+    }
 }

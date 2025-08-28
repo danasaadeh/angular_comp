@@ -47,7 +47,8 @@ public class ReadOnly extends Statements {
     public String convertToJs() {
         StringBuilder sb = new StringBuilder();
         if (declaration != null) {
-            sb.append("const ").append(declaration.getId()); // no readonly in JS
+            // في JavaScript نستخدم const بدلاً من readonly
+            sb.append("const ").append(declaration.convertToJs());
         }
         if (thisExpression != null) {
             sb.append(" = ").append(thisExpression.convertToJs());

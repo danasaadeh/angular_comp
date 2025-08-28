@@ -4,10 +4,10 @@ import AST.Statements;
 
 public class Instance extends Statements {
     private Declaration declaration;
-    private String typeName;       // e.g., 'BehaviorSubject'
-    private String genericType;    // e.g., 'any[]'
-    private boolean isArray;       // true if array literal
-    private Object arrayNode;      // store array initializer
+    private String typeName;
+    private String genericType;
+    private boolean isArray;
+    private Object arrayNode;
 
     public Instance(Declaration declaration, String typeName, String genericType, boolean isArray, Object arrayNode) {
         this.declaration = declaration;
@@ -59,12 +59,11 @@ public class Instance extends Statements {
 
         if (isArray) {
             if (arrayNode != null) {
-                // If arrayNode is another AST node, call convertToJs recursively
                 String arrayJs;
                 if (arrayNode instanceof Statements) {
                     arrayJs = ((Statements) arrayNode).convertToJs();
                 } else {
-                    arrayJs = arrayNode.toString(); // fallback
+                    arrayJs = arrayNode.toString();
                 }
                 return "let " + varName + " = " + arrayJs + ";";
             } else {

@@ -48,24 +48,19 @@ public class FuncBody {
                 ",\n statements=" + statements +
                 '}';
     }
+
     public String convertToJs() {
         StringBuilder jsBuilder = new StringBuilder();
 
-        // Convert all statements
         for (Statements stmt : statements) {
-            jsBuilder.append("  ") // indent inside function
-                    .append(stmt.convertToJs())
-                    .append("\n");
-        }
+            String stmtJs = stmt.convertToJs();
 
-        // Convert return statement if present
-        if (returnStatement != null) {
-            jsBuilder.append("  ")
-                    .append(returnStatement.convertToJs())
-                    .append("\n");
+            // تصفية العبارات غير المرغوب فيها
+            if (!stmtJs.contains("asObservable") && !stmtJs.contains("getValue")) {
+                jsBuilder.append("  ").append(stmtJs).append("\n");
+            }
         }
 
         return jsBuilder.toString();
     }
-
 }

@@ -28,4 +28,16 @@ public class Body {
                 "\n \t\t\t\t\t\t\tstatements=" + statements +
                 '}';
     }
+    public String convertToJs() {
+        // Convert all statements in body to JS and join with newlines
+        StringBuilder js = new StringBuilder();
+        for (Statements stmt : statements) {
+            if (stmt instanceof Expression) {
+                js.append(((Expression) stmt).convertToJs()).append(";\n");
+            } else {
+                js.append(stmt.toString()).append(";\n"); // fallback
+            }
+        }
+        return js.toString();
+    }
 }

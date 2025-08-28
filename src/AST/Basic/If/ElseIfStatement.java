@@ -27,4 +27,11 @@ public class ElseIfStatement {
                 "\n \t\t\t\t\t\t\t body=" + body +
                 '}';
     }
+    public String convertToJs() {
+        StringBuilder js = new StringBuilder();
+        js.append("else if (").append(condition.convertToJs()).append(") {\n");
+        js.append(body.convertToJs());
+        js.append("}\n");
+        return js.toString();
+    }
 }
