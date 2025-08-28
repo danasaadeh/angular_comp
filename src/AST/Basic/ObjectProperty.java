@@ -31,4 +31,12 @@ public class ObjectProperty {
     public String toString() {
         return id + ": " + val; // Format for objectProperty representation
     }
+    public String convertToJs() {
+        // Wrap val in quotes if it's not numeric
+        if (val.matches("-?\\d+(\\.\\d+)?")) {
+            return id + ": " + val; // number
+        } else {
+            return id + ": \"" + val + "\""; // string
+        }
+    }
 }

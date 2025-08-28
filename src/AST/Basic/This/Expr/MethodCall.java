@@ -28,5 +28,19 @@ public class MethodCall extends Statements {
                 ", arguments=" + arguments +
                 '}';
     }
+    @Override
+    public String convertToJs() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(methodName).append("(");
+        if (arguments != null && !arguments.isEmpty()) {
+            for (int i = 0; i < arguments.size(); i++) {
+                sb.append(arguments.get(i).convertToJs());
+                if (i < arguments.size() - 1) sb.append(", ");
+            }
+        }
+        sb.append(")");
+        return sb.toString();
+    }
+
 }
 

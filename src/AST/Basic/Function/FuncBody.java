@@ -7,7 +7,7 @@ import java.util.List;
 
 public class FuncBody {
     public List<Statements> statements;
-   public Return returnStatement;
+    public Return returnStatement;
 
     public FuncBody() {
         this.statements = new ArrayList<>();
@@ -38,8 +38,8 @@ public class FuncBody {
     @Override
     public String toString() {
         return
-                 "\n \t\t\t\t\t\t\t returnStatement=" + returnStatement +
-                 "\n \t\t\t\t\t\t\tstatements=" + statements
+                "\n \t\t\t\t\t\t\t returnStatement=" + returnStatement +
+                        "\n \t\t\t\t\t\t\tstatements=" + statements
                 ;
     }
     public String print() {
@@ -48,4 +48,24 @@ public class FuncBody {
                 ",\n statements=" + statements +
                 '}';
     }
+    public String convertToJs() {
+        StringBuilder jsBuilder = new StringBuilder();
+
+        // Convert all statements
+        for (Statements stmt : statements) {
+            jsBuilder.append("  ") // indent inside function
+                    .append(stmt.convertToJs())
+                    .append("\n");
+        }
+
+        // Convert return statement if present
+        if (returnStatement != null) {
+            jsBuilder.append("  ")
+                    .append(returnStatement.convertToJs())
+                    .append("\n");
+        }
+
+        return jsBuilder.toString();
+    }
+
 }

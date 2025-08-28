@@ -236,12 +236,7 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
 
     @Override
     public Object visitEXPR_STATE(ParserFile.EXPR_STATEContext ctx) {
-        Statements statements = new Statements();
-        Expression expression = (Expression) visit(ctx.expr());
-        if (expression != null) {
-            statements.getExps().add(expression);
-        }
-        return statements;
+        return visit(ctx.expr());
     }
 
     @Override
@@ -279,15 +274,15 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
         return super.visitVALUE_STATE(ctx);
     }
 
-    @Override
-    public Object visitRETRUN_STATE(ParserFile.RETRUN_STATEContext ctx) {
-        Statements statements = new Statements();
-        Return returnStatement = (Return) visit(ctx.return_());
-        if (returnStatement != null) {
-            statements.getReturns().add(returnStatement);
-        }
-        return statements;
-    }
+//    @Override
+//    public Object visitRETRUN_STATE(ParserFile.RETRUN_STATEContext ctx) {
+//        Statements statements = new Statements();
+//        Return returnStatement = (Return) visit(ctx.return_());
+//        if (returnStatement != null) {
+//            statements.getReturns().add(returnStatement);
+//        }
+//        return statements;
+//    }
 
     @Override
     public Object visitCOMMENT_STATE(ParserFile.COMMENT_STATEContext ctx) {
@@ -296,10 +291,17 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
 
     @Override
     public Object visitARRAY_STATE(ParserFile.ARRAY_STATEContext ctx) {
-        return super.visitARRAY_STATE(ctx);
+        Statements statements = new Statements();
+
+        // delegate to the array() rule
+        Array arrayNode = (Array) visit(ctx.array());
+        if (arrayNode != null) {
+            // Assuming you add a list for arrays inside your Statements class
+            statements.getArrays().add(arrayNode);
+        }
+
+        return statements;
     }
-
-
     @Override
     public Component visitComponent(ParserFile.ComponentContext ctx) {
         // Visit the body of the component, where selector and other properties are handled
@@ -940,17 +942,17 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
         String name = ctx.ID() != null ? ctx.ID().getText() : "unnamed";
         String dataType = ctx.DATA_TYPE() != null ? ctx.DATA_TYPE().getText() : "undefined";
 
-        // Check for duplicate variable declaration in the same scope
+        // Check for duplicate variable declaration
         for (Row existing : st.getRow()) {
             if (existing != null && name.equals(existing.getName()) && st.getCurrentScope().equals(existing.getScope())) {
                 int line = ctx.getStart().getLine();
                 int column = ctx.getStart().getCharPositionInLine();
                 semanticErrors.add(new DuplicateVariableError(name, line, column));
-                return new Declaration(name, dataType); // Return declaration even if there's an error
+                return new Declaration(dataType, name); // fixed order
             }
         }
 
-        Declaration declaration = new Declaration(name, dataType);
+        Declaration declaration = new Declaration(dataType, name); // fixed order
         Row row = new Row();
         row.setType(dataType);
         row.setName(name);
@@ -1134,7 +1136,7 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
         st.getRow().add(row);
     }
 
-    private String extractArgumentValue(Statements arg) {
+    private String extractArgumentValue(Object arg) {
         if (arg == null) {
             return "<no-arg>";
         }
@@ -1156,9 +1158,9 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
             }
         } else if (arg instanceof Array) {
             Array arrayExpr = (Array) arg;
-            List<Statements> elements = arrayExpr.getElements();
+            List<Object> elements = arrayExpr.getElements();
             List<String> elemsStr = new ArrayList<>();
-            for (Statements elem : elements) {
+            for (Object elem : elements) {
                 elemsStr.add(extractArgumentValue(elem));
             }
             return "[" + String.join(", ", elemsStr) + "]";
@@ -1171,6 +1173,9 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
                     .map(this::extractArgumentValue)
                     .collect(Collectors.joining(", "));
             return mc.getMethodName() + "(" + argsStr + ")";
+        } else if (arg instanceof MyObject) {
+            // New case → convert object literal
+            return ((MyObject) arg).convertToJs(); // you can define a helper in MyObject
         }
 
         // Heuristic for lambda detection
@@ -1181,8 +1186,9 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
         return argText;
     }
 
+
     private String extractValueFromAssignment(Assignment assignment) {
-        Statements value = assignment.getValue();
+        Object value = assignment.getValue(); // was Statements
 
         if (value instanceof ValueExpression) {
             return ((ValueExpression) value).getValue();
@@ -1192,10 +1198,13 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
                 return extractArgumentValue(methodCall.getArguments().get(0));
             }
             return methodCall.getMethodName();
+        } else if (value instanceof MyObject) {
+            return ((MyObject) value).convertToJs();
         } else {
             return value.toString();
         }
     }
+
 
     @Override
     public PropertyChain visitProperty_chain(ParserFile.Property_chainContext ctx) {
@@ -1240,6 +1249,21 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
         String op = ctx.getText();
         return new PostOp(op);
     }
+
+    @Override
+    public Object visitArray(ParserFile.ArrayContext ctx) {
+        List<Object> elements = new ArrayList<>();
+
+        for (ParserFile.ArrayElementContext elemCtx : ctx.arrayElement()) {
+            Object element = visit(elemCtx); // don’t cast to Statements
+            if (element != null) {
+                elements.add(element);
+            }
+        }
+
+        return new Array(elements);
+    }
+
     @Override
     public Object visitSuper_exp(ParserFile.Super_expContext ctx) {
 

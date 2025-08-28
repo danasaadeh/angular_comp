@@ -10,6 +10,7 @@ import AST.Basic.Interface.Interface;
 import AST.Basic.Loop.Exp.Expression;
 import AST.Basic.Loop.ForLoop;
 import AST.Basic.Loop.While;
+import AST.Basic.This.Expr.Array;
 
 
 import java.util.ArrayList;
@@ -28,13 +29,15 @@ public class Statements  extends Instruction{
     private List<ForLoop> forLoops;
     private List<Print> printStatements;
     private List<IfStatement> ifStatements;
-    private List<Return> returns;
+//    private List<Return> returns;
     private List<Assign> assigns;
     private List<Constructor> cons;
     private List<While> whiles;
     private  List<Expression> exps;
     private List<Instance> inst;
     private  List<ReadOnly> reads;
+    private List<Array> arrays; // list of arrays
+
 
     public Statements() {
         this.exps=new ArrayList<>();
@@ -52,10 +55,12 @@ public class Statements  extends Instruction{
         this.printStatements = new ArrayList<>();
         this.ifStatements = new ArrayList<>();
         this.whiles=new ArrayList<>();
-        this.returns=new ArrayList<>();
+//        this.returns=new ArrayList<>();
         this.inst=new ArrayList<>();
         this.reads=new ArrayList<>();
         this.type = null;
+        this.arrays = new ArrayList<>();
+
     }
 
     public List<ClassDecl> getClassDecls() {
@@ -97,6 +102,7 @@ public class Statements  extends Instruction{
     public void setInits(List<Init> inits) {
         this.inits = inits;
     }
+
 
     @Override
     public String toString() {
@@ -144,15 +150,17 @@ public class Statements  extends Instruction{
         if (whiles != null && !whiles.isEmpty()) {
             sb.append("\n \t\t\t\t\t\t\t while=").append(whiles);
         }
-        if (returns != null && !returns.isEmpty()) {
-            sb.append("\n \t\t\t\t\t\t\t if=").append(returns);
-        }
+//        if (returns != null && !returns.isEmpty()) {
+//            sb.append("\n \t\t\t\t\t\t\t if=").append(returns);
+//        }
         if (exps != null && !exps.isEmpty()) {
             sb.append("\n \t\t\t\t\t\t\t expressions=").append(exps);
         }
         if (printStatements != null && !printStatements.isEmpty()) {
             sb.append("\n \t\t\t\t\t\t\t print=").append(printStatements);
         }
+        if (!arrays.isEmpty()) {sb.append("\n  arrays=").append(arrays);}
+
 
         return sb.toString();
     }
@@ -204,6 +212,100 @@ public class Statements  extends Instruction{
         sb.append(" }");
         return sb.toString();
     }
+
+    public String convertToJs() {
+        StringBuilder jsBuilder = new StringBuilder();
+//        jsBuilder.append("// Generated JavaScript\n");
+
+        // Classes
+        for (ClassDecl classDecl : classDecls) {
+            jsBuilder.append(classDecl.convertToJs()).append("\n");
+        }
+
+        // Interfaces
+        for (Interface inter : interfaces) {
+            jsBuilder.append(inter.convertToJs()).append("\n");
+        }
+
+        // Constructors
+        for (Constructor constructor : cons) {
+            jsBuilder.append(constructor.convertToJs()).append("\n");
+        }
+
+        // Functions
+        for (FuncDecl func : funcDecls) {
+            jsBuilder.append(func.convertToJs()).append("\n");
+        }
+
+        for (Declaration decl : declarations) {
+            jsBuilder.append("let ").append(decl.convertToJs()).append(";\n");
+        }
+
+        // Initializations
+        for (Init init : inits) {
+            jsBuilder.append(init.convertToJs()).append("\n");
+        }
+
+        // Array initializations
+        for (InitArray initArray : initArrays) {
+            jsBuilder.append(initArray.convertToJs()).append("\n");
+        }
+
+        // Assignments
+        for (Assign assign : assigns) {
+            jsBuilder.append(assign.convertToJs()).append("\n");
+        }
+
+        // Expressions
+        for (Expression exp : exps) {
+            jsBuilder.append(exp.convertToJs()).append("\n");
+        }
+
+        // This keyword usage
+        for (ThisExpression thisExp : thisExpressions) {
+            jsBuilder.append(thisExp.convertToJs()).append("\n");
+        }
+
+        // Super keyword usage
+        for (SuperExp superExp : superExpressions) {
+            jsBuilder.append(superExp.convertToJs()).append("\n");
+        }
+
+        // Control structures
+        for (IfStatement ifStatement : ifStatements) {
+            jsBuilder.append(ifStatement.convertToJs()).append("\n");
+        }
+        for (While whileStatement : whiles) {
+            jsBuilder.append(whileStatement.convertToJs()).append("\n");
+        }
+        for (ForLoop forLoop : forLoops) {
+            jsBuilder.append(forLoop.convertToJs()).append("\n");
+        }
+
+//        // Return statements
+//        for (Return returnStmt : returns) {
+//            jsBuilder.append(returnStmt.convertToJs()).append("\n");
+//        }
+
+        // Print statements
+        for (Print printStatement : printStatements) {
+            jsBuilder.append(printStatement.convertToJs()).append("\n");
+        }
+
+        // Read-only expressions/statements
+        for (ReadOnly read : reads) {
+            jsBuilder.append(read.convertToJs()).append("\n");
+        }
+
+
+        for (Instance instance : inst) {
+            jsBuilder.append(instance.convertToJs()).append("\n");
+        }
+        arrays.forEach(a -> jsBuilder.append(a.convertToJs()).append(";\n"));
+
+        return jsBuilder.toString();
+    }
+
     public String getType() {
         return type;
     }
@@ -244,13 +346,13 @@ public class Statements  extends Instruction{
         this.printStatements = printStatements;
     }
 
-    public List<Return> getReturns() {
-        return returns;
-    }
-
-    public void setReturns(List<Return> returns) {
-        this.returns = returns;
-    }
+//    public List<Return> getReturns() {
+//        return returns;
+//    }
+//
+//    public void setReturns(List<Return> returns) {
+//        this.returns = returns;
+//    }
 
     public List<Constructor> getCons() {
         return cons;
@@ -316,4 +418,8 @@ public class Statements  extends Instruction{
     public void setReads(List<ReadOnly> reads) {
         this.reads = reads;
     }
+    public List<AST.Basic.This.Expr.Array> getArrays() { return arrays; }
+    public void setArrays(List<Array> arrays) { this.arrays = arrays; }
+    public void addArray(Array array) { this.arrays.add(array); }
+
 }

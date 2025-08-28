@@ -35,7 +35,7 @@ public class Declaration extends Statements {
     public String toString() {
         return
                 "\n \t\t\t\t\t\t\t ID: " + id +
-                (dataType != null ? " : " + dataType : "");
+                        (dataType != null ? " : " + dataType : "");
     }
 
 
@@ -45,4 +45,10 @@ public class Declaration extends Statements {
                 "\n id='" + id + '\'' +
                 '}';
     }
+    public String convertToJs() {
+
+        return  this.getId() ;
+
+    }
+
 }
