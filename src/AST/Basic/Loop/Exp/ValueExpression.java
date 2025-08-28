@@ -21,4 +21,8 @@ public class ValueExpression extends Expression {
                 "\n \t\t\t\t\t\t\tvalue='" + value + '\'' +
                 '}';
     }
+    public String convertToJs() {
+        // Directly return the value (number, variable, or string)
+        return value;
+    }
 }

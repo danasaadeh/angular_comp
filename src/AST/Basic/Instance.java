@@ -1,16 +1,13 @@
 package AST.Basic;
 
-
-
 import AST.Statements;
-
 
 public class Instance extends Statements {
     private Declaration declaration;
-    private String typeName;       // ID after NEW
-    private String genericType;    // DATA_TYPE in the OPERATION < DATA_TYPE >
-    private boolean isArray;       // true because grammar has SQUARE_OPEN SQUARE_CLOSE
-    private Object arrayNode;      // placeholder for actual AST array node (replace with your type)
+    private String typeName;
+    private String genericType;
+    private boolean isArray;
+    private Object arrayNode;
 
     public Instance(Declaration declaration, String typeName, String genericType, boolean isArray, Object arrayNode) {
         this.declaration = declaration;
@@ -20,42 +17,15 @@ public class Instance extends Statements {
         this.arrayNode = arrayNode;
     }
 
-    public Declaration getDeclaration() {
-        return declaration;
-    }
-
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public String getGenericType() {
-        return genericType;
-    }
-
-    public boolean isArray() {
-        return isArray;
-    }
-
-    /** Replace Object with your concrete AST type */
-    public Object getArrayNode() {
-        return arrayNode;
-    }
-
-    public void setDeclaration(Declaration declaration) {
-        this.declaration = declaration;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
-
-    public void setGenericType(String genericType) {
-        this.genericType = genericType;
-    }
-
-    public void setArrayNode(Object arrayNode) {
-        this.arrayNode = arrayNode;
-    }
+    public Declaration getDeclaration() { return declaration; }
+    public String getTypeName() { return typeName; }
+    public String getGenericType() { return genericType; }
+    public boolean isArray() { return isArray; }
+    public Object getArrayNode() { return arrayNode; }
+    public void setDeclaration(Declaration declaration) { this.declaration = declaration; }
+    public void setTypeName(String typeName) { this.typeName = typeName; }
+    public void setGenericType(String genericType) { this.genericType = genericType; }
+    public void setArrayNode(Object arrayNode) { this.arrayNode = arrayNode; }
 
     @Override
     public String toString() {
@@ -79,4 +49,31 @@ public class Instance extends Statements {
         sb.append(" }");
         return sb.toString();
     }
+    @Override
+    public String convertToJs() {
+        if (declaration == null || declaration.getId() == null) {
+            throw new IllegalStateException("Declaration id is null");
+        }
+
+        String varName = declaration.getId();
+
+        if (isArray) {
+            if (arrayNode != null) {
+                String arrayJs;
+                if (arrayNode instanceof Statements) {
+                    arrayJs = ((Statements) arrayNode).convertToJs();
+                } else {
+                    arrayJs = arrayNode.toString();
+                }
+                return "let " + varName + " = " + arrayJs + ";";
+            } else {
+                return "let " + varName + " = [];";
+            }
+        } else {
+            return "let " + varName + " = new " + typeName
+                    + (genericType != null ? "<" + genericType + ">()" : "();");
+        }
+    }
+
+
 }

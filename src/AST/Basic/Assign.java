@@ -26,6 +26,18 @@ public class Assign  extends Statements {
                 "\n \t\t\t\t\t\t\tvalue='" + value + '\'' +
                 ", variableName='" + variableName + '\'' ;
     }
+    @Override
+    public String convertToJs() {
+        StringBuilder jsBuilder = new StringBuilder();
+
+        jsBuilder.append(variableName)
+                .append(" = ")
+                .append(value)
+                .append(";");
+
+        return jsBuilder.toString();
+    }
+
 
 //    @Override
 //    public String toString() {

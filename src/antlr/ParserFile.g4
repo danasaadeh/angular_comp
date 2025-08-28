@@ -51,7 +51,7 @@ statements:
   |super_exp                #SUPER_EXPR_STATE
   | print                   #PRINT_STATE
   |value                    #VALUE_STATE
-  |return                   #RETRUN_STATE
+
   | comment                 #COMMENT_STATE
   |array                    #ARRAY_STATE;
 
@@ -142,7 +142,7 @@ property_chain
 // method call like: .next(), .addItem(arg)
 
 method_call
-  : ID OPEN_B (expr (COMMA expr)*)? CLOSE_B
+  : DOT? ID OPEN_B (expr (COMMA expr)*)? CLOSE_B
   ;
 
 
@@ -188,7 +188,7 @@ parameter: MODIFIER? ID COLON typeReference;
 typeReference: DATA_TYPE | ID; // DATA_TYPE includes primitives
 
 return:
-	RETURN (ID
+	RETURN (ID method_call?
 	       | VAL
 	       | SENTENCE
 	       |statements

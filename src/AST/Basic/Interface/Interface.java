@@ -50,4 +50,18 @@ public class Interface extends Statements {
     public void setInterface_name(String interface_name) {
         this.interface_name = interface_name;
     }
+    public String convertToJs() {
+        StringBuilder js = new StringBuilder();
+
+        js.append("const ").append(interface_name).append(" = {\n");
+
+        for (Declaration decl : body) {
+
+            js.append("  ").append(decl.getId()).append(": function() {},\n");
+        }
+
+        js.append("};\n");
+
+        return js.toString();
+    }
 }

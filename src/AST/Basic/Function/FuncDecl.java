@@ -63,9 +63,9 @@ public class FuncDecl  extends Statements {
     public String toString() {
         return
                 "\n \t\t\t\t\t\t\tfunctionBodies=" + functionBodies +
-                 "\n \t\t\t\t\t\t\treturn_type='" + return_type + '\'' +
-                "\n \t\t\t\t\t\t\tname='" + name + '\'' +
-                 "\n \t\t\t\t\t\t\tparameters=" + parameters ;
+                        "\n \t\t\t\t\t\t\treturn_type='" + return_type + '\'' +
+                        "\n \t\t\t\t\t\t\tname='" + name + '\'' +
+                        "\n \t\t\t\t\t\t\tparameters=" + parameters ;
     }
     public String print() {
         return "\n FuncDecl{" +
@@ -83,5 +83,36 @@ public class FuncDecl  extends Statements {
     public void setParameters(List<Parameter> parameters) {
         this.parameters = parameters;
     }
+
+    @Override
+    public String convertToJs() {
+        StringBuilder jsBuilder = new StringBuilder();
+
+        // Function signature
+        jsBuilder.append("function ")
+                .append(name)
+                .append("(");
+
+        // Parameters
+        for (int i = 0; i < parameters.size(); i++) {
+            jsBuilder.append(parameters.get(i).getName());
+            if (i < parameters.size() - 1) {
+                jsBuilder.append(", ");
+            }
+        }
+        jsBuilder.append(") {\n");
+
+        // Function body (statements inside)
+        for (FuncBody body : functionBodies) {
+            jsBuilder.append("  ")
+                    .append(body.convertToJs())
+                    .append("\n");
+        }
+
+        jsBuilder.append("}\n");
+
+        return jsBuilder.toString();
+    }
+
 }
 

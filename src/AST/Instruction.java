@@ -144,24 +144,99 @@ public class Instruction implements Program {
         StringBuilder jsBuilder = new StringBuilder();
         jsBuilder.append("// script.js\n");
 
-        // Use ImportState's convertToJs() for each import
-        if (this.importStates != null && !this.importStates.isEmpty()) {
-            for (ImportState imp : this.importStates) {
+        // --- 1. Emit import states if needed ---
+        if (importStates != null && !importStates.isEmpty()) {
+            for (ImportState imp : importStates) {
                 jsBuilder.append(imp.convertToJs()).append("\n");
             }
-            jsBuilder.append("\n");
         }
 
-        // Fallback JS logic
-        jsBuilder.append("(function(){ var app = document.querySelector('#app'); if(app){ app.innerHTML = '<h1>Hello from generated JS</h1>'; } })();");
+        // --- 2. Emit top-level statements (Init, Assign, FuncDecl, ClassDecl, etc.) ---
+        if (statements != null && !statements.isEmpty()) {
+            for (Statements stmt : statements) {
+                jsBuilder.append(stmt.convertToJs()).append("\n");
+            }
+        }
+
+        // --- 3. Emit Angular/Component bodies if any ---
+        if (components != null && !components.isEmpty()) {
+            for (Component comp : components) {
+                jsBuilder.append(comp.convertToJs()).append("\n");
+            }
+        }
+
+        // --- 4. Recursively emit children instructions ---
+        if (instructions_list != null && !instructions_list.isEmpty()) {
+            for (Instruction child : instructions_list) {
+                jsBuilder.append(child.convertToJs()).append("\n");
+            }
+        }
+
         return jsBuilder.toString();
     }
 
 
     // ---- Helpers to render HTML with inline attributes/styles ----
     private String renderTemplate(AST.Angular.Component.Template template) {
-        if (template == null) return "";
-        return template.convertToHtml();
+        if (template == null || template.getHtmlDocument() == null) return "";
+        return renderHtmlDocument(template.getHtmlDocument());
+    }
+
+    private String renderHtmlDocument(AST.Html.HtmlDocument document) {
+        StringBuilder sb = new StringBuilder();
+        for (AST.Html.HtmlElement el : document.getHtmlElements()) {
+            sb.append(renderHtmlElement(el));
+        }
+        return sb.toString();
+    }
+
+    private String renderHtmlElement(AST.Html.HtmlElement element) {
+        if (element == null) return "";
+        String tag = element.getTagName() != null ? element.getTagName() : "div";
+        StringBuilder sb = new StringBuilder();
+        sb.append("<").append(tag);
+        if (element.getHtmlAttributes() != null) {
+            for (AST.Html.HtmlAttribute attr : element.getHtmlAttributes()) {
+                if (attr.getTagName() != null && !attr.getTagName().isEmpty()) {
+                    sb.append(" ").append(attr.getTagName());
+                    if (attr.getValue() != null && !attr.getValue().isEmpty()) {
+                        sb.append("=\"").append(escapeHtml(attr.getValue())).append("\"");
+                    }
+                }
+            }
+        }
+        sb.append(">");
+
+        if (element.getHtmlContents() != null) {
+            // text data
+            if (element.getHtmlContents().getData() != null) {
+                for (AST.Html.HtmlChardata d : element.getHtmlContents().getData()) {
+                    if (d.getHtmlText() != null && !d.getHtmlText().isEmpty()) {
+                        sb.append(escapeHtml(d.getHtmlText()));
+                    }
+                    if (d.getInter() != null && !d.getInter().isEmpty()) {
+                        sb.append(d.getInter());
+                    }
+                }
+            }
+            // nested elements
+            if (element.getHtmlContents().getHtmlElements() != null) {
+                for (AST.Html.HtmlElement child : element.getHtmlContents().getHtmlElements()) {
+                    sb.append(renderHtmlElement(child));
+                }
+            }
+        }
+
+        sb.append("</").append(tag).append(">");
+        return sb.toString();
+    }
+
+    private String escapeHtml(String s) {
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
     }
 
     // --- Other Getters/Setters ---

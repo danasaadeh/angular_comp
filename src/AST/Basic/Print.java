@@ -20,4 +20,11 @@ public class Print extends Statements {
                 "\n \t\t\t\t\t\t\t expression=" + expression +
                 '}';
     }
+    public String convertToJs() {
+        if (expression != null) {
+            return "console.log(" + expression.convertToJs() + ");";
+        } else {
+            return "console.log();";
+        }
+    }
 }

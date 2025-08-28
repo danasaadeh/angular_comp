@@ -45,4 +45,23 @@ public class  IfStatement  extends Statements {
                 "\n \t\t\t\t\t\t\telseBody=" + elseBody +
                 '}';
     }
+    public String convertToJs() {
+        StringBuilder js = new StringBuilder();
+        js.append("if (").append(condition.convertToJs()).append(") {\n");
+        js.append(body.convertToJs()).append("}\n");
+
+        if (elseIfs != null) {
+            for (ElseIfStatement elseIf : elseIfs) {
+                js.append(elseIf.convertToJs());
+            }
+        }
+
+        if (elseBody != null) {
+            js.append("else {\n");
+            js.append(elseBody.convertToJs());
+            js.append("}\n");
+        }
+
+        return js.toString();
+    }
 }

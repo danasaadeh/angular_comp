@@ -18,4 +18,9 @@ public class IdExpr extends Expression{
                 "\n \t\t\t\t\t\t\tvalue='" + ID + '\'' +
                 '}';
     }
+    @Override
+    public String convertToJs() {
+
+        return ID;
+    }
 }

@@ -35,10 +35,44 @@ public class Value extends Statements {
     @Override
     public String toString() {
         if (!objects.isEmpty()) {
-            return objects.toString(); // print list of MyObject
+            return objects.toString();
         } else {
-            return values.toString(); // simple primitive values
+            return values.toString();
         }
+    }
+    public String convertToJs() {
+        StringBuilder js = new StringBuilder();
+
+
+        if (!objects.isEmpty()) {
+            js.append("{ ");
+            for (int i = 0; i < objects.size(); i++) {
+                MyObject obj = objects.get(i);
+
+                js.append(obj.convertToJs());
+                if (i < objects.size() - 1) js.append(", ");
+            }
+            js.append(" }");
+        }
+
+        else if (!values.isEmpty()) {
+            if (values.size() == 1) {
+                js.append(values.get(0));
+            } else {
+                js.append("[");
+                for (int i = 0; i < values.size(); i++) {
+                    js.append(values.get(i));
+                    if (i < values.size() - 1) js.append(", ");
+                }
+                js.append("]");
+            }
+        }
+
+        else {
+            js.append("undefined");
+        }
+
+        return js.toString();
     }
 
 }

@@ -14,7 +14,7 @@ public class Return  extends Statements{
     private  List<Statements> statements;
     public Return() {
         this.id = null;
-this.statements=new ArrayList<>();
+        this.statements=new ArrayList<>();
         this.value = null;
         this.sentence = null;
         this.values = new ArrayList<>();
@@ -36,10 +36,10 @@ this.statements=new ArrayList<>();
     public String toString() {
         return
                 "\n \t\t\t\t\t\t\t id=" + id + '\'' +
-                "\n \t\t\t\t\t\t\t value='" + value + '\'' +
-                "\n \t\t\t\t\t\t\t sentence='" + sentence + '\''+
+                        "\n \t\t\t\t\t\t\t value='" + value + '\'' +
+                        "\n \t\t\t\t\t\t\t sentence='" + sentence + '\''+
                         "\n \t\t\t\t\t\t\t sentence='" + statements + '\''+
-        "\n \t\t\t\t\t\t\t object='" + values + '\''
+                        "\n \t\t\t\t\t\t\t object='" + values + '\''
                 ;
     }
     public String print() {
@@ -77,5 +77,39 @@ this.statements=new ArrayList<>();
 
     public void setStatements(List<Statements> statements) {
         this.statements = statements;
+    }
+
+    public String convertToJs() {
+        StringBuilder js = new StringBuilder();
+
+        // If there is a simple value
+        if (value != null && !value.isEmpty()) {
+            js.append("return ").append(value).append(";");
+        }
+        // If the return has an expression sentence
+        else if (sentence != null && !sentence.isEmpty()) {
+            js.append("return ").append(sentence).append(";");
+        }
+        // If the return has nested statements
+        else if (statements != null && !statements.isEmpty()) {
+            js.append("return { ");
+            for (int i = 0; i < statements.size(); i++) {
+                Statements stmt = statements.get(i);
+                if (stmt instanceof Return) {
+                    js.append(((Return) stmt).convertToJs());
+                } else {
+                    // fallback: assume other statements implement convertToJs()
+                    js.append(stmt.convertToJs());
+                }
+                if (i < statements.size() - 1) js.append(", ");
+            }
+            js.append(" };");
+        }
+        // Fallback empty return
+        else {
+            js.append("return;");
+        }
+
+        return js.toString();
     }
 }

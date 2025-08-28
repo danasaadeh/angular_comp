@@ -12,7 +12,7 @@ public class ClassBody {
     public List<Statements> statements;
 
     public ClassBody() {
-       this.statements=new ArrayList<>();
+        this.statements=new ArrayList<>();
     }
 
 
@@ -33,5 +33,13 @@ public class ClassBody {
         return "\n ClassBody{" +
                 "statements=" + statements +
                 '}';
+    }
+    public String convertToJs() {
+        StringBuilder js = new StringBuilder();
+        for (Statements stmt : statements) {
+
+            js.append("    ").append(stmt.convertToJs()).append("\n");
+        }
+        return js.toString();
     }
 }

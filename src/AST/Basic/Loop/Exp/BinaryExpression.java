@@ -33,4 +33,9 @@ public class BinaryExpression extends Expression {
                 "\n \t\t\t\t\t\t\tright=" + right +
                 '}';
     }
+    @Override
+    public String convertToJs() {
+        // Wrap in parentheses for correct JS precedence
+        return "(" + left.convertToJs() + " " + operator + " " + right.convertToJs() + ")";
+    }
 }

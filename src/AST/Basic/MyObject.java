@@ -29,4 +29,14 @@ public class MyObject {
     public void setProperties(List<ObjectProperty> properties) {
         this.properties = properties;
     }
+    public String convertToJs() {
+        StringBuilder js = new StringBuilder("{\n");
+        for (int i = 0; i < properties.size(); i++) {
+            js.append("  ").append(properties.get(i).convertToJs());
+            if (i < properties.size() - 1) js.append(",\n");
+        }
+        js.append("\n}");
+        return js.toString();
+    }
+
 }

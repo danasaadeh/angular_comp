@@ -31,4 +31,8 @@ public class BinaryCondition extends Condition {
                 "\n \t\t\t\t\t\t\tright=" + right +
                 '}';
     }
+    @Override
+    public String convertToJs() {
+        return "(" + left.convertToJs() + " " + operation + " " + right.convertToJs() + ")";
+    }
 }

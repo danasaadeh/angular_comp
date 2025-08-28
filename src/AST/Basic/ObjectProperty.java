@@ -29,6 +29,13 @@ public class ObjectProperty {
 
     @Override
     public String toString() {
-        return id + ": " + val; // Format for objectProperty representation
+        return id + ": " + val;
     }
-}
+    public String convertToJs() {
+
+        if (val.matches("-?\\d+(\\.\\d+)?")) {
+            return id + ": " + val; // number
+        } else {
+            return id + ": " + val;
+        }
+}}

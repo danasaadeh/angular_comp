@@ -17,4 +17,8 @@ public class IdentifierCondition extends Condition {
                 "\n \t\t\t\t\t\t\tidentifier='" + identifier + '\'' +
                 '}';
     }
+    @Override
+    public String convertToJs() {
+        return identifier;
+    }
 }

@@ -23,4 +23,9 @@ public class ParameterList extends Statements {
                 "parameters=" + parameters +
                 '}';
     }
+
+    public String convertToJs() {
+        if (parameters == null || parameters.isEmpty()) return "";
+        return String.join(", ", parameters);
+    }
 }

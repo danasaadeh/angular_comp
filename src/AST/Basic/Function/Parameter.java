@@ -32,13 +32,16 @@ public class Parameter  {
     @Override
     public String toString() {
         return
-               "\n \t\t\t\t\t\t\t name='" + name + '\'' +
-               "\n \t\t\t\t\t\t\t type='" + type + '\'' ;
+                "\n \t\t\t\t\t\t\t name='" + name + '\'' +
+                        "\n \t\t\t\t\t\t\t type='" + type + '\'' ;
     }
     public String print() {
         return "\n Parameter{" +
                 "\n name='" + name + '\'' +
                 ",\n type='" + type + '\'' +
                 '}';
+    }
+    public String convertToJs() {
+        return name;
     }
 }

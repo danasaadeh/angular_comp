@@ -17,4 +17,9 @@ public class ValueCondition extends Condition {
                 "\n \t\t\t\t\t\t\tvalue='" + value + '\'' +
                 '}';
     }
+    @Override
+    public String convertToJs() {
+
+        return value;
+    }
 }
