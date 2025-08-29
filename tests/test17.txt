@@ -54,6 +54,8 @@ details: '',
      size: '',
    };
 
+   let namer:string= "ahmad";
+
    constructor(private productService: ProductService, private router: Router) {}
 
    submit() {
