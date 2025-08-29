@@ -1,3 +1,5 @@
+
+
 package semantic;
 
 public class UndefinedVariableError extends SemanticError {

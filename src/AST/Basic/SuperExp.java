@@ -7,26 +7,25 @@ import java.util.List;
 public class SuperExp extends Statements {
     private String methodName;
     private List<String> arguments;
-    private String property; // This will hold the full property chain
+    private String property;
     private String value;
 
-    // Constructor for method call
+
     public SuperExp(String methodName, List<String> arguments) {
         this.methodName = methodName;
         this.arguments = arguments;
-        this.property = null; // Ensure property is not set for method calls
-        this.value = null; // Ensure value is not set for method calls
+        this.property = null;
+        this.value = null;
     }
 
-    // Constructor for property assignment
+
     public SuperExp(String property, String value) {
-        this.property = property; // This can now hold the full chain of properties
+        this.property = property;
         this.value = value;
-        this.methodName = null; // Ensure methodName is not set for property assignments
-        this.arguments = null; // Ensure arguments are not set for property assignments
+        this.methodName = null;
     }
 
-    // Getters and setters
+
     public String getMethodName() {
         return methodName;
     }
@@ -36,7 +35,7 @@ public class SuperExp extends Statements {
     }
 
     public String getProperty() {
-        return property; // This will return the full chain of properties
+        return property;
     }
 
     public String getValue() {

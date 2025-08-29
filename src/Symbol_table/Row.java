@@ -7,9 +7,9 @@ public class Row {
     private String scope;
 
 
-    // New fields for semantic checks
-    private String kind;      // e.g., "variable", "component"
-    private String selector;  // for components
+
+    private String kind;
+    private String selector;
     private int line;
     private int column;
 

@@ -21,7 +21,7 @@ public class Array extends Statements {
         if (elements != null && !elements.isEmpty()) {
             for (int i = 0; i < elements.size(); i++) {
                 Object element = elements.get(i);
-                sb.append("\t"); // indentation for each object
+                sb.append("\t");
                 if (element instanceof AST.Basic.MyObject) {
                     sb.append(((AST.Basic.MyObject) element).convertToJs());
                 } else if (element instanceof Statements) {
@@ -29,7 +29,7 @@ public class Array extends Statements {
                 } else {
                     sb.append(element.toString());
                 }
-                if (i < elements.size() - 1) sb.append(",\n"); // newline between elements
+                if (i < elements.size() - 1) sb.append(",\n");
             }
         }
         sb.append("\n]");

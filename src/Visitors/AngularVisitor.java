@@ -555,7 +555,7 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
             // or do it only if you track positions in the tree.
         }
 
-        InitArray initArray = new InitArray(name,dataType);
+        InitArray initArray = new InitArray(dataType,name);
 
         Row arrayRow = new Row();
         arrayRow.setType(dataType != null ? dataType : "array");

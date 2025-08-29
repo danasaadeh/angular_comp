@@ -18,6 +18,10 @@ import java.util.*;
  * list of occurrences.  This makes it easy to see how many times each name was
  * duplicated.  All other categories are represented as {@code List<SemanticError>}.
  */
+
+
+
+
 public final class SemanticErrorTablePrinter {
 
     private SemanticErrorTablePrinter() {
@@ -25,7 +29,7 @@ public final class SemanticErrorTablePrinter {
 
     public static void printTables(List<SemanticError> allErrors) {
         // ----- Group errors -------------------------------------------------
-        Map<String, List<SemanticError>> duplicateTable = new LinkedHashMap<>(); // keep insertion order
+        Map<String, List<SemanticError>> duplicateTable = new LinkedHashMap<>();
         List<SemanticError> missingSelectorTable = new ArrayList<>();
         List<SemanticError> missingImportTable = new ArrayList<>();
         List<SemanticError> typeMismatchTable = new ArrayList<>();
@@ -62,7 +66,7 @@ public final class SemanticErrorTablePrinter {
             }
         }
 
-        // Remaining tables use simple Lists
+
         printListTable("(2) Missing Selector Errors", missingSelectorTable);
         printListTable("(3) Missing Component-Import Errors", missingImportTable);
         printListTable("(4) Type-Mismatch Errors", typeMismatchTable);
@@ -82,18 +86,11 @@ public final class SemanticErrorTablePrinter {
         }
     }
 
-    /**
-     * Attempts to extract the offending name from the error message.  This is a
-     * best-effort helper to create a reasonable map key.  If parsing fails, the
-     * entire message is used as the key.
-     */
+
     private static String extractOffendingName(String message) {
         if (message == null) {
             return "unknown";
         }
-        // The two duplicate-error messages currently look like:
-        //  "Redeclared variable in the same scope: <name>" or
-        //  "Component <name> is missing a selector" (handled elsewhere)
         int colon = message.lastIndexOf(':');
         if (colon >= 0 && colon + 1 < message.length()) {
             return message.substring(colon + 1).trim();
@@ -101,4 +98,5 @@ public final class SemanticErrorTablePrinter {
         int lastSpace = message.lastIndexOf(' ');
         return lastSpace >= 0 ? message.substring(lastSpace + 1).trim() : message;
     }
-} 
+}
+
