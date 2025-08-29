@@ -125,4 +125,10 @@ public class ComponentBody {
         }
         return "";
     }
+    public String convertToJs() {
+        if (template != null) {
+            return template.convertToJs();
+        }
+        return "";
+    }
 }

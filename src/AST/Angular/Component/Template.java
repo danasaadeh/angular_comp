@@ -36,5 +36,12 @@ public class Template {
         }
         return "";
     }
+
+    public String convertToJs() {
+        if (htmlDocument != null) {
+            return htmlDocument.convertToJs();
+        }
+        return "";
+    }
 }
 

@@ -29,4 +29,11 @@ public class Component extends Instruction {
         }
         return "";
     }
+    @Override
+    public String convertToJs() {
+        if (componentBody != null) {
+            return componentBody.convertToJs();
+        }
+        return "";
+    }
 }
