@@ -44,7 +44,7 @@ public class ImportState extends Instruction {
     public String convertToJs() {
         StringBuilder jsBuilder = new StringBuilder();
 
-        // Generate the equivalent JS import statement
+
         if (importTypes != null && !importTypes.isEmpty() && fromPath != null) {
             jsBuilder.append("import { ");
             jsBuilder.append(String.join(", ", importTypes));

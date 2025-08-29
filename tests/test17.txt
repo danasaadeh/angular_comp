@@ -46,11 +46,11 @@ export class ProductService {
 }
 
 export class AddProductComponent4 {
-   produ: any = {
-     mmm: '',
-     image: 0,
- yumna: '',
-    ha: 0,
+   producteee: any = {
+    name: '',
+     image: '',
+details: '',
+    priceff: 0,
      size: '',
    };
 

@@ -55,7 +55,7 @@ public class Init extends Statements {
     @Override
     public String convertToJs() {
         StringBuilder sb = new StringBuilder();
-        sb.append("let ").append(id).append(" = ").append(value).append(";");
+      //  sb.append("let ").append(id).append(" = ").append(value).append(";");
         return sb.toString();
     }
 }

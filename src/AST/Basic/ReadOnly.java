@@ -45,20 +45,21 @@ public class ReadOnly extends Statements {
     }
     @Override
     public String convertToJs() {
-        StringBuilder sb = new StringBuilder();
-
-        if (declaration != null) {
-            sb.append("const ").append(declaration.convertToJs());
-        }
-
-        if (thisExpression != null && thisExpression.getPropertyChain() != null) {
-            // Get the first identifier from the list (the base variable)
-            String baseIdentifier = thisExpression.getPropertyChain().getIdentifiers().get(0);
-            sb.append(" = ").append(baseIdentifier);
-        }
-
-        sb.append(";");
-        return sb.toString();
+//        StringBuilder sb = new StringBuilder();
+//
+//        if (declaration != null) {
+//            sb.append("const ").append(declaration.convertToJs());
+//        }
+//
+//        if (thisExpression != null && thisExpression.getPropertyChain() != null) {
+//            // Get the first identifier from the list (the base variable)
+//            String baseIdentifier = thisExpression.getPropertyChain().getIdentifiers().get(0);
+//            sb.append(" = ").append(baseIdentifier);
+//        }
+//
+//        sb.append(";");
+        return "";
+                //sb.toString();
     }
 
 }
