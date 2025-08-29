@@ -53,11 +53,11 @@ public class ClassDecl extends Statements {
 
     public String convertToJs() {
         StringBuilder js = new StringBuilder();
-        js.append("class ").append(class_name).append(" {\n");
+
         if (body != null) {
             js.append(body.convertToJs());
         }
-        js.append("}\n");
+
         return js.toString();
     }
 }

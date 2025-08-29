@@ -93,7 +93,7 @@ public class FuncDecl extends Statements {
 
             for (Row r : st.getRow()) {
                 if (r != null && r.getValue() != null && r.getValue().toString().startsWith("{")) {
-                    entity = r.getName();      // name from symbol table, e.g., 'produ'
+                    entity = r.getName();
                     entityRow = r;
                     break;
                 }
@@ -130,12 +130,12 @@ public class FuncDecl extends Statements {
             String formVarName = "add" + cap + "Form";
             String plural = entity + "s";
 
-            jsBuilder.append("let ").append(entity).append(" = {");
-            for (int i = 0; i < keys.size(); i++) {
-                jsBuilder.append(keys.get(i)).append(": ''");
-                if (i < keys.size() - 1) jsBuilder.append(",");
-            }
-            jsBuilder.append("};\n\n");
+//            jsBuilder.append("let ").append(entity).append(" = {");
+//            for (int i = 0; i < keys.size(); i++) {
+//                jsBuilder.append(keys.get(i)).append(": ''");
+//                if (i < keys.size() - 1) jsBuilder.append(",");
+//            }
+//            jsBuilder.append("};\n\n");
 
             jsBuilder.append(formVarName).append(".addEventListener(\"submit\", (e) => {\n")
                     .append("  e.preventDefault();\n")
