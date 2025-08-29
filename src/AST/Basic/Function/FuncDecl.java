@@ -1,33 +1,37 @@
 package AST.Basic.Function;
 
-
-
-import AST.Basic.Declaration;
+import AST.Basic.Init;
 import AST.Statements;
+import Symbol_table.Row;
+import Symbol_table.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FuncDecl  extends Statements {
-    public String return_type ;
-    public String name  ;
-    public List <FuncBody> functionBodies;
-    public List<Parameter> parameters ;
+public class FuncDecl extends Statements {
+    public String return_type;
+    public String name;
+    public List<FuncBody> functionBodies;
+    public List<Parameter> parameters;
 
+    // Symbol table reference
+    private SymbolTable st;
 
-
-
-    public FuncDecl() {
-
-        this.name = name;
+    public FuncDecl(SymbolTable st) {
+        this.st = st;
+        this.name = null;
+        this.return_type = null;
         this.parameters = new ArrayList<>();
-        this.return_type = return_type;
-        this.functionBodies=new ArrayList<>();
+        this.functionBodies = new ArrayList<>();
     }
 
+    public void setSymbolTable(SymbolTable st) {
+        this.st = st;
+    }
 
-
-
+    public SymbolTable getSymbolTable() {
+        return st;
+    }
 
     public String getName() {
         return name;
@@ -37,10 +41,6 @@ public class FuncDecl  extends Statements {
         this.name = name;
     }
 
-
-
-
-
     public String getReturn_type() {
         return return_type;
     }
@@ -49,31 +49,12 @@ public class FuncDecl  extends Statements {
         this.return_type = return_type;
     }
 
-
-
     public List<FuncBody> getFunctionBodies() {
         return functionBodies;
     }
 
     public void setFunctionBodies(List<FuncBody> functionBodies) {
         this.functionBodies = functionBodies;
-    }
-
-    @Override
-    public String toString() {
-        return
-                "\n \t\t\t\t\t\t\tfunctionBodies=" + functionBodies +
-                        "\n \t\t\t\t\t\t\treturn_type='" + return_type + '\'' +
-                        "\n \t\t\t\t\t\t\tname='" + name + '\'' +
-                        "\n \t\t\t\t\t\t\tparameters=" + parameters ;
-    }
-    public String print() {
-        return "\n FuncDecl{" +
-                "\n functionBodies=" + functionBodies +
-                ",\n return_type='" + return_type + '\'' +
-                ",\n name='" + name + '\'' +
-                ",\n parameters=" + parameters +
-                '}';
     }
 
     public List<Parameter> getParameters() {
@@ -85,34 +66,134 @@ public class FuncDecl  extends Statements {
     }
 
     @Override
+    public String toString() {
+        return "\nFuncDecl{" +
+                "functionBodies=" + functionBodies +
+                ", return_type='" + return_type + '\'' +
+                ", name='" + name + '\'' +
+                ", parameters=" + parameters +
+                '}';
+    }
+
+
+
+    @Override
     public String convertToJs() {
+        if (st == null) {
+            throw new RuntimeException("SymbolTable not set in FuncDecl");
+        }
+
         StringBuilder jsBuilder = new StringBuilder();
 
-        // Function signature
-        jsBuilder.append("function ")
-                .append(name)
-                .append("(");
+        if ("submit".equals(name)) {
 
-        // Parameters
-        for (int i = 0; i < parameters.size(); i++) {
-            jsBuilder.append(parameters.get(i).getName());
-            if (i < parameters.size() - 1) {
-                jsBuilder.append(", ");
+            // Pick first non-null object from symbol table as the entity
+            String entity = null;
+            Row entityRow = null;
+
+            for (Row r : st.getRow()) {
+                if (r != null && r.getValue() != null && r.getValue().toString().startsWith("{")) {
+                    entity = r.getName();      // name from symbol table, e.g., 'produ'
+                    entityRow = r;
+                    break;
+                }
             }
-        }
-        jsBuilder.append(") {\n");
 
-        // Function body (statements inside)
-        for (FuncBody body : functionBodies) {
-            jsBuilder.append("  ")
-                    .append(body.convertToJs())
-                    .append("\n");
-        }
+            if (entity == null) {
+                entity = "product"; // fallback
+            }
 
-        jsBuilder.append("}\n");
+            // Extract keys from entity object
+            List<String> keys = new ArrayList<>();
+            if (entityRow != null) {
+                String valueText = entityRow.getValue().toString().trim();
+                String objectBody = valueText.substring(1, valueText.length() - 1).trim();
+                if (!objectBody.isEmpty()) {
+                    for (String part : objectBody.split(",")) {
+                        String[] kv = part.split(":");
+                        if (kv.length > 0) keys.add(kv[0].trim());
+                    }
+                }
+            }
+
+            // fallback keys if none found
+            if (keys.isEmpty()) {
+                keys.add("name");
+                keys.add("image");
+                keys.add("details");
+                keys.add("price");
+                keys.add("size");
+            }
+
+            // JS variable names based on entity
+            String cap = Character.toUpperCase(entity.charAt(0)) + entity.substring(1);
+            String formVarName = "add" + cap + "Form";
+            String plural = entity + "s";
+
+            jsBuilder.append("let ").append(entity).append(" = {");
+            for (int i = 0; i < keys.size(); i++) {
+                jsBuilder.append(keys.get(i)).append(": ''");
+                if (i < keys.size() - 1) jsBuilder.append(",");
+            }
+            jsBuilder.append("};\n\n");
+
+            jsBuilder.append(formVarName).append(".addEventListener(\"submit\", (e) => {\n")
+                    .append("  e.preventDefault();\n")
+                    .append(buildObjectLiteralFromKeys(cap, keys, st))
+                    .append("  ").append(plural).append(".push(new").append(cap).append(");\n")
+                    .append("  showHomePage();\n")
+                    .append("  ").append(formVarName).append(".reset();\n")
+                    .append("});\n\n")
+                    .append("// Initial render\n")
+                    .append("renderProducts();\n");
+        }
 
         return jsBuilder.toString();
     }
 
-}
 
+    private String buildObjectLiteralFromKeys(String entity, List<String> keys, SymbolTable st) {
+        String cap = Character.toUpperCase(entity.charAt(0)) + entity.substring(1);
+        StringBuilder b = new StringBuilder();
+        b.append("  const new").append(cap).append(" = {\n");
+
+        for (int i = 0; i < keys.size(); i++) {
+            String k = keys.get(i);
+            String line;
+
+            // detect if the key is numeric from symbol table safely
+            boolean isNumeric = false;
+            if (st != null && st.getRow() != null) {
+                for (Row r : st.getRow()) {
+                    if (r != null && k.equals(r.getName()) && r.getValue() != null) {
+                        Object val = r.getValue();
+                        if (val instanceof Number) {
+                            isNumeric = true;
+                        } else if (val instanceof String) {
+                            try {
+                                Double.parseDouble((String) val);
+                                isNumeric = true;
+                            } catch (NumberFormatException ignored) {}
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if (isNumeric) {
+                line = "    " + k + ": parseFloat(document.getElementById(\"" + k + "\").value)";
+            } else {
+                line = "    " + k + ": document.getElementById(\"" + k + "\").value";
+            }
+
+            if (i < keys.size() - 1) line += ",";
+            b.append(line).append("\n");
+        }
+
+        b.append("  };\n");
+        return b.toString();
+    }
+
+
+
+}

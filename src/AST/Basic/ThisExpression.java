@@ -102,16 +102,15 @@ public class ThisExpression extends Statements {
         return sb.toString();
     }
     @Override
+
     public String convertToJs() {
-        StringBuilder sb = new StringBuilder("this.");
-        sb.append(propertyChain.convertToJs());
-        if (assignment != null) {
-            sb.append(" = ").append(assignment.getValue());
-        }
-        if (postOp != null) {
-            sb.append(postOp.getOperation());
-        }
-        return sb.toString();
-    }
+//        StringBuilder sb = new StringBuilder("this.");
+//        sb.append(propertyChain.convertToJs());
+//        if (assignment != null) {
+//            sb.append(" = ").append(assignment.getValue().convertToJs());
+//        }
+//        return sb.toString();
+//    }
+        return "";}
 
 }

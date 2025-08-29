@@ -488,13 +488,9 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
     public Init visitInit(ParserFile.InitContext ctx) {
         String name = ctx.ID().getText();
         String dataType = ctx.DATA_TYPE() != null ? ctx.DATA_TYPE().getText() : "unknown";
-
-        // value now comes from the `value` subrule (not a VAL token on InitContext)
         String valueText = ctx.value() != null ? ctx.value().getText() : null;
-        // If you want the structured value node, you can also do:
-        // Value valueNode = ctx.value() != null ? (Value) visit(ctx.value()) : null;
 
-        // Duplicate variable check (unchanged)
+        // Duplicate variable check
         for (Row existing : st.getRow()) {
             if (existing != null
                     && name.equals(existing.getName())
@@ -506,7 +502,7 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
             }
         }
 
-        // Simple type checks against the textual value (unchanged)
+        // Type checks
         if ("number".equals(dataType) && (valueText == null || !valueText.matches("\\d+"))) {
             int line = ctx.getStart().getLine();
             int column = ctx.getStart().getCharPositionInLine();
@@ -521,10 +517,11 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
             semanticErrors.add(new TypeMismatchError(name, valueText, dataType, line, column));
         }
 
+        // Add row to symbol table
         Row row = new Row();
         row.setType(dataType);
         row.setName(name);
-        row.setValue(valueText);
+        row.setValue(valueText); // keep object literal as text
         row.setScope(st.getCurrentScope());
         row.setLine(ctx.getStart().getLine());
         row.setColumn(ctx.getStart().getCharPositionInLine());
@@ -532,6 +529,7 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
 
         return new Init(dataType, name, valueText);
     }
+
 
 
 
@@ -1391,7 +1389,9 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
     public FuncDecl visitFunction_decl(ParserFile.Function_declContext ctx) {
         st.enterScope("function");
 
-        FuncDecl funcDecl = new FuncDecl();
+        // Pass the symbol table
+        FuncDecl funcDecl = new FuncDecl(st);
+
         funcDecl.setName(ctx.ID().getText());
 
         if (ctx.COLON() != null && ctx.DATA_TYPE() != null) {
@@ -1422,6 +1422,7 @@ public class AngularVisitor extends ParserFileBaseVisitor<Object> {
         st.exitScope();
         return funcDecl;
     }
+
 
     @Override
     public FuncBody visitFunction_body(ParserFile.Function_bodyContext ctx) {

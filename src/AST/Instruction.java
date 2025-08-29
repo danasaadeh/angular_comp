@@ -191,44 +191,45 @@ public class Instruction implements Program {
     }
 
     private String renderHtmlElement(AST.Html.HtmlElement element) {
-        if (element == null) return "";
-        String tag = element.getTagName() != null ? element.getTagName() : "div";
-        StringBuilder sb = new StringBuilder();
-        sb.append("<").append(tag);
-        if (element.getHtmlAttributes() != null) {
-            for (AST.Html.HtmlAttribute attr : element.getHtmlAttributes()) {
-                if (attr.getTagName() != null && !attr.getTagName().isEmpty()) {
-                    sb.append(" ").append(attr.getTagName());
-                    if (attr.getValue() != null && !attr.getValue().isEmpty()) {
-                        sb.append("=\"").append(escapeHtml(attr.getValue())).append("\"");
-                    }
-                }
-            }
-        }
-        sb.append(">");
-
-        if (element.getHtmlContents() != null) {
-            // text data
-            if (element.getHtmlContents().getData() != null) {
-                for (AST.Html.HtmlChardata d : element.getHtmlContents().getData()) {
-                    if (d.getHtmlText() != null && !d.getHtmlText().isEmpty()) {
-                        sb.append(escapeHtml(d.getHtmlText()));
-                    }
-                    if (d.getInter() != null && !d.getInter().isEmpty()) {
-                        sb.append(d.getInter());
-                    }
-                }
-            }
-            // nested elements
-            if (element.getHtmlContents().getHtmlElements() != null) {
-                for (AST.Html.HtmlElement child : element.getHtmlContents().getHtmlElements()) {
-                    sb.append(renderHtmlElement(child));
-                }
-            }
-        }
-
-        sb.append("</").append(tag).append(">");
-        return sb.toString();
+//        if (element == null) return "";
+//        String tag = element.getTagName() != null ? element.getTagName() : "div";
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("<").append(tag);
+//        if (element.getHtmlAttributes() != null) {
+//            for (AST.Html.HtmlAttribute attr : element.getHtmlAttributes()) {
+//                if (attr.getTagName() != null && !attr.getTagName().isEmpty()) {
+//                    sb.append(" ").append(attr.getTagName());
+//                    if (attr.getValue() != null && !attr.getValue().isEmpty()) {
+//                        sb.append("=\"").append(escapeHtml(attr.getValue())).append("\"");
+//                    }
+//                }
+//            }
+//        }
+//        sb.append(">");
+//
+//        if (element.getHtmlContents() != null) {
+//            // text data
+//            if (element.getHtmlContents().getData() != null) {
+//                for (AST.Html.HtmlChardata d : element.getHtmlContents().getData()) {
+//                    if (d.getHtmlText() != null && !d.getHtmlText().isEmpty()) {
+//                        sb.append(escapeHtml(d.getHtmlText()));
+//                    }
+//                    if (d.getInter() != null && !d.getInter().isEmpty()) {
+//                        sb.append(d.getInter());
+//                    }
+//                }
+//            }
+//            // nested elements
+//            if (element.getHtmlContents().getHtmlElements() != null) {
+//                for (AST.Html.HtmlElement child : element.getHtmlContents().getHtmlElements()) {
+//                    sb.append(renderHtmlElement(child));
+//                }
+//            }
+//        }
+//
+//        sb.append("</").append(tag).append(">");
+        return"";
+              //  sb.toString();
     }
 
     private String escapeHtml(String s) {
