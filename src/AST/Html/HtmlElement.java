@@ -122,52 +122,69 @@ public class HtmlElement {
 
     // ==== HTML Conversion ====
     public String convertToHtml() {
-        // If this element has an ngIf directive, keep attributes (id, style, etc.) but remove the directive itself
-        if (directives != null) {
-            for (Directive dir : directives) {
-                if ("ngIf".equalsIgnoreCase(dir.getNg()) || "*ngIf".equalsIgnoreCase(dir.getNg())) {
-                    String tag = (tagName != null && !tagName.trim().isEmpty()) ? tagName.trim() : "div";
-
-                    StringBuilder attrBuilder = new StringBuilder();
-                    if (htmlAttributes != null) {
-                        for (HtmlAttribute attr : htmlAttributes) {
-                            String a = attr.convertToHtml();
-                            if (a != null && !a.isEmpty()) {
-                                if (attrBuilder.length() > 0) attrBuilder.append(" ");
-                                attrBuilder.append(a);
-                            }
-                        }
-                    }
-
-                    // include hashes
-                    if (hashes != null) {
-                        for (Hash hash : hashes) {
-                            String h = hash.convertToHtml();
-                            if (h != null && !h.isEmpty()) {
-                                if (attrBuilder.length() > 0) attrBuilder.append(" ");
-                                attrBuilder.append(h.trim());
-                            }
-                        }
-                    }
-
-                    // include bindings (property + event)
-                    if (bindings != null) {
-                        for (Binding b : bindings) {
-                            String bindStr = b.convertToHtml();
-                            if (bindStr != null && !bindStr.isEmpty()) {
-                                if (attrBuilder.length() > 0) attrBuilder.append(" ");
-                                attrBuilder.append(bindStr.trim());
-                            }
-                        }
-                    }
-
-                    String attrString = attrBuilder.toString().trim();
-                    return "<" + tag + (attrString.isEmpty() ? "" : " " + attrString) + "></" + tag + ">";
-                }
-            }
+        // --- Handle *ngFor first: replace repeated element with a container DIV ---
+        Directive ngForDir = findDirective("ngFor");
+        if (ngForDir == null) ngForDir = findDirective("*ngFor");
+        if (ngForDir != null) {
+            String id = findId();
+            // Always output the static container. Keep the id if present.
+            String containerId = (id != null) ? " id=\"" + escapeHtmlAttr(id) + "\"" : "";
+            return "<div" + containerId + " style=\"display: flex; flex-direction: column\"></div>";
         }
 
-        // Normal rendering if no ngIf directive
+        // --- Handle *ngIf: keep element and attributes, drop the directive itself ---
+        Directive ngIfDir = findDirective("ngIf");
+        if (ngIfDir == null) ngIfDir = findDirective("*ngIf");
+        if (ngIfDir != null) {
+            String tag = (tagName != null && !tagName.trim().isEmpty()) ? tagName.trim() : "div";
+
+            StringBuilder attrBuilder = new StringBuilder();
+            if (htmlAttributes != null) {
+                for (HtmlAttribute attr : htmlAttributes) {
+                    String a = attr.convertToHtml();
+                    if (a != null && !a.isEmpty()) {
+                        if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                        attrBuilder.append(a);
+                    }
+                }
+            }
+            if (hashes != null) {
+                for (Hash hash : hashes) {
+                    String h = hash.convertToHtml();
+                    if (h != null && !h.isEmpty()) {
+                        if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                        attrBuilder.append(h.trim());
+                    }
+                }
+            }
+            if (bindings != null) {
+                for (Binding b : bindings) {
+                    String bindStr = b.convertToHtml();
+                    if (bindStr != null && !bindStr.isEmpty()) {
+                        if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                        attrBuilder.append(bindStr.trim());
+                    }
+                }
+            }
+            String attrString = attrBuilder.toString().trim();
+
+// Ensure style contains display:none
+            if (attrString.contains("style=")) {
+                // Append display:none inside existing style
+                attrString = attrString.replaceFirst("style=\"", "style=\"display: none; ");
+            } else {
+                // No style yet → add new style attribute
+                if (!attrString.isEmpty()) {
+                    attrString += " ";
+                }
+                attrString += "style=\"display: none;\"";
+            }
+
+            return "<" + tag + (attrString.isEmpty() ? "" : " " + attrString) + "></" + tag + ">";
+
+        }
+
+        // --- Normal rendering (no structural directives) ---
         if (tagName == null || tagName.trim().isEmpty()) {
             return htmlContents != null ? htmlContents.convertToHtml() : "";
         }
@@ -175,7 +192,6 @@ public class HtmlElement {
         String tag = tagName.trim();
         StringBuilder attrBuilder = new StringBuilder();
 
-        // include normal HTML attributes
         if (htmlAttributes != null) {
             for (HtmlAttribute attr : htmlAttributes) {
                 String a = attr.convertToHtml();
@@ -186,7 +202,6 @@ public class HtmlElement {
             }
         }
 
-        // include hashes
         if (hashes != null) {
             for (Hash hash : hashes) {
                 String h = hash.convertToHtml();
@@ -197,7 +212,6 @@ public class HtmlElement {
             }
         }
 
-        // include bindings (property + event)
         if (bindings != null) {
             for (Binding b : bindings) {
                 String bindStr = b.convertToHtml();
@@ -243,51 +257,116 @@ public class HtmlElement {
         String elementId = findId();
         String varName = (elementId != null) ? sanitizeIdentifier(toCamelCase(elementId)) : null;
 
-        // Step 1: create variable for id
         if (elementId != null) {
             jsBuilder.append("const ").append(varName)
                     .append(" = document.getElementById(\"")
                     .append(escapeJsString(elementId)).append("\");\n");
         }
 
-        // Step 2: handle ngIf directive → generate toggle functions
-        if (directives != null) {
-            for (Directive dir : directives) {
-                if ("ngIf".equalsIgnoreCase(dir.getNg()) || "*ngIf".equalsIgnoreCase(dir.getNg())) {
-                    String showFn = "show" + capitalize(varName);
-                    String hideFn = "hide" + capitalize(varName);
+        // --- *ngFor → render<IdCamel>() that builds items dynamically ---
+        Directive ngForDir = findDirective("ngFor");
+        if (ngForDir == null) ngForDir = findDirective("*ngFor");
+        if (ngForDir != null) {
+            NgForParts parts = parseNgFor(stripQuotes(ngForDir.getValue()));
+            // Fallbacks just in case parsing fails
+            String itemVar = (parts.itemVar != null && !parts.itemVar.isEmpty()) ? parts.itemVar : "item";
+            String listExpr = (parts.listExpr != null && !parts.listExpr.isEmpty()) ? parts.listExpr : "[]";
 
-                    // Build inner template
-                    StringBuilder inner = new StringBuilder();
-                    if (htmlContents != null && htmlContents.hasContent()) {
-                        for (Object child : htmlContents.getChildren()) {
-                            if (child instanceof HtmlChardata) {
-                                inner.append(((HtmlChardata) child).convertToJsTemplate());
-                            } else if (child instanceof HtmlElement) {
-                                // For nested elements, just render their HTML directly
-                                inner.append(((HtmlElement) child).convertElementToJsTemplate());
-                            }
-                        }
+            String funcName = "render" + capitalize(varName != null ? varName : "List");
+
+            // Tag to create for each item = the original element's tag (e.g., "button")
+            String repeatTag = (tagName != null && !tagName.trim().isEmpty()) ? tagName.trim() : "div";
+
+            // Collect inline style on the repeated element (if any)
+            String itemStyle = findAttributeValue("style");
+            if (itemStyle == null) itemStyle = "";
+
+            // Build the inner template for each repeated item from the CHILDREN of this element
+            StringBuilder inner = new StringBuilder();
+            if (htmlContents != null && htmlContents.hasContent()) {
+                for (Object child : htmlContents.getChildren()) {
+                    if (child instanceof HtmlChardata) {
+                        inner.append(((HtmlChardata) child).convertToJsTemplate());
+                    } else if (child instanceof HtmlElement) {
+                        // Convert nested element to a template string with ${...} + property bindings
+                        inner.append(((HtmlElement) child).convertElementToJsTemplate());
                     }
-
-                    jsBuilder.append("function ").append(showFn).append("() {\n")
-                            .append("  ").append(varName).append(".style.display = \"flex\";\n")
-                            .append("  ").append(varName).append(".innerHTML = `")
-                            .append(inner.toString())
-                            .append("`;\n")
-                            .append("}\n\n");
-
-                    jsBuilder.append("function ").append(hideFn).append("() {\n")
-                            .append("  ").append(varName).append(".style.display = \"none\";\n")
-                            .append("  ").append(varName).append(".innerHTML = \"\";\n")
-                            .append("}\n\n");
-
-                    return jsBuilder.toString();
                 }
             }
+
+            // Find event bindings on the repeated element, e.g. (click)="buttonClicked(product)"
+            List<String> eventLines = new ArrayList<>();
+            if (bindings != null) {
+                for (Binding b : bindings) {
+                    String bind = b.getBinding();
+                    if (bind != null && bind.startsWith("(") && bind.endsWith(")")) {
+                        String eventName = bind.substring(1, bind.length() - 1).trim();
+                        String handlerExpr = b.getValue() != null ? stripQuotes(b.getValue().trim()) : "";
+                        if (!eventName.isEmpty() && !handlerExpr.isEmpty()) {
+                            eventLines.add("  itemEl.addEventListener(\"" + eventName + "\", () => " + handlerExpr + ");\n");
+                        }
+                    }
+                }
+            }
+
+            jsBuilder.append("function ").append(funcName).append("() {\n")
+                    .append("  ").append(varName != null ? varName : "/*container*/").append(".innerHTML = \"\";\n")
+                    .append("  (").append(listExpr).append(").forEach((").append(itemVar).append(") => {\n")
+                    .append("    const itemEl = document.createElement(\"").append(repeatTag).append("\");\n");
+
+            if (!itemStyle.isEmpty()) {
+                jsBuilder.append("    itemEl.style.cssText = \"").append(escapeJsString(itemStyle)).append("\";\n");
+            }
+
+            jsBuilder.append("    itemEl.innerHTML = `").append(inner.toString()).append("`;\n");
+
+            for (String ev : eventLines) {
+                jsBuilder.append(ev);
+            }
+
+            jsBuilder.append("    ").append(varName != null ? varName : "/*container*/")
+                    .append(".appendChild(itemEl);\n")
+                    .append("  });\n")
+                    .append("}\n\n");
+
+            // Stop here: children of an *ngFor are rendered by the function
+            return jsBuilder.toString();
         }
 
-        // Step 3: recurse normally for children
+        // --- *ngIf → show/hide helpers (your previous behavior) ---
+        Directive ngIfDir = findDirective("ngIf");
+        if (ngIfDir == null) ngIfDir = findDirective("*ngIf");
+        if (ngIfDir != null) {
+            String param = stripQuotes(ngIfDir.getValue()); // remove " ... "
+
+            String showFn = "show" + capitalize(varName);
+            String hideFn = "hide" + capitalize(varName);
+
+            StringBuilder inner = new StringBuilder();
+            if (htmlContents != null && htmlContents.hasContent()) {
+                for (Object child : htmlContents.getChildren()) {
+                    if (child instanceof HtmlChardata) {
+                        inner.append(((HtmlChardata) child).convertToJsTemplate());
+                    } else if (child instanceof HtmlElement) {
+                        inner.append(((HtmlElement) child).convertElementToJsTemplate());
+                    }
+                }
+            }
+
+            jsBuilder.append("function ").append(showFn)
+                    .append("(").append(param).append(") {\n")   // <-- pass parameter
+                    .append("  ").append(varName).append(".style.display = \"flex\";\n")
+                    .append("  ").append(varName).append(".innerHTML = `").append(inner.toString()).append("`;\n")
+                    .append("}\n\n");
+            jsBuilder.append("function ").append(hideFn).append("() {\n")
+                    .append("  ").append(varName).append(".style.display = \"none\";\n")
+                    .append("  ").append(varName).append(".innerHTML = \"\";\n")
+                    .append("}\n\n");
+
+            return jsBuilder.toString();
+        }
+
+        // --- Recurse normally for non-structural elements ---
         if (htmlContents != null && htmlContents.hasContent()) {
             for (Object child : htmlContents.getChildren()) {
                 if (child instanceof HtmlElement) {
@@ -311,14 +390,18 @@ public class HtmlElement {
         return null;
     }
 
+    // Build a JS template for a single nested element (used inside *ngFor & *ngIf bodies)
     public String convertElementToJsTemplate() {
         String tag = (tagName != null && !tagName.isEmpty()) ? tagName.trim() : "div";
         StringBuilder attrBuilder = new StringBuilder();
 
-        // Convert normal attributes
+        // Normal attributes → also convert any {{ }} inside attribute values to ${ }
         if (htmlAttributes != null) {
             for (HtmlAttribute attr : htmlAttributes) {
-                String a = attr.convertToHtml(); // works if plain
+                // Do not propagate id of the repeated element into each item
+                if ("id".equalsIgnoreCase(attr.getName())) continue;
+
+                String a = attributeToJsTemplate(attr); // <-- converts {{ }} to ${ }
                 if (a != null && !a.isEmpty()) {
                     if (attrBuilder.length() > 0) attrBuilder.append(" ");
                     attrBuilder.append(a);
@@ -326,18 +409,25 @@ public class HtmlElement {
             }
         }
 
-        // Convert bindings → src="${...}", alt="${...}", etc.
+        // Property/event bindings → src="${...}", alt="${...}", etc.
         if (bindings != null) {
             for (Binding b : bindings) {
-                String bindJs = b.convertToJsTemplate(); // you need this in Binding
-                if (bindJs != null && !bindJs.isEmpty()) {
-                    if (attrBuilder.length() > 0) attrBuilder.append(" ");
-                    attrBuilder.append(bindJs);
+                // Only property bindings become attributes here; events are attached in convertToJs()
+                String bind = b.getBinding();
+                if (bind != null && bind.startsWith("[") && bind.endsWith("]")) {
+                    String prop = bind.substring(1, bind.length() - 1).trim();
+                    String expr = b.getValue() != null ? stripQuotes(b.getValue().trim()) : "";
+                    if (!prop.isEmpty() && !expr.isEmpty()) {
+                        if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                        attrBuilder.append(prop).append("=\"${").append(expr).append("}\"");
+                    }
+                } else if (bind != null && bind.startsWith("(") && bind.endsWith(")")) {
+                    // Skip here; handled as addEventListener in convertToJs()
                 }
             }
         }
 
-        // children
+        // Children
         StringBuilder childBuilder = new StringBuilder();
         if (htmlContents != null && htmlContents.hasContent()) {
             for (Object child : htmlContents.getChildren()) {
@@ -354,6 +444,7 @@ public class HtmlElement {
                 ">" + childBuilder.toString() +
                 "</" + tag + ">";
     }
+
 
     private String capitalize(String s) {
         if (s == null || s.isEmpty()) return s;
@@ -415,4 +506,75 @@ public class HtmlElement {
     private String escapeJsString(String s) {
         return s.replace("\\", "\\\\").replace("\"", "\\\"");
     }
+
+
+    private Directive findDirective(String name) {
+        if (directives == null || name == null) return null;
+        for (Directive d : directives) {
+            if (d == null || d.getNg() == null) continue;
+            String ng = d.getNg().trim();
+            if (name.equalsIgnoreCase(ng)) return d;
+        }
+        return null;
+    }
+
+    private static class NgForParts {
+        String itemVar;
+        String listExpr;
+    }
+
+    private NgForParts parseNgFor(String expr) {
+        NgForParts p = new NgForParts();
+        if (expr == null) return p;
+        String s = expr.trim();
+
+        // Expect shapes like: let item of items [; ...ignored]
+        // Strip any trailing ";" segment (e.g., "let item of items; index as i")
+        int semi = s.indexOf(';');
+        if (semi >= 0) s = s.substring(0, semi).trim();
+
+        // Remove optional quotes if caller forgot
+        s = stripQuotes(s);
+
+        java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("let\\s+(\\w+)\\s+of\\s+(.+)", java.util.regex.Pattern.CASE_INSENSITIVE)
+                .matcher(s);
+        if (m.find()) {
+            p.itemVar = m.group(1).trim();
+            p.listExpr = m.group(2).trim();
+        }
+        return p;
+    }
+
+    private String findAttributeValue(String name) {
+        if (htmlAttributes == null || name == null) return null;
+        for (HtmlAttribute a : htmlAttributes) {
+            if (a != null && name.equalsIgnoreCase(a.getName())) {
+                String v = a.getValue();
+                return (v != null) ? stripQuotes(v.trim()) : null;
+            }
+        }
+        return null;
+    }
+
+    private String attributeToJsTemplate(HtmlAttribute attr) {
+        if (attr == null || attr.getName() == null) return "";
+        String name = attr.getName().trim();
+        String raw = attr.getValue();
+
+        if (raw == null || raw.isEmpty()) {
+            return name; // boolean attribute
+        }
+        String val = stripQuotes(raw.trim());
+        // Convert {{ expr }} → ${expr}
+        val = val.replaceAll("\\{\\{\\s*(.*?)\\s*\\}\\}", "\\${$1}");
+        return name + "=\"" + val + "\"";
+    }
+
+    private String escapeHtmlAttr(String s) {
+        if (s == null) return "";
+        return s.replace("&", "&amp;").replace("\"", "&quot;")
+                .replace("<", "&lt;").replace(">", "&gt;");
+    }
+
 }
