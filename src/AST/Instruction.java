@@ -80,6 +80,8 @@ public class Instruction implements Program {
 
     // --- Code generation: HTML/CSS/JS ---
     @Override
+
+
     public String convertToHtml() {
         StringBuilder htmlBuilder = new StringBuilder();
         htmlBuilder.append("<!-- output.html -->\n");
@@ -92,38 +94,27 @@ public class Instruction implements Program {
         htmlBuilder.append("</head>\n");
         htmlBuilder.append("<body>\n");
 
-        // Try to render any component templates with inline styles
-        boolean renderedAnyComponent = false;
-        // Case 1: this node holds components list
-        if (this.components != null && !this.components.isEmpty()) {
-            for (Component component : this.components) {
-                if (component != null && component.getComponentBody() != null && component.getComponentBody().getTemplate() != null) {
-                    htmlBuilder.append(renderTemplate(component.getComponentBody().getTemplate()));
-                    renderedAnyComponent = true;
-                }
-            }
-        }
-        // Case 2: children are concrete Component nodes
-        if (!renderedAnyComponent && this.instructions_list != null) {
-            for (Instruction child : this.instructions_list) {
-                if (child instanceof Component) {
-                    Component component = (Component) child;
-                    if (component.getComponentBody() != null && component.getComponentBody().getTemplate() != null) {
-                        htmlBuilder.append(renderTemplate(component.getComponentBody().getTemplate()));
-                        renderedAnyComponent = true;
-                    }
-                } else if (child != null && child.components != null && !child.components.isEmpty()) {
-                    for (Component component : child.components) {
-                        if (component != null && component.getComponentBody() != null && component.getComponentBody().getTemplate() != null) {
-                            htmlBuilder.append(renderTemplate(component.getComponentBody().getTemplate()));
-                            renderedAnyComponent = true;
-                        }
+        // Collect every Component from this node and all descendants
+        List<Component> allComponents = collectAllComponents(this);
+
+        boolean renderedAny = false;
+        if (allComponents != null && !allComponents.isEmpty()) {
+            for (Component comp : allComponents) {
+                if (comp == null || comp.getComponentBody() == null) continue;
+
+                AST.Angular.Component.Template tpl = comp.getComponentBody().getTemplate();
+                if (tpl != null) {
+                    String rendered = renderTemplate(tpl);
+                    if (rendered != null && !rendered.isEmpty()) {
+                        htmlBuilder.append(rendered).append("\n");
+                        renderedAny = true;
                     }
                 }
             }
         }
 
-        if (!renderedAnyComponent) {
+        // Fallback if no templates were rendered
+        if (!renderedAny) {
             htmlBuilder.append("    <div id=\"app\"></div>\n");
         }
 
@@ -132,6 +123,40 @@ public class Instruction implements Program {
         htmlBuilder.append("</html>");
         return htmlBuilder.toString();
     }
+
+    /**
+     * Recursively collects all Component nodes found in this Instruction and its children.
+     */
+    private List<Component> collectAllComponents(Instruction root) {
+        List<Component> result = new ArrayList<>();
+        collectAllComponentsInto(root, result);
+        return result;
+    }
+
+    /** Helper to avoid repeated list allocations. */
+    private void collectAllComponentsInto(Instruction node, List<Component> out) {
+        if (node == null) return;
+
+        // ✅ If this node is itself a Component, add it
+        if (node instanceof Component) {
+            out.add((Component) node);
+        }
+
+        // ✅ Add components defined at this node
+        if (node.getComponents() != null && !node.getComponents().isEmpty()) {
+            out.addAll(node.getComponents());
+        }
+
+        // ✅ Recurse into children
+        if (node.getInstructions_list() != null && !node.getInstructions_list().isEmpty()) {
+            for (Instruction child : node.getInstructions_list()) {
+                collectAllComponentsInto(child, out);
+            }
+        }
+    }
+
+
+
 
     @Override
     public String convertToCss() {

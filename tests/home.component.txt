@@ -1,11 +1,7 @@
 
-import { NgForOf, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { ProductService } from '../product.service';
 
 @Component({
-  selector: 'app-home',
+
   template: `
     <div
       id="home-page"
@@ -58,19 +54,3 @@ import { ProductService } from '../product.service';
 
   imports: [NgForOf, NgIf],
 })
-export class HomeComponent {
-  product: any;
-  products: any[] = [];
-
-  constructor(private router: Router, private productService: ProductService) {
-    this.productService.products$.subscribe((data) => (this.products = data));
-  }
-
-  showProductDetails(product: any) {
-    this.product = product;
-  }
-
-  showAddProductPage() {
-    this.router.navigate(['/add-product']);
-  }
-}

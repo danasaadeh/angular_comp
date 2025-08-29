@@ -1,2 +1,4 @@
 Semantic check errors:
-Line 112: (Error: Redeclared variable in the same scope: product)
+Line 5: (Error: Component component_5 is missing a selector)
+Line 5: (Error: Component dependency 'NgForOf' is used in the component's imports but is not imported.)
+Line 5: (Error: Component dependency 'NgIf' is used in the component's imports but is not imported.)

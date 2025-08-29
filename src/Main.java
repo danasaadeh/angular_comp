@@ -42,8 +42,18 @@ public class Main {
 
             Program subProgram = (Program) visitor.visit(tree);
 
-            // Merge each file’s AST into the root
-            rootProgram.setInstructions_list((Instruction) subProgram);
+            if (subProgram instanceof Instruction) {
+                Instruction subInstr = (Instruction) subProgram;
+
+                // ✅ Add sub-instruction
+                rootProgram.setInstructions_list(subInstr);
+
+                // ✅ Also merge components into root so they are visible
+                if (subInstr.getComponents() != null && !subInstr.getComponents().isEmpty()) {
+                    rootProgram.getComponents().addAll(subInstr.getComponents());
+                }
+            }
+
         }
 
         // === 4) Collect semantic errors
