@@ -27,7 +27,7 @@
       <div style="width: 50%; display: flex; flex-direction: column;">
         <button
           style="margin-bottom: 20px; padding: 15px; background-color: #CB6F6E; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"
-          (click)="goToAddProduct()"
+          (click)="showAddProductPage()"
         >
           Add Product
         </button>
@@ -52,6 +52,8 @@
 
   imports: [NgForOf, NgIf],
 })
+
+
 @Component({
   selector: 'app-add-product',
   standalone: true,
@@ -153,38 +155,3 @@
   `,
   imports: [CommonModule, FormsModule],
 })
-
-let products = [
-  {
-    name: "first product",
-    image:
-      "https://img.freepik.com/premium-photo/cosmetic-bottle-mockup_863013-107717.jpg",
-    details: "first product details",
-    price: 19.99,
-    size: "200ml",
-  },
-  {
-    name: "second product",
-    image:
-      "https://img.freepik.com/premium-photo/cosmetic-bottle-mockup_863013-107608.jpg",
-    details: "second product details",
-    price: 24.99,
-    size: "250ml",
-  },
-  {
-    name: "third product",
-    image:
-      "https://img.freepik.com/premium-photo/cosmetic-bottle-mockup_863013-107632.jpg?w=360",
-    details: "third product details",
-    price: 15.49,
-    size: "150ml",
-  },
-  {
-    name: "fourth product",
-    image:
-      "https://img.freepik.com/premium-photo/cosmetic-bottle-mockup_863013-107603.jpg?w=360",
-    details: "fourth product details",
-    price: 29.99,
-    size: "300ml",
-  },
-];

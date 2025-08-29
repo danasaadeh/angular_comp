@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private _products = new BehaviorSubject<any[]>([
+  private products = new BehaviorSubject<any[]>([
     {
       name: 'first product',
       image:
@@ -39,10 +39,10 @@ export class ProductService {
     },
   ]);
 
-  readonly products$ = this._products.asObservable();
+  readonly products$ = this.products.asObservable();
 
   addProduct(product: any) {
-    const current = this._products.getValue();
-    this._products.next([...current, product]);
+    const current = this.products.getValue();
+    this.products.next([...current, product]);
   }
 }

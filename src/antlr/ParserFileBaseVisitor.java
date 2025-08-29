@@ -249,13 +249,6 @@ public class ParserFileBaseVisitor<T> extends AbstractParseTreeVisitor<T> implem
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitRETRUN_STATE(ParserFile.RETRUN_STATEContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitCOMMENT_STATE(ParserFile.COMMENT_STATEContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

@@ -231,13 +231,6 @@ public interface ParserFileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVALUE_STATE(ParserFile.VALUE_STATEContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code RETRUN_STATE}
-	 * labeled alternative in {@link ParserFile#statements}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitRETRUN_STATE(ParserFile.RETRUN_STATEContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code COMMENT_STATE}
 	 * labeled alternative in {@link ParserFile#statements}.
 	 * @param ctx the parse tree
