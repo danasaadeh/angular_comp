@@ -122,14 +122,60 @@ public class HtmlElement {
 
     // ==== HTML Conversion ====
     public String convertToHtml() {
+        // If this element has an ngIf directive, keep attributes (id, style, etc.) but remove the directive itself
+        if (directives != null) {
+            for (Directive dir : directives) {
+                if ("ngIf".equalsIgnoreCase(dir.getNg()) || "*ngIf".equalsIgnoreCase(dir.getNg())) {
+                    String tag = (tagName != null && !tagName.trim().isEmpty()) ? tagName.trim() : "div";
+
+                    StringBuilder attrBuilder = new StringBuilder();
+                    if (htmlAttributes != null) {
+                        for (HtmlAttribute attr : htmlAttributes) {
+                            String a = attr.convertToHtml();
+                            if (a != null && !a.isEmpty()) {
+                                if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                                attrBuilder.append(a);
+                            }
+                        }
+                    }
+
+                    // include hashes
+                    if (hashes != null) {
+                        for (Hash hash : hashes) {
+                            String h = hash.convertToHtml();
+                            if (h != null && !h.isEmpty()) {
+                                if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                                attrBuilder.append(h.trim());
+                            }
+                        }
+                    }
+
+                    // include bindings (property + event)
+                    if (bindings != null) {
+                        for (Binding b : bindings) {
+                            String bindStr = b.convertToHtml();
+                            if (bindStr != null && !bindStr.isEmpty()) {
+                                if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                                attrBuilder.append(bindStr.trim());
+                            }
+                        }
+                    }
+
+                    String attrString = attrBuilder.toString().trim();
+                    return "<" + tag + (attrString.isEmpty() ? "" : " " + attrString) + "></" + tag + ">";
+                }
+            }
+        }
+
+        // Normal rendering if no ngIf directive
         if (tagName == null || tagName.trim().isEmpty()) {
             return htmlContents != null ? htmlContents.convertToHtml() : "";
         }
 
         String tag = tagName.trim();
-
         StringBuilder attrBuilder = new StringBuilder();
 
+        // include normal HTML attributes
         if (htmlAttributes != null) {
             for (HtmlAttribute attr : htmlAttributes) {
                 String a = attr.convertToHtml();
@@ -140,32 +186,24 @@ public class HtmlElement {
             }
         }
 
-        if (bindings != null) {
-            for (Binding binding : bindings) {
-                String b = binding.convertToHtml();
-                if (b != null && !b.isEmpty()) {
-                    if (attrBuilder.length() > 0) attrBuilder.append(" ");
-                    attrBuilder.append(b.trim());
-                }
-            }
-        }
-
-        if (directives != null) {
-            for (Directive directive : directives) {
-                String d = directive.convertToHtml();
-                if (d != null && !d.isEmpty()) {
-                    if (attrBuilder.length() > 0) attrBuilder.append(" ");
-                    attrBuilder.append(d.trim());
-                }
-            }
-        }
-
+        // include hashes
         if (hashes != null) {
             for (Hash hash : hashes) {
                 String h = hash.convertToHtml();
                 if (h != null && !h.isEmpty()) {
                     if (attrBuilder.length() > 0) attrBuilder.append(" ");
                     attrBuilder.append(h.trim());
+                }
+            }
+        }
+
+        // include bindings (property + event)
+        if (bindings != null) {
+            for (Binding b : bindings) {
+                String bindStr = b.convertToHtml();
+                if (bindStr != null && !bindStr.isEmpty()) {
+                    if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                    attrBuilder.append(bindStr.trim());
                 }
             }
         }
@@ -197,38 +235,59 @@ public class HtmlElement {
         return htmlBuilder.toString();
     }
 
-    public static boolean isSelfClosingTag(String tag) {
-        String[] voidTags = {
-                "area", "base", "br", "col", "embed", "hr", "img",
-                "input", "link", "meta", "param", "source", "track", "wbr"
-        };
-        if (tag == null) return false;
-        for (String t : voidTags) {
-            if (t.equalsIgnoreCase(tag)) return true;
-        }
-        return false;
-    }
 
-
+    // ==== JS Conversion ====
     public String convertToJs() {
         StringBuilder jsBuilder = new StringBuilder();
 
-        if (htmlAttributes != null) {
-            for (HtmlAttribute attr : htmlAttributes) {
-                if ("id".equalsIgnoreCase(attr.getName()) && attr.getValue() != null && !attr.getValue().isEmpty()) {
-                    String rawId = attr.getValue().trim();
-                    String cleanId = stripQuotes(rawId);                  // <-- remove wrapping quotes if any
-                    String varName = sanitizeIdentifier(toCamelCase(cleanId)); // <-- make a valid JS identifier
+        String elementId = findId();
+        String varName = (elementId != null) ? sanitizeIdentifier(toCamelCase(elementId)) : null;
 
-                    jsBuilder.append("const ")
-                            .append(varName)                              // <-- NO quotes here
-                            .append(" = document.getElementById(\"")      // <-- quote the string literal id
-                            .append(escapeJsString(cleanId))
-                            .append("\");\n");
+        // Step 1: create variable for id
+        if (elementId != null) {
+            jsBuilder.append("const ").append(varName)
+                    .append(" = document.getElementById(\"")
+                    .append(escapeJsString(elementId)).append("\");\n");
+        }
+
+        // Step 2: handle ngIf directive → generate toggle functions
+        if (directives != null) {
+            for (Directive dir : directives) {
+                if ("ngIf".equalsIgnoreCase(dir.getNg()) || "*ngIf".equalsIgnoreCase(dir.getNg())) {
+                    String showFn = "show" + capitalize(varName);
+                    String hideFn = "hide" + capitalize(varName);
+
+                    // Build inner template
+                    StringBuilder inner = new StringBuilder();
+                    if (htmlContents != null && htmlContents.hasContent()) {
+                        for (Object child : htmlContents.getChildren()) {
+                            if (child instanceof HtmlChardata) {
+                                inner.append(((HtmlChardata) child).convertToJsTemplate());
+                            } else if (child instanceof HtmlElement) {
+                                // For nested elements, just render their HTML directly
+                                inner.append(((HtmlElement) child).convertElementToJsTemplate());
+                            }
+                        }
+                    }
+
+                    jsBuilder.append("function ").append(showFn).append("() {\n")
+                            .append("  ").append(varName).append(".style.display = \"flex\";\n")
+                            .append("  ").append(varName).append(".innerHTML = `")
+                            .append(inner.toString())
+                            .append("`;\n")
+                            .append("}\n\n");
+
+                    jsBuilder.append("function ").append(hideFn).append("() {\n")
+                            .append("  ").append(varName).append(".style.display = \"none\";\n")
+                            .append("  ").append(varName).append(".innerHTML = \"\";\n")
+                            .append("}\n\n");
+
+                    return jsBuilder.toString();
                 }
             }
         }
 
+        // Step 3: recurse normally for children
         if (htmlContents != null && htmlContents.hasContent()) {
             for (Object child : htmlContents.getChildren()) {
                 if (child instanceof HtmlElement) {
@@ -240,7 +299,77 @@ public class HtmlElement {
         return jsBuilder.toString();
     }
 
-    // Utility: convert kebab-case or snake_case to camelCase
+    // === Utility methods ===
+    private String findId() {
+        if (htmlAttributes != null) {
+            for (HtmlAttribute attr : htmlAttributes) {
+                if ("id".equalsIgnoreCase(attr.getName()) && attr.getValue() != null) {
+                    return stripQuotes(attr.getValue().trim());
+                }
+            }
+        }
+        return null;
+    }
+
+    public String convertElementToJsTemplate() {
+        String tag = (tagName != null && !tagName.isEmpty()) ? tagName.trim() : "div";
+        StringBuilder attrBuilder = new StringBuilder();
+
+        // Convert normal attributes
+        if (htmlAttributes != null) {
+            for (HtmlAttribute attr : htmlAttributes) {
+                String a = attr.convertToHtml(); // works if plain
+                if (a != null && !a.isEmpty()) {
+                    if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                    attrBuilder.append(a);
+                }
+            }
+        }
+
+        // Convert bindings → src="${...}", alt="${...}", etc.
+        if (bindings != null) {
+            for (Binding b : bindings) {
+                String bindJs = b.convertToJsTemplate(); // you need this in Binding
+                if (bindJs != null && !bindJs.isEmpty()) {
+                    if (attrBuilder.length() > 0) attrBuilder.append(" ");
+                    attrBuilder.append(bindJs);
+                }
+            }
+        }
+
+        // children
+        StringBuilder childBuilder = new StringBuilder();
+        if (htmlContents != null && htmlContents.hasContent()) {
+            for (Object child : htmlContents.getChildren()) {
+                if (child instanceof HtmlChardata) {
+                    childBuilder.append(((HtmlChardata) child).convertToJsTemplate());
+                } else if (child instanceof HtmlElement) {
+                    childBuilder.append(((HtmlElement) child).convertElementToJsTemplate());
+                }
+            }
+        }
+
+        return "<" + tag +
+                (attrBuilder.length() > 0 ? " " + attrBuilder.toString() : "") +
+                ">" + childBuilder.toString() +
+                "</" + tag + ">";
+    }
+
+    private String capitalize(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return s.substring(0, 1).toUpperCase() + s.substring(1);
+    }
+
+    public static boolean isSelfClosingTag(String tag) {
+        String[] voidTags = {"area","base","br","col","embed","hr","img",
+                "input","link","meta","param","source","track","wbr"};
+        if (tag == null) return false;
+        for (String t : voidTags) {
+            if (t.equalsIgnoreCase(tag)) return true;
+        }
+        return false;
+    }
+
     private String toCamelCase(String value) {
         if (value == null || value.isEmpty()) return "";
         String[] parts = value.split("[-_]");
@@ -254,7 +383,6 @@ public class HtmlElement {
         return camelCase.toString();
     }
 
-    // Remove wrapping single/double quotes if present
     private String stripQuotes(String s) {
         if (s == null || s.length() < 2) return s;
         char first = s.charAt(0), last = s.charAt(s.length() - 1);
@@ -264,70 +392,26 @@ public class HtmlElement {
         return s;
     }
 
-    // Ensure it's a valid, non-reserved JS identifier
     private String sanitizeIdentifier(String s) {
         if (s == null || s.isEmpty()) return "_el";
-        // Replace invalid characters
         String out = s.replaceAll("[^A-Za-z0-9_$]", "_");
-        // Cannot start with a digit
         if (out.matches("^[0-9].*")) out = "_" + out;
-        // Avoid reserved words
         if (isReservedWord(out)) out = out + "El";
         return out;
     }
 
     private boolean isReservedWord(String s) {
         switch (s) {
-            case "break":
-            case "case":
-            case "catch":
-            case "class":
-            case "const":
-            case "continue":
-            case "debugger":
-            case "default":
-            case "delete":
-            case "do":
-            case "else":
-            case "export":
-            case "extends":
-            case "finally":
-            case "for":
-            case "function":
-            case "if":
-            case "import":
-            case "in":
-            case "instanceof":
-            case "new":
-            case "return":
-            case "super":
-            case "switch":
-            case "this":
-            case "throw":
-            case "try":
-            case "typeof":
-            case "var":
-            case "void":
-            case "while":
-            case "with":
-            case "yield":
-            case "let":
-            case "enum":
-            case "await":
-            case "implements":
-            case "package":
-            case "protected":
-            case "static":
-            case "interface":
-            case "private":
-            case "public":
+            case "class": case "function": case "var": case "let": case "const":
+            case "if": case "else": case "switch": case "for": case "while":
+            case "do": case "return": case "break": case "case": case "new":
+            case "this": case "super": case "import": case "export":
+            case "default": case "try": case "catch": case "finally":
                 return true;
-            default:
-                return false;
+            default: return false;
         }
     }
 
-    // Escape quotes/backslashes for JS string literal
     private String escapeJsString(String s) {
         return s.replace("\\", "\\\\").replace("\"", "\\\"");
     }

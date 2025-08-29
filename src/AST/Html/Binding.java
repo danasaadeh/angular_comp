@@ -68,4 +68,30 @@ public class Binding {
         
         return htmlBuilder.toString();
     }
+    public String convertToJsTemplate() {
+        if (binding != null && value != null) {
+            String cleanBinding = binding.trim();
+
+            // Handle property binding [src] → src
+            if (cleanBinding.startsWith("[") && cleanBinding.endsWith("]")) {
+                cleanBinding = cleanBinding.substring(1, cleanBinding.length() - 1);
+            }
+
+            // Handle event binding (click) → onClick
+            else if (cleanBinding.startsWith("(") && cleanBinding.endsWith(")")) {
+                String eventName = cleanBinding.substring(1, cleanBinding.length() - 1);
+                cleanBinding = "on" + eventName.substring(0, 1).toUpperCase() + eventName.substring(1);
+            }
+
+            // Remove extra quotes from value
+            String cleanValue = value.replaceAll("^\"|\"$", "").trim();
+
+            // Build normal HTML attribute with JS interpolation
+            return cleanBinding + "=\"${" + cleanValue + "}\"";
+        }
+        return "";
+    }
+
+
+
 }
