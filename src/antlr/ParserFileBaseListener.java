@@ -413,18 +413,6 @@ public class ParserFileBaseListener implements ParserFileListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterRETRUN_STATE(ParserFile.RETRUN_STATEContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitRETRUN_STATE(ParserFile.RETRUN_STATEContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterCOMMENT_STATE(ParserFile.COMMENT_STATEContext ctx) { }
 	/**
 	 * {@inheritDoc}

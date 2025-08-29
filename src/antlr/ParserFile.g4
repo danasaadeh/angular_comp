@@ -59,7 +59,7 @@ statements:
 value:  VAL
       | object;
 init:MODIFIER? HELPERS?  ID COLON DATA_TYPE EQUAL value  eos;
-init_array :EXPORT? HELPERS?   ID (COLON typeReference (SQUARE_OPEN SQUARE_CLOSE)?)? EQUAL SQUARE_OPEN value (COMMA value)* SQUARE_CLOSE eos;
+init_array :EXPORT? HELPERS?   ID (COLON typeReference (SQUARE_OPEN SQUARE_CLOSE)?)? EQUAL SQUARE_OPEN value? (COMMA value)* SQUARE_CLOSE eos;
 
 
 object:CURLY_OPEN objectProperty (COMMA objectProperty)* COMMA? CURLY_CLOSE COMMA?;

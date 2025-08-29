@@ -1,1 +1,2 @@
-No semantic errors found.
+Semantic check errors:
+Line 112: (Error: Redeclared variable in the same scope: product)

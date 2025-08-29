@@ -1,3 +1,4 @@
+import AST.Instruction;
 import AST.Program;
 import CodeGeneration.Generation;
 import Visitors.AngularVisitor;
@@ -17,17 +18,35 @@ import static org.antlr.v4.runtime.CharStreams.fromFileName;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String source = "tests/test17.txt";
+        // === 1) Define multiple sources
+        String[] sources = {
+                "tests/product.service.txt",
+                "tests/home.component.txt",
+                "tests/add-product.component.txt",
+                "tests/app.routes.txt"
+        };
+
         String output = "output.txt";
 
-        CharStream sc = fromFileName(source);
-        LexerFile lexer = new LexerFile(sc);
-        CommonTokenStream token = new CommonTokenStream(lexer);
-        ParserFile parser = new ParserFile(token);
-        ParseTree tree = parser.program();
-
+        // === 2) Visitor + root container
         AngularVisitor visitor = new AngularVisitor();
-        Program program = (Program) visitor.visit(tree);
+        Instruction rootProgram = new Instruction();
+
+        // === 3) Parse each file and merge
+        for (String source : sources) {
+            CharStream sc = fromFileName(source);
+            LexerFile lexer = new LexerFile(sc);
+            CommonTokenStream token = new CommonTokenStream(lexer);
+            ParserFile parser = new ParserFile(token);
+            ParseTree tree = parser.program();
+
+            Program subProgram = (Program) visitor.visit(tree);
+
+            // Merge each file’s AST into the root
+            rootProgram.setInstructions_list((Instruction) subProgram);
+        }
+
+        // === 4) Collect semantic errors
         List<SemanticError> errors = visitor.getSemanticErrors();
 
         // Write semantic errors to output file
@@ -42,19 +61,18 @@ public class Main {
             }
         }
 
-        // Output AST and symbol table to console
+        // === 5) Output AST + symbol table
         System.out.println("Abstract Syntax Tree:");
-        System.out.println(program.print());
+        System.out.println(rootProgram.print());
         System.out.println();
 
-        // Print the populated symbol table to console
         visitor.st.writeTo();
 
-        // --------------------------------------------------
-        // Print five semantic-error tables in console
+        // Print the semantic-error tables in console
         semantic.SemanticErrorTablePrinter.printTables(errors);
-        Generation codeGeneration = new Generation();
-        codeGeneration.generateOutputFiles(program);
 
+        // === 6) Generate code from combined AST
+        Generation codeGeneration = new Generation();
+        codeGeneration.generateOutputFiles(rootProgram);
     }
 }
