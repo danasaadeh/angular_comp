@@ -1,3 +1,7 @@
+
+
+
+
 package semantic;
 
 public class DuplicateSelectorError extends SemanticError {

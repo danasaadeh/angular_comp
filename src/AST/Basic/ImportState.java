@@ -45,15 +45,15 @@ public class ImportState extends Instruction {
         StringBuilder jsBuilder = new StringBuilder();
 
 
-        if (importTypes != null && !importTypes.isEmpty() && fromPath != null) {
-            jsBuilder.append("import { ");
-            jsBuilder.append(String.join(", ", importTypes));
-            jsBuilder.append(" } from '");
-            jsBuilder.append(fromPath);
-            jsBuilder.append("';");
-        }
+//        if (importTypes != null && !importTypes.isEmpty() && fromPath != null) {
+//            jsBuilder.append("import { ");
+//            jsBuilder.append(String.join(", ", importTypes));
+//            jsBuilder.append(" } from '");
+//            jsBuilder.append(fromPath);
+//            jsBuilder.append("';");
+//        }
 
-        return jsBuilder.toString();
+        return "";
     }
 
 }

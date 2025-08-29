@@ -59,12 +59,12 @@ public class Value extends Statements {
             if (values.size() == 1) {
                 js.append(values.get(0));
             } else {
-                js.append("[");
+               js.append("[");
                 for (int i = 0; i < values.size(); i++) {
                     js.append(values.get(i));
                     if (i < values.size() - 1) js.append(", ");
                 }
-                js.append("]");
+               js.append("]");
             }
         }
 
