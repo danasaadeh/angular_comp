@@ -79,76 +79,77 @@ public class FuncDecl extends Statements {
 
     @Override
     public String convertToJs() {
-        if (st == null) {
-            throw new RuntimeException("SymbolTable not set in FuncDecl");
-        }
-
-        StringBuilder jsBuilder = new StringBuilder();
-
-        if ("submit".equals(name)) {
-
-            // Pick first non-null object from symbol table as the entity
-            String entity = null;
-            Row entityRow = null;
-
-            for (Row r : st.getRow()) {
-                if (r != null && r.getValue() != null && r.getValue().toString().startsWith("{")) {
-                    entity = r.getName();
-                    entityRow = r;
-                    break;
-                }
-            }
-
-            if (entity == null) {
-                entity = "product"; // fallback
-            }
-
-            // Extract keys from entity object
-            List<String> keys = new ArrayList<>();
-            if (entityRow != null) {
-                String valueText = entityRow.getValue().toString().trim();
-                String objectBody = valueText.substring(1, valueText.length() - 1).trim();
-                if (!objectBody.isEmpty()) {
-                    for (String part : objectBody.split(",")) {
-                        String[] kv = part.split(":");
-                        if (kv.length > 0) keys.add(kv[0].trim());
-                    }
-                }
-            }
-
-            // fallback keys if none found
-            if (keys.isEmpty()) {
-                keys.add("name");
-                keys.add("image");
-                keys.add("details");
-                keys.add("price");
-                keys.add("size");
-            }
-
-            // JS variable names based on entity
-            String cap = Character.toUpperCase(entity.charAt(0)) + entity.substring(1);
-            String formVarName = "add" + cap + "Form";
-            String plural = entity + "s";
-
-//            jsBuilder.append("let ").append(entity).append(" = {");
-//            for (int i = 0; i < keys.size(); i++) {
-//                jsBuilder.append(keys.get(i)).append(": ''");
-//                if (i < keys.size() - 1) jsBuilder.append(",");
+//        if (st == null) {
+//            throw new RuntimeException("SymbolTable not set in FuncDecl");
+//        }
+//
+//        StringBuilder jsBuilder = new StringBuilder();
+//
+//        if ("submit".equals(name)) {
+//
+//            // Pick first non-null object from symbol table as the entity
+//            String entity = null;
+//            Row entityRow = null;
+//
+//            for (Row r : st.getRow()) {
+//                if (r != null && r.getValue() != null && r.getValue().toString().startsWith("{")) {
+//                    entity = r.getName();
+//                    entityRow = r;
+//                    break;
+//                }
 //            }
-//            jsBuilder.append("};\n\n");
-
-            jsBuilder.append(formVarName).append(".addEventListener(\"submit\", (e) => {\n")
-                    .append("  e.preventDefault();\n")
-                    .append(buildObjectLiteralFromKeys(cap, keys, st))
-                    .append("  ").append(plural).append(".push(new").append(cap).append(");\n")
-                    .append("  showHomePage();\n")
-                    .append("  ").append(formVarName).append(".reset();\n")
-                    .append("});\n\n")
-                    .append("// Initial render\n")
-                    .append("renderProducts();\n");
-        }
-
-        return jsBuilder.toString();
+//
+//            if (entity == null) {
+//                entity = "product"; // fallback
+//            }
+//
+//            // Extract keys from entity object
+//            List<String> keys = new ArrayList<>();
+//            if (entityRow != null) {
+//                String valueText = entityRow.getValue().toString().trim();
+//                String objectBody = valueText.substring(1, valueText.length() - 1).trim();
+//                if (!objectBody.isEmpty()) {
+//                    for (String part : objectBody.split(",")) {
+//                        String[] kv = part.split(":");
+//                        if (kv.length > 0) keys.add(kv[0].trim());
+//                    }
+//                }
+//            }
+//
+//            // fallback keys if none found
+//            if (keys.isEmpty()) {
+//                keys.add("name");
+//                keys.add("image");
+//                keys.add("details");
+//                keys.add("price");
+//                keys.add("size");
+//            }
+//
+//            // JS variable names based on entity
+//            String cap = Character.toUpperCase(entity.charAt(0)) + entity.substring(1);
+//            String formVarName = "add" + cap + "Form";
+//            String plural = entity + "s";
+//
+////            jsBuilder.append("let ").append(entity).append(" = {");
+////            for (int i = 0; i < keys.size(); i++) {
+////                jsBuilder.append(keys.get(i)).append(": ''");
+////                if (i < keys.size() - 1) jsBuilder.append(",");
+////            }
+////            jsBuilder.append("};\n\n");
+//
+//            jsBuilder.append(formVarName).append(".addEventListener(\"submit\", (e) => {\n")
+//                    .append("  e.preventDefault();\n")
+//                    .append(buildObjectLiteralFromKeys(cap, keys, st))
+//                    .append("  ").append(plural).append(".push(new").append(cap).append(");\n")
+//                    .append("  showHomePage();\n")
+//                    .append("  ").append(formVarName).append(".reset();\n")
+//                    .append("});\n\n")
+//                    .append("// Initial render\n")
+//                    .append("renderProducts();\n");
+//        }
+//
+//        return jsBuilder.toString();
+        return "";
     }
 
 

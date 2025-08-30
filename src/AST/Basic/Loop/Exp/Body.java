@@ -29,14 +29,10 @@ public class Body {
                 '}';
     }
     public String convertToJs() {
-        // Convert all statements in body to JS and join with newlines
+
         StringBuilder js = new StringBuilder();
         for (Statements stmt : statements) {
-            if (stmt instanceof Expression) {
-                js.append(((Expression) stmt).convertToJs()).append(";\n");
-            } else {
-                js.append(stmt.toString()).append(";\n"); // fallback
-            }
+            js.append(stmt.convertToJs()).append("\n");
         }
         return js.toString();
     }

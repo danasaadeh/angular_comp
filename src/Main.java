@@ -23,7 +23,8 @@ public class Main {
                 "tests/product.service.txt",
                 "tests/home.component.txt",
                 "tests/add-product.component.txt",
-                "tests/app.routes.txt"
+               "tests/app.routes.txt",
+
         };
 
         String output = "output.txt";

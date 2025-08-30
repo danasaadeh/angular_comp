@@ -167,7 +167,7 @@ public class Instruction implements Program {
     @Override
     public String convertToJs() {
         StringBuilder jsBuilder = new StringBuilder();
-        jsBuilder.append("// script.js\n");
+
 
         // --- 1. Emit import states if needed ---
         if (importStates != null && !importStates.isEmpty()) {

@@ -47,7 +47,7 @@ public class Declaration extends Statements {
     }
     public String convertToJs() {
 
-        return  this.getId() ;
+        return "" ;
 
     }
 

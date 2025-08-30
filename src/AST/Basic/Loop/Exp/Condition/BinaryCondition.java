@@ -33,6 +33,6 @@ public class BinaryCondition extends Condition {
     }
     @Override
     public String convertToJs() {
-        return "(" + left.convertToJs() + " " + operation + " " + right.convertToJs() + ")";
+        return  left.convertToJs() + " " + operation + " " + right.convertToJs() ;
     }
 }

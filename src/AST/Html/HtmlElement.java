@@ -567,7 +567,7 @@ public class HtmlElement {
         }
 
         // === At root element: append initial render calls ===
-        // === At root element: append initial render calls ===
+
         if (this.tagName == null
                 || "html".equalsIgnoreCase(this.tagName)
                 || "body".equalsIgnoreCase(this.tagName)

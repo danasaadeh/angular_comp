@@ -238,7 +238,7 @@ public class Statements  extends Instruction{
         }
 
         for (Declaration decl : declarations) {
-            jsBuilder.append("let ").append(decl.convertToJs()).append(";\n");
+            jsBuilder.append(decl.convertToJs()).append("\n");
         }
 
         // Initializations
